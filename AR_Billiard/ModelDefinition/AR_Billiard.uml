@@ -380,6 +380,42 @@
                 LastKnownLocation="AR_Billiard.uml" />
             </type_NamedElement>
           </property>
+          <property
+            Id="ba858c4d-d861-400c-bc19-89fbf62ec7c1"
+            name="width"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="b9c55d51-c2d0-4f0d-8633-06993e980138"
+                LastKnownName="float"
+                LastKnownLocation="AR_Billiard.uml" />
+            </type_NamedElement>
+          </property>
+          <property
+            Id="a42c703b-504b-4dd6-bac4-40b102864ca2"
+            name="height"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false">
+            <type_NamedElement>
+              <undefinedTypeMoniker
+                Id="b9c55d51-c2d0-4f0d-8633-06993e980138"
+                LastKnownName="float"
+                LastKnownLocation="AR_Billiard.uml" />
+            </type_NamedElement>
+          </property>
         </ownedAttributesInternal>
         <ownedOperationsInternal>
           <operation
