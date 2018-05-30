@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GLScene.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_TouchScreen.cpp" />
+    <ClCompile Include="GeneratedFiles\qrc_TouchScreen.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_GLScene.cpp" />
+    <ClCompile Include="GeneratedFiles\Release\moc_TouchScreen.cpp" />
+    <ClCompile Include="GLScene.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="TouchScreen.cpp" />
+    <ClCompile Include="Calibration.cpp">
+      <Filter>Source Dateien</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Dateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_TouchScreen.h" />
+    <ClInclude Include="Camera.h">
+      <Filter>Header Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Calibration.h">
+      <Filter>Header Dateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="TouchScreen.h" />
+    <CustomBuild Include="TouchScreen.ui" />
+    <CustomBuild Include="GLScene.h" />
+    <CustomBuild Include="TouchScreen.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Dateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Source Dateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+  </ItemGroup>
+</Project>

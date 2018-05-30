@@ -1,0 +1,17 @@
+﻿Der Buildvorgang wurde am 30.05.2018 15:18:29 gestartet.
+     1>Projekt "C:\Users\fp16\Documents\Visual Studio 2013\Projects\AR_Billiard\TouchScreen\TouchScreen.vcxproj" auf Knoten "2", Build Ziel(e).
+     1>Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\fp16\Documents\Visual Studio 2013\Projects\AR_Billiard\Win32\Debug\\Aufgabe_Qt_TouchScreen.exe" /NOLOGO /LIBPATH:c:\library_builds\msvc12x86\qt\lib qtmaind.lib Qt5Cored.lib Qt5Guid.lib Qt5OpenGLd.lib opengl32.lib glu32.lib Qt5Widgetsd.lib opencv_core2412.lib opencv_highgui2412.lib opencv_imgproc2412.lib opencv_calib3d2412.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\fp16\Documents\Visual Studio 2013\Projects\AR_Billiard\Win32\Debug\Aufgabe_Qt_TouchScreen.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\fp16\Documents\Visual Studio 2013\Projects\AR_Billiard\Win32\Debug\Aufgabe_Qt_TouchScreen.lib" /MACHINE:X86 /SAFESEH Debug\Calibration.obj
+         Debug\Camera.obj
+         Debug\moc_GLScene.obj
+         Debug\moc_TouchScreen.obj
+         Debug\qrc_TouchScreen.obj
+         Debug\GLScene.obj
+         Debug\main.obj
+         Debug\TouchScreen.obj
+         TouchScreen.vcxproj -> C:\Users\fp16\Documents\Visual Studio 2013\Projects\AR_Billiard\Win32\Debug\Aufgabe_Qt_TouchScreen.exe
+     1>Die Erstellung des Projekts "C:\Users\fp16\Documents\Visual Studio 2013\Projects\AR_Billiard\TouchScreen\TouchScreen.vcxproj" ist abgeschlossen, Build Ziel(e).
+
+Build erfolgreich.
+
+Verstrichene Zeit 00:00:00.74
