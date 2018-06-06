@@ -21,6 +21,7 @@ private slots:
   void toggleFullScreen();
   void createActions();
   void startGame();
+  void enableMouseControll();
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event);
@@ -32,8 +33,9 @@ private:
 	QMenu *_optionMenu;
 	QMenu *_aboutMenu;
 
-	QAction *_start;
-
+	QAction *_startGame;
+	QAction *_mouseControll;
+	bool _mouseFunction;
     QShortcut   *_shrtFullScreen,
                 *_shrtQuit;
     QGridLayout *_gridLayout; 
