@@ -18,11 +18,21 @@ public:
     ~TouchScreen();
 
 private slots:
-
   void toggleFullScreen();
+  void createActions();
+  void startGame();
+
+protected:
+	void contextMenuEvent(QContextMenuEvent *event);
 
 private:
     Ui::TouchScreenClass ui;
+
+	QMenu *_fileMenu;
+	QMenu *_optionMenu;
+	QMenu *_aboutMenu;
+
+	QAction *_start;
 
     QShortcut   *_shrtFullScreen,
                 *_shrtQuit;
