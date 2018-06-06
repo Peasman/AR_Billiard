@@ -1,4 +1,6 @@
 #include "TouchScreen.h"
+#include "windows.h"
+#include <iostream>
 #include <QMenuBar>
 
 TouchScreen::TouchScreen(QWidget *parent)
@@ -18,9 +20,13 @@ TouchScreen::TouchScreen(QWidget *parent)
 
   createActions();
   _fileMenu->addAction(_startGame);
+  _fileMenu->addAction(_resetGame);
+  _fileMenu->addAction(_quitGame);
   _optionMenu->addAction(_mouseControll);
-
+  
 }
+TouchScreen::~TouchScreen()
+{}
 
 void TouchScreen::createActions()
 {
@@ -28,6 +34,12 @@ void TouchScreen::createActions()
 	_mouseControll->setChecked(false);
 	_mouseControll->setCheckable(true);
 	connect(_mouseControll, SIGNAL(triggered()), this, SLOT(enableMouseControll()));
+
+	_quitGame = new QAction(tr("&Close Game"), this);
+	connect(_quitGame, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
+
+	_resetGame = new QAction(tr("&Reset Game"), this);
+	connect(_resetGame, SIGNAL(triggered()), this, SLOT(resetGame()));
 
 	_startGame = new QAction(tr("&Start Game"), this);
 	connect(_startGame, SIGNAL(triggered()), this, SLOT(startGame()));
@@ -51,6 +63,7 @@ void TouchScreen::enableMouseControll()
 	{
 		_mouseControll->setText(tr("&Dissable Mouse"));
 		_mouseControll->setChecked(true);
+
 		//funcion für die GLSCENE
 		_mouseFunction = true;
 
@@ -67,14 +80,20 @@ void TouchScreen::enableMouseControll()
 void TouchScreen::startGame()
 {
 	//BOOL von GLScene ändern in True, weil das Spiel gestartet wird.
-
+	
 }
 
-TouchScreen::~TouchScreen()
+void TouchScreen::resetGame()
 {
-
+	const int result = MessageBox(nullptr, TEXT("Reset Game?"), TEXT("Message"), MB_YESNO);
+	switch (result)
+	{
+		case IDYES:
+			// RESET GAME WIRD AUSGEFÜHRT
+			break;
+	}
+	
 }
-
 
 void TouchScreen::toggleFullScreen()
 {
