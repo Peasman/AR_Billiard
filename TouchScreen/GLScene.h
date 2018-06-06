@@ -19,7 +19,7 @@ public:
 public slots:
 
   void updateFrame();
-  void resetGame(int player);
+  void resetGame();
 
 protected:
   
@@ -30,25 +30,24 @@ protected:
   bool event( QEvent * e );
 
   void updatePhysics();
-  
+
   void handleTouchPoints( const QList<QTouchEvent::TouchPoint> &points );
   
   QTimer *_timer;
   QShortcut *_shrtReset;
 
   float _w, _h, _xpos, _ypos;
-  list<Ball> balls; //Liste der Kugeln die Momentan aktiv sind
-  //Generell um Berechnungen während des Spielens zu verringern
+
   enum Color{
-    Orange, Blue, LightBlue, Red, Brown, Green, Yellow, Black, White
-  }
+	  Orange=0, Blue, LightBlue, Red, Brown, Green, Yellow, Black, White
+  };
   struct Pool 
   {
     float leftBound, rightBound,              //Linkes Ende des Spielfelds/Pools immer 0, rechtes ist Fenstergröße bzw 1920 im Normalfall
           topBound, bottomBound,              //Oben immer 0 bzw (1080 - 960)/2 = 60 (für das 2:1 Verhältnis) und unten 1020 
           midX, midY;                         //Fenstergröße/2, wird benötigt für Start und Löcher
     
-  }
+  };
   struct Puck
   {
     
@@ -56,23 +55,23 @@ protected:
           vx, vy, // geschwindigkeit
           omega,  // winkelgeschwindigket der rotation in 2 * pi / sek
                   // positive werte -> mathematisch positive rotation ( gegen den uhrzeiger )
-                  // negative werte -> mathematisch negative rotation ( mit dem uhrzeiger )
+                 // negative werte -> mathematisch negative rotation ( mit dem uhrzeiger )
           angle;  // aktueller Winkel des Pucks
   };
 
-  struct Ball{
-    //glColor3f color;
-    Color color;                        //Farbe
-    bool full,                          //Halb oder ganz?
-         exists;                        // Noch im spiel?
-    int number;                         //Noetig? Nummer der Kugel 
-    float x=0,y=0,                          //Position x und y der Kugel
-          xLast,yLast,                  //Letzte Position
-          vx,vy,                        //Momentane Geschwindigkeit
-          omega,                        //Momentane Winkelgeschwindigkeit
-          angle, angleLast              //Momentaner Winkel und letzter Winkel
-  }
-  }
+  struct Ball
+  {
+	  //glColor3f color;
+	  Color color;                        //Farbe
+	  bool full,                          //Halb oder ganz?
+		  exists;                        // Noch im spiel?
+	  int number;                         //Noetig? Nummer der Kugel 
+	  float x = 0, y = 0,                          //Position x und y der Kugel
+		  xLast, yLast,                  //Letzte Position
+		  vx, vy,                        //Momentane Geschwindigkeit
+		  omega,                        //Momentane Winkelgeschwindigkeit
+		  angle, angleLast;              //Momentaner Winkel und letzter Winkel
+  };
   struct Racket
   {
     float x, y,             // aktuelle position
@@ -89,7 +88,6 @@ protected:
     float tpx1Last, tpy1Last, // touchpoint positionen rotationsverfolgung, letzte werte
           tpx2Last, tpy2Last;
   };
-  }
   inline float d( float x1, float y1, float x2, float y2 )
   {
     float dx = x1 - x2;
@@ -128,16 +126,20 @@ protected:
   Racket _racketLeft;
   Racket _racketRight;
 
-  float _puckSize, _racketSize,_ballsize;
+  float _puckSize, _racketSize,_ballSize;
 
   void renderPuck();
   void renderBall(Ball const& ball);
   void renderRacket( Racket const& racket );
   void collidePuckRacket( Racket const& racket );
-  void updateBallVelocity(Ball const& ball);
-  void updateBallCollision(Ball const& ball);
+  void updateBallVelocity(Ball& ball);
+  void updateBallCollision(Ball& ball, int index);
+  void CollisionWithHole(Ball& ball);
+  void initStandardBalls();
+
   const int _timerPeriod;
-  
+  std::vector<Ball> _balls; //Liste der Kugeln die Momentan aktiv sind
+  //Generell um Berechnungen während des Spielens zu verringern
   int _gameInit;
   static const float eps;
 };
