@@ -81,7 +81,7 @@ void GLScene::resizeGL(int w, int h)
 
 	_puckSize = _h / 30.0f;
 	_racketSize = _h / 10.0f;
-	_ballSize = _h / 30.0f;
+	_ballSize = _h / 40.0f;
 	glViewport(0, 0, w, h);
 
 	glMatrixMode(GL_PROJECTION);
@@ -98,10 +98,6 @@ void GLScene::paintGL()
 	// zur ModelView-Matrix wechseln
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity(); // Identit�tsmatrix laden
-
-	renderPuck();
-	renderRacket(_racketLeft);
-	renderRacket(_racketRight);
 	for (int i = 0; i < _balls.size(); i++) {
 		renderBall(_balls[i]);
 	}
@@ -445,9 +441,11 @@ void GLScene::updatePhysics()
 }
 void GLScene::initStandardBalls()
 {
-	for (int i = Orange; i != White; i++)
+	std::cout << "Starte init" << std::endl;
+	for (int i = Orange; i != Length; i++)
 	{
 		Color foo = static_cast<Color>(i);
+		std::cout << "Current color: " << foo << std::endl;
 		if (foo == White || foo == Black)
 		{
 			Ball currentBallHalf;
@@ -455,7 +453,9 @@ void GLScene::initStandardBalls()
 			currentBallHalf.y = 0;
 			currentBallHalf.color = foo;
 			currentBallHalf.full = false;
-			_balls.push_back(currentBallHalf);
+		_balls.push_back(currentBallHalf);
+		std::cout << "Schwarz oder Weiß: " << currentBallHalf.color << std::endl;
+
 		}
 		else
 		{
@@ -466,204 +466,44 @@ void GLScene::initStandardBalls()
 			currentBallHalf.full = false;
 			_balls.push_back(currentBallHalf);
 			Ball currentBallFull;
-			currentBallHalf.x = 0;
-			currentBallHalf.y = 0;
-			currentBallHalf.color = foo;
-			currentBallHalf.full = true;
+			currentBallFull.x = 0;
+			currentBallFull.y = 0;
+			currentBallFull.color = foo;
+			currentBallFull.full = true;
 			_balls.push_back(currentBallFull);
+
+			std::cout << "Farbehalb: " << currentBallHalf.color << std::endl;
+			std::cout << "Farbeganz: " << currentBallFull.color << std::endl;
 		}
-		//std::cout << "Farbeganz: " <<  << std::endl;
 
 	}
 }
-//Alternative:
-/*  Ball greenHalf
- {
- x = 0;
- y = 0;
- color_r = 0.0f;
- color_g = 1.0f;
- color_b = 0.0f;
- full = false;
- }
- balls.push_back(greenHalf);
- Ball greenFull
- {
- x = 0;
- y = 0;
- color_r = 0.0f;
- color_g = 1.0f;
- color_b = 0.0f;
- full = true;
- }
- balls.push_back(greenFull);
- Ball orangeHalf
- {
- x = 0;
- y = 0;
- color_r = 1.0f;
- color_g = 0.8f;
- color_b = 0.2f;
- full = false;
- }
- balls.push_back(orangeHalf);
-
- Ball orangeFull
- {
- x = 0;
- y = 0;
- color_r = 1.0f;
- color_g = 0.8f;
- color_b = 0.2f;
- full = true;
- }
- balls.push_back(orangeFull);
-
- Ball blueHalf
- {
- x = 0;
- y = 0;
- color_r = 0.0f;
- color_g = 0.0f;
- color_b = 1.0f;
- full = false;
- }
- balls.push_back(blueHalf);
- Ball blueFull
- {
- x = 0;
- y = 0;
- color_r = 0.0f;
- color_g = 0.0f;
- color_b = 1.0f;
- full = true;
- }
- balls.push_back(blueFull);
- Ball lightBlueHalf
- {
- x = 0;
- y = 0;
- color_r = 0.2f;
- color_g = 0.8f;
- color_b = 1.0f;
- full = false;
- }
- balls.push_back(lightBlueHalf);
-
- Ball lightBlueFull
- {
- x = 0;
- y = 0;
- color_r = 0.2f;
- color_g = 0.8f;
- color_b = 1.0f;
- full = true;
- }
- balls.push_back(lightBlueFull);
-
- Ball redHalf
- {
- x = 0;
- y = 0;
- color_r = 1.0f;
- color_g = 0.0f;
- color_b = 0.0f;
- full = false;
- }
- balls.push_back(redHalf);
-
- Ball redFull
- {
- x = 0;
- y = 0;
- color_r = 1.0f;
- color_g = 0.0f;
- color_b = 0.0f;
- full = true;
- }
- balls.push_back(redFull);
- Ball brownHalf
- {
- x = 0;
- y = 0;
- color_r = 0.6f;
- color_g = 0.0f;
- color_b = 0.0f;
- full = false;
- }
- balls.push_back(brownHalf);
-
- Ball brownFull
- {
- x = 0;
- y = 0;
- color_r = 0.6f;
- color_g = 0.0f;
- color_b = 0.0f;
- full = true;
- }
- balls.push_back(brownFull);
-
- Ball yellowHalf
- {
- x = 0;
- y = 0;
- color_r = 1.0f;
- color_g = 1.0f;
- color_b = 0.0f;
- full = false;
- }
- balls.push_back(yellowHalf);
- Ball yellowFull
- {
- x = 0;
- y = 0;
- color_r = 1.0f;
- color_g = 1.0f;
- color_b = 0.0f;
- full = true;
- }
- balls.push_back(yellowFull);
-
- Ball blackBall
- {
- x = 0;
- y = 0;
- color_r = 0.0f;
- color_b = 0.0f;
- color_g = 0.0f;
- full = false;
- }
- balls.push_back(blackBall); */
 void GLScene::resetGame()
 {
 	//_balls.clear();
-	initStandardBalls();
-	//std::random_shuffle(_balls.begin(), _balls.end());
-	Ball whiteBall;
+	if (!alreadyStarted) {
+		initStandardBalls();
+	}
+	
+	std::random_shuffle(_balls.begin(), _balls.end()-1);
+	_balls[_balls.size() - 1].x = _w / 4;
+	_balls[_balls.size() - 1].y = _h / 2;
 //	for (int i = 0; i < 16; i++) {
 
 	//}
-	whiteBall.x = _w / 4;
-	whiteBall.y = _h / 2;
-	/*Ball &currentBall = *(_balls.begin());
-	for (int i = 0; i < 5; i++)
+	int currentPosition = 0;
+	for (int i = 0; i <= 5; i++)
 	{
-		for (int j = 1; j < i; j++)
+		for (int j = 1; j <= i; j++)
 		{
-			float yOffset = _h / 2.0f - i / 2.0f * (_ballSize + 3.0f); //Hälfte der Höhe, - hälfte der Anzahl der Kugeln mal die Größe der Kugeln
+			float yOffset = _h / 2.0f - i / 2.0f * (_ballSize*2 + 3.0f); //Hälfte der Höhe, - hälfte der Anzahl der Kugeln mal die Größe der Kugeln
 			
-			currentBall.x = _w / 4.0f * 3.0f + i * _ballSize; //Verschieben nach rechts von 3/4 der Width aus
-			currentBall.y = yOffset + j * _ballSize;         //Verschieben nach unten/oben
-			std::cout << "X: " << currentBall.x << "Y: "  << currentBall.y << std::endl;
+			_balls[currentPosition].x = _w / 3.0f * 2.0f + i * _ballSize*2; //Verschieben nach rechts von 3/4 der Width aus
+			_balls[currentPosition].y = yOffset + j * _ballSize*2;         //Verschieben nach unten/oben
+			currentPosition++;
 		}
 	}
-	*/
-	for (int i = 0; i < _balls.size(); i++) {
-		_balls[i].x = _w / 4 + _ballSize * i;
-		_balls[i].y = _h / 2;
-
-	}
+	
 	/*
 	_racketLeft.x = 0.25 * _w;
 	_racketLeft.y = 0.5 * _h;
@@ -705,15 +545,18 @@ void GLScene::renderBall(Ball const &ball)
 	glPushMatrix();
 	glLoadIdentity();
 	const int k = 32;
+	float x1 = ball.x - _ballSize * 4;
+	float x2 = ball.x + _ballSize * 4;
+	float y1 = ball.y - _ballSize * 4;
+	float y2 = ball.y + _ballSize * 4;
 	glTranslatef(ball.x, ball.y, 0.0f);
-	//  glRotatef( _puck.angle, 0.0, 0.0, 1.0 );
-	glScalef(_puckSize, _puckSize, 1.0f);
-
+	glRotatef( ball.angle, 0.0, 0.0, 1.0 );
+	glScalef(_ballSize, _ballSize, 1.0f);
 	glBegin(GL_TRIANGLE_FAN);
 
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
-
+	
 	for (int i = 0; i <= k; ++i)
 	{
 		float x = cos(2.0 * M_PI * static_cast<float>(i) / k);
@@ -743,16 +586,28 @@ void GLScene::renderBall(Ball const &ball)
 			glColor3f(0.2f, 0.8f, 1.0f);
 			break;
 		case (Orange) :
-			glColor3f(1.0f, 0.8f, 0.2f);
+			glColor3f(1.0f, 0.6f, 0.0f);
 			break;
 		case (Blue) :
 			glColor3f(0.0f, 0.0f, 1.0f);
 		}
 		//glColor3f(ball.color_r, ball.color_g, ball.color_b);
+		
 		glVertex3f(x, y, 0.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glRectf(x1, y1, x2, y2);
+
 	}
 	glEnd();
-
+	
+	/*
+	glBegin(GL_POLYGON);
+	glColor3f(1.0f, 1.0f, 1.0f);
+	glVertex2f(x1, y1);
+	glVertex2f(x2, y1);
+	glVertex2f(x2, y2);
+	glVertex2f(x1, y2);
+	glEnd();*/
 	glPopMatrix();
 }
 void GLScene::renderPuck()

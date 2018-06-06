@@ -28,7 +28,7 @@ public:
     {
         if (TouchScreenClass->objectName().isEmpty())
             TouchScreenClass->setObjectName(QStringLiteral("TouchScreenClass"));
-        TouchScreenClass->resize(600, 400);
+        TouchScreenClass->resize(1400, 700);
         centralWidget = new QWidget(TouchScreenClass);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         TouchScreenClass->setCentralWidget(centralWidget);
