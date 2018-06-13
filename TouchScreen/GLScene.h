@@ -33,11 +33,9 @@ protected:
   void resizeGL( int w, int h );
   void paintGL();
 
-  bool event( QEvent * e );
 
   void updatePhysics();
 
-  void handleTouchPoints( const QList<QTouchEvent::TouchPoint> &points );
 
   // Maus-Event-Methoden
   void mousePressEvent(QMouseEvent *event);
@@ -76,7 +74,7 @@ protected:
 	  //glColor3f color;
 	  Color color;                        //Farbe
 	  bool full,                          //Halb oder ganz?
-		  exists;                        // Noch im spiel?
+		  exists=true;                        // Noch im spiel?
 	  int number;                         //Noetig? Nummer der Kugel 
 	  float x = 0, y = 0,                          //Position x und y der Kugel
 		  xLast=0, yLast=0,                  //Letzte Position

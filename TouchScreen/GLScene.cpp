@@ -35,7 +35,6 @@ bool isMouseEnable = false;
 
 //Die Funktion der Mouse wird aktiviert
 void GLScene::enableMouse(bool isEnable){
-	std::cout << "enable Mouse ist: "<< isEnable << std::endl;
 	isMouseEnable = isEnable;
 }
 //========================================================================================
@@ -43,9 +42,8 @@ void GLScene::enableMouse(bool isEnable){
 //========================================================================================
 void GLScene::mousePressEvent(QMouseEvent *event)
 {
-	if (isMouseEnable){
+	if (!isMouseEnable){
 		currentPos = event->pos();
-		std::cout << "erste Mouse Position: " << currentPos.x() << ", " << currentPos.y() << std::endl;
 	}
 }
 //========================================================================================
@@ -53,11 +51,12 @@ void GLScene::mousePressEvent(QMouseEvent *event)
 //========================================================================================
 void GLScene::mouseMoveEvent(QMouseEvent *event)
 {
-	if (isMouseEnable){
+	if (!isMouseEnable){
 		lastPos = currentPos;
-		currentPos = event->pos();
-		std::cout << "currentPos Maus: " << currentPos.x() << "," << currentPos.y() << std::endl;
-		std::cout << "lastPos Maus: " << lastPos.x() << "," << lastPos.y() << std::endl;
+		float currentx = event->pos().x();
+		float currenty = event->pos().y()+40.0f;
+		currentPos = QPoint(currentx, currenty);
+		std::cout << currentPos.x() << " y: " << currentPos.y() << std::endl;
 	}
 }
 
@@ -66,7 +65,7 @@ void GLScene::mouseMoveEvent(QMouseEvent *event)
 //========================================================================================
 void GLScene::mouseReleaseEvent(QMouseEvent *event)
 {
-	if (isMouseEnable){
+	if (!isMouseEnable){
 
 	}
 }
@@ -105,7 +104,7 @@ void GLScene::updateFrame()
 			break;
 		}
 	}
-	//updatePhysics();
+	updatePhysics();
 	update();
 }
 
@@ -157,154 +156,10 @@ void GLScene::paintGL()
 	
 }
 
-bool GLScene::event(QEvent *e)
-{
-	switch (e->type())
-	{
-	case QEvent::TouchBegin:
-	case QEvent::TouchUpdate:
-	case QEvent::TouchEnd:
-		handleTouchPoints(static_cast<QTouchEvent *>(e)->touchPoints());
-		break;
-	default:
-		return QWidget::event(e);
-	}
-
-	return true;
-}
-
-void GLScene::handleTouchPoints(const QList<QTouchEvent::TouchPoint> &points)
-{
-	// Sortiere die Touchpunkte je nach Racket
-	// racketPoints[ 0 ] -> linkes Racket
-	// racketPoints[ 1 ] -> rechtes Racket
-	std::vector<QTouchEvent::TouchPoint> racketPoints[2];
-
-	for (QList<QTouchEvent::TouchPoint>::const_iterator point = points.constBegin(); point != points.constEnd(); ++point)
-	{
-
-		// speichere Punktpositionen aus i in _xpos und _ypos
-		// _xpos =
-		// _ypos =
-
-		_xpos = point->pos().x();
-		_ypos = _h - point->pos().y();
-
-		// ein Punkt geh�rt zum Racket wenn der Abstand des Punktes zum Mittelpunkt des Rackets
-		// kleiner ist als der Radius des Rackets
-		// Verwenden Sie die Funktion d( ... ) f�r die Berechnung des Abstandes
-		// Hinweis: if ( d( ... ) < radius des Rackets )....
-
-		if (d(_racketLeft.x, _racketLeft.y, _xpos, _ypos) < _racketSize)
-		{
-			racketPoints[0].push_back(*point);
-		}
-		else if (d(_racketRight.x, _racketRight.y, _xpos, _ypos) < _racketSize)
-		{
-			racketPoints[1].push_back(*point);
-		}
-	}
-
-	// F�hre folgende Berechnungen nacheinander f�r beide Punktmengen aus
-	for (int i = 0; i < 2; ++i)
-	{
-
-		// Speichere einen Pointer f�r das aktuelle Racket
-		// Das spart sp�ter viele if( ... )-Abfragen
-		Racket *racket;
-		if (i == 0)
-			racket = &_racketLeft;
-		else
-			racket = &_racketRight;
-
-		QTouchEvent::TouchPoint tp1;
-		QTouchEvent::TouchPoint tp2;
-
-		int count = 0;
-		float xPos = 0;
-		float yPos = 0.0f;
-		for (std::vector<QTouchEvent::TouchPoint>::const_iterator point = racketPoints[i].begin(); point != racketPoints[i].end(); ++point)
-		{
-
-			xPos += point->pos().x();
-			yPos += _h - point->pos().y();
-			count++;
-
-			if (racket->tpid1 == point->id())
-			{
-				tp1 = *point;
-			}
-			else if (racket->tpid2 = point->id())
-			{
-				tp2 = *point;
-			}
-		}
-
-		// falls �berhaupt Punkte existieren
-		if (count > 0)
-		{
-
-			racket->x = fmax(fmin(xPos / count, _w / 2 * (i + 1) - _racketSize), _w / 2 * i + _racketSize);
-			racket->y = yPos / count;
-		}
-		// falls mindestens zwei Punkte existieren --> Rotationsverfolgung
-		if (count > 1)
-		{
-			// Start der Rotationsverfolgung
-			if (racket->tpid1 == -1)
-			{
-				racket->tpid1 = (racketPoints[i])[0].id();
-				racket->tpid2 = (racketPoints[i])[1].id();
-			}
-			else
-			{
-				// TouchPoints von letzten Durchlauf vorhanden
-				racket->tpx1 = tp1.pos().x();
-				racket->tpy1 = tp1.pos().y();
-				racket->tpx2 = tp2.pos().x();
-				racket->tpy2 = tp2.pos().y();
-
-				float vecX = racket->tpx1 - racket->tpx2;
-				float vecXLast = racket->tpx1Last - racket->tpx2Last;
-				float vecY = racket->tpy1 - racket->tpy2;
-				float vecYLast = racket->tpy1Last - racket->tpy2Last;
-
-				float angle = acos(dot(vecX, vecY, vecXLast, vecYLast) / (norm(vecX, vecY) * norm(vecXLast, vecYLast))) * 180.0 / 3.14159265;
-
-				float cpz = vecX * vecYLast - vecY * vecXLast;
-				float sgn = (cpz > 0) - (cpz < 0);
-
-				racket->angle += sgn * fmax(-180, fmin(180, angle)) * 0.10;
-			}
-
-			racket->tpx1Last = racket->tpx1;
-			racket->tpy1Last = racket->tpy1;
-			racket->tpx2Last = racket->tpx2;
-			racket->tpy2Last = racket->tpy2;
-		}
-		else
-		{
-			racket->tpid1 = -1;
-			racket->tpid2 = -1;
-		}
-
-		// Berechne die Rotation des Rackets
-		// Hinweis: Beachten Sie die Funktionen
-		// normalize : Vektor normalisieren
-		// dot       : Punktprodukt zweier Vektoren
-		// norm      : Die Standardnorm eines Vektors
-		// scalarMult: Skalarmultiplikation eines Vektors
-		// rotate    : Rotation es Vektors um einen Winkel
-	}
-}
-
 void GLScene::updateBallVelocity(Ball& ball)
 {	
 
-	if (ball.color == Color::White) {
-		ball.vx = 1;
-	}
-	const float friction = 1.5f;
+	const float friction = 0.99f;
 	const float rfriction = 0.001f;
 	rotate(rfriction * ball.omega, ball.vx, ball.vy);
 	ball.x = ball.x + ball.vx;
@@ -336,6 +191,10 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 
 	//TODO Collision mit Löchern
 	//CollisionWithHole(ball);
+	if (ball.color == Color::White) {
+		ball.vx =20.0f;
+		ball.vy = 0.0f;
+	}
 	if (ball.exists)
 	{
 		
@@ -359,41 +218,80 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 			ball.vx *= -1.0f;
 			ball.x -= 2.0 * (ball.x - _ballSize);
 		}
-		
+		//Maus erkennung
+		/*float dist = d(currentPos.x(), currentPos.y(), ball.x, ball.y);
+		//std::cout << dist << std::endl;
+		if (dist >0 && dist < _ballSize*2) {
+			const float slip = 0.6;
+			float nx, ny, tx, ty;
+
+			// normal
+			nx = ball.x - lastPos.x();
+			ny = ball.y - lastPos.y();
+			normalize(nx, ny);
+
+			// tangent pointing to the left of normal
+			tx = -ny;
+			ty = nx;
+
+			float mvx = (currentPos.x() - lastPos.x());
+			float mvy = (currentPos.y() - lastPos.y());
+			// relative velocity
+			float vsumx = mvx- ball.vx;
+			float vsumy = mvy - ball.vy;
+
+			// coordinates in radial tangential coordinate frame
+			float vn = nx * vsumx + ny * vsumy;
+			float vt = tx * vsumx + ty * vsumy;
+
+			ball.x += nx * (vn + 0.1);
+			ball.y += ny * (vn + 0.1);
+
+			ball.vx += vn * nx;
+			ball.vy += vn * ny;
+
+			// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
+			//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
+		}
+		*/
 		for (int i = 0; i < 16; i++)
 		{
 			Ball& currentBall = _balls[i];
 			if ( index != i && currentBall.exists)
 			{
-				//TODO Geschwindigkeit von beiden Kugeln ändern
-				const float slip = 0.6;
-				float nx, ny, tx, ty;
+				dist = d(currentBall.x, currentBall.y, ball.x, ball.y);
+				if (dist < _ballSize * 2) {
+					//TODO Geschwindigkeit von beiden Kugeln ändern
+					const float slip = 0.6;
+					float nx, ny, tx, ty;
 
-				// normal
-				nx = ball.x - currentBall.x;
-				ny = ball.y - currentBall.y;
-				normalize(nx, ny);
+					// normal
+					nx = ball.x - currentBall.x;
+					ny = ball.y - currentBall.y;
+					normalize(nx, ny);
 
-				// tangent pointing to the left of normal
-				tx = -ny;
-				ty = nx;
+					// tangent pointing to the left of normal
+					tx = -ny;
+					ty = nx;
 
-				// relative velocity
-				float vsumx = currentBall.vx - ball.vx;
-				float vsumy = currentBall.vy - ball.vy;
+					// relative velocity
+					float vsumx = currentBall.vx - ball.vx;
+					float vsumy = currentBall.vy - ball.vy;
 
-				// coordinates in radial tangential coordinate frame
-				float vn = nx * vsumx + ny * vsumy;
-				float vt = tx * vsumx + ty * vsumy;
+					// coordinates in radial tangential coordinate frame
+					float vn = nx * vsumx + ny * vsumy;
+					float vt = tx * vsumx + ty * vsumy;
 
-				ball.x += nx * (vn + 0.1);
-				ball.y += ny * (vn + 0.1);
+					ball.x += nx * (vn + 1.0f);
+					ball.y += ny * (vn + 1.0f);
 
-				ball.vx += vn * nx;
-				ball.vy += vn * ny;
+					ball.vx += vn * nx;
+					ball.vy += vn * ny;
 
-				// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
-				ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
+					// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
+					//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
+				}
+				
 			}
 			
 		}
@@ -468,6 +366,7 @@ void GLScene::resetGame()
 			
 			_balls[currentPosition].x = _w / 3.0f * 2.0f + i * _ballSize*2; //Verschieben nach rechts von 3/4 der Width aus
 			_balls[currentPosition].y = yOffset + j * (_ballSize+1.0f) *2;         //Verschieben nach unten/oben
+			std::cout << "x: " << _balls[currentPosition].x << " y: " << _balls[currentPosition].y << std::endl;
 			currentPosition++;
 		}
 	}
