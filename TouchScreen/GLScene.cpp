@@ -259,7 +259,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 			Ball& currentBall = _balls[i];
 			if ( index != i && currentBall.exists)
 			{
-				dist = d(currentBall.x, currentBall.y, ball.x, ball.y);
+				float dist = d(currentBall.x, currentBall.y, ball.x, ball.y);
 				if (dist < _ballSize * 2) {
 					//TODO Geschwindigkeit von beiden Kugeln ändern
 					const float slip = 0.6;
