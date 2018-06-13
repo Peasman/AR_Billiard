@@ -19,6 +19,8 @@ public:
 	};
 	DetectedCue detectCue(cv::Mat img);
 	void runTest();
+	void drawAxis(cv::Mat& img, cv::Point p, cv::Point q, cv::Scalar colour);
+	double getOrientation(std::vector<cv::Point> &, cv::Mat&);
 private:
 	std::string _windowName;
 };
