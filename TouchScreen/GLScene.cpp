@@ -3,7 +3,7 @@
 #include <QMetaEnum>
 #include <iostream>
 #include <vector>
-
+#include <QtWidgets/QApplication>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <GL\glut.h>
@@ -33,6 +33,7 @@ void initGame()
 bool alreadyStarted = false;
 bool isMouseEnable = false;
 
+//Die Funktion der Mouse wird aktiviert
 void GLScene::enableMouse(bool isEnable){
 	std::cout << "enable Mouse ist: "<< isEnable << std::endl;
 	isMouseEnable = isEnable;
@@ -43,7 +44,8 @@ void GLScene::enableMouse(bool isEnable){
 void GLScene::mousePressEvent(QMouseEvent *event)
 {
 	if (isMouseEnable){
-		
+		currentPos = event->pos();
+		std::cout << "erste Mouse Position: " << currentPos.x() << ", " << currentPos.y() << std::endl;
 	}
 }
 //========================================================================================
@@ -52,7 +54,10 @@ void GLScene::mousePressEvent(QMouseEvent *event)
 void GLScene::mouseMoveEvent(QMouseEvent *event)
 {
 	if (isMouseEnable){
-
+		lastPos = currentPos;
+		currentPos = event->pos();
+		std::cout << "currentPos Maus: " << currentPos.x() << "," << currentPos.y() << std::endl;
+		std::cout << "lastPos Maus: " << lastPos.x() << "," << lastPos.y() << std::endl;
 	}
 }
 
@@ -66,9 +71,11 @@ void GLScene::mouseReleaseEvent(QMouseEvent *event)
 	}
 }
 
+
 void GLScene::startGame(bool gameStarted){
 	if (!alreadyStarted){
 		alreadyStarted = gameStarted;
+		resetGame();
 	}
 	else{
 		const int result = MessageBox(nullptr, TEXT("A game is already started, do you want to start a new Game?"), TEXT("Message"), MB_YESNO);
@@ -85,8 +92,18 @@ void GLScene::startGame(bool gameStarted){
 void GLScene::updateFrame()
 {
 	if (!alreadyStarted) {
-		alreadyStarted = true;
-		resetGame();
+
+		const int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+		switch (result)
+		{
+		case IDNO:
+			QApplication::quit();
+		case IDYES:
+			// RESET GAME WIRD AUSGEFÜHRT
+			alreadyStarted = true;
+			resetGame();
+			break;
+		}
 	}
 	//updatePhysics();
 	update();

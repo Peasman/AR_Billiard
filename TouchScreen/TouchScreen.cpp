@@ -12,7 +12,7 @@ TouchScreen::TouchScreen(QWidget *parent)
 
   _fileMenu = menuBar()->addMenu(tr("&File"));
   _optionMenu = menuBar()->addMenu(tr("&Option"));
-  _aboutMenu = menuBar()->addMenu(tr("&About"));
+  _helpMenu = menuBar()->addMenu(tr("&Help"));
  
 
   _scene = new GLScene( this );
@@ -25,6 +25,7 @@ TouchScreen::TouchScreen(QWidget *parent)
   _fileMenu->addAction(_resetGame);
   _fileMenu->addAction(_quitGame);
   _optionMenu->addAction(_mouseControll);
+  _helpMenu->addAction(_about);
   
 }
 TouchScreen::~TouchScreen()
@@ -52,8 +53,13 @@ void TouchScreen::createActions()
 	_shrtQuit = new QShortcut(QKeySequence("Ctrl+Q"), this);
 	connect(_shrtQuit, SIGNAL(activated()), QApplication::instance(), SLOT(quit()));
 
+	_about = new QAction(tr("&About AR_Biliard"), this);
+	connect(_about, SIGNAL(triggered()), this, SLOT(showAbout()));
 }
 
+void TouchScreen::showAbout(){
+	const int result = MessageBox(nullptr, TEXT("Made by: \nMoritz Ludolf \nRobin Mertens \nFriedemann Runte\nDiyar Omar"), TEXT("About AR_Biliard"), MB_OK);
+}
 
 //CONTEXTMENU EVENTUELL NICHT BENÖTIGT
 void TouchScreen::contextMenuEvent(QContextMenuEvent *event){}
