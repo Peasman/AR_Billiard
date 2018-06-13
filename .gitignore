@@ -7,6 +7,7 @@
 *.obj
 *.suo
 *.sln
+*.sdf
 #die Release und Debug Ordner
 Win32
 /TouchScreen/Debug
