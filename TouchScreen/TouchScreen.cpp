@@ -2,10 +2,12 @@
 #include "windows.h"
 #include <iostream>
 #include <QMenuBar>
+#include "GLScene.h"
 
 TouchScreen::TouchScreen(QWidget *parent)
     : QMainWindow(parent)
 {
+
   ui.setupUi(this);
 
   _fileMenu = menuBar()->addMenu(tr("&File"));
@@ -19,7 +21,7 @@ TouchScreen::TouchScreen(QWidget *parent)
   _gridLayout->addWidget( _scene, 0, 0, 1, 1 );
 
   createActions();
-  _fileMenu->addAction(_startGame);
+  _fileMenu->addAction(_startNewGame);
   _fileMenu->addAction(_resetGame);
   _fileMenu->addAction(_quitGame);
   _optionMenu->addAction(_mouseControll);
@@ -41,8 +43,8 @@ void TouchScreen::createActions()
 	_resetGame = new QAction(tr("&Reset Game"), this);
 	connect(_resetGame, SIGNAL(triggered()), this, SLOT(resetGame()));
 
-	_startGame = new QAction(tr("&Start Game"), this);
-	connect(_startGame, SIGNAL(triggered()), this, SLOT(startGame()));
+	_startNewGame = new QAction(tr("&Start New Game"), this);
+	connect(_startNewGame, SIGNAL(triggered()), this, SLOT(startGame()));
 
 	_shrtFullScreen = new QShortcut(QKeySequence("Ctrl+F"), this);
 	connect(_shrtFullScreen, SIGNAL(activated()), this, SLOT(toggleFullScreen()));
@@ -54,8 +56,7 @@ void TouchScreen::createActions()
 
 
 //CONTEXTMENU EVENTUELL NICHT BENÖTIGT
-void TouchScreen::contextMenuEvent(QContextMenuEvent *event)
-{}
+void TouchScreen::contextMenuEvent(QContextMenuEvent *event){}
 
 void TouchScreen::enableMouseControll()
 {
@@ -66,6 +67,7 @@ void TouchScreen::enableMouseControll()
 
 		//funcion für die GLSCENE
 		_mouseFunction = true;
+		_scene->enableMouse(_mouseFunction);
 
 	}
 	if (!_mouseControll->isChecked()){
@@ -74,13 +76,15 @@ void TouchScreen::enableMouseControll()
 
 		//function für die GLSCENE
 		_mouseFunction = false;
+		_scene->enableMouse(_mouseFunction);
 	}
 }
 
 void TouchScreen::startGame()
 {
-	//BOOL von GLScene ändern in True, weil das Spiel gestartet wird.
-	
+	//BOOL von GLScene ändern in True, wenn das Spiel gestartet wird.
+	_startGame = true;
+	_scene->startGame(_startGame);
 }
 
 void TouchScreen::resetGame()
@@ -90,6 +94,7 @@ void TouchScreen::resetGame()
 	{
 		case IDYES:
 			// RESET GAME WIRD AUSGEFÜHRT
+			_scene->resetGame();
 			break;
 	}
 	

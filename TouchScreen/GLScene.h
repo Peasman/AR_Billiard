@@ -16,13 +16,19 @@ public:
 
   GLScene( QWidget *parent );
 
+
 public slots:
 
   void updateFrame();
   void resetGame();
+  void enableMouse(bool);
+  void startGame(bool);
 
 protected:
   
+  QPoint lastPos; // letzte Mausposition
+  QPoint lastPos2; // letzte Mausposition
+
   void initializeGL();
   void resizeGL( int w, int h );
   void paintGL();
@@ -32,6 +38,12 @@ protected:
   void updatePhysics();
 
   void handleTouchPoints( const QList<QTouchEvent::TouchPoint> &points );
+
+  // Maus-Event-Methoden
+  void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent *event);
+  void mouseReleaseEvent(QMouseEvent *event);
+
   
   QTimer *_timer;
   QShortcut *_shrtReset;

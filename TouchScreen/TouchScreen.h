@@ -9,6 +9,9 @@
 
 #include "ui_TouchScreen.h"
 
+
+class GLScene;
+
 class TouchScreen : public QMainWindow
 {
     Q_OBJECT
@@ -29,13 +32,13 @@ protected:
 
 private:
 	bool _mouseFunction;
-	
+	bool _startGame;
 	Ui::TouchScreenClass ui;
 
 	QMenu *_fileMenu;
 	QMenu *_optionMenu;
 	QMenu *_aboutMenu;
-	QAction *_startGame;
+	QAction *_startNewGame;
 	QAction *_resetGame;
 	QAction *_quitGame;
 	QAction *_mouseControll;

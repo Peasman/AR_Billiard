@@ -31,6 +31,57 @@ void initGame()
 
 }
 bool alreadyStarted = false;
+bool isMouseEnable = false;
+
+void GLScene::enableMouse(bool isEnable){
+	std::cout << "enable Mouse ist: "<< isEnable << std::endl;
+	isMouseEnable = isEnable;
+}
+//========================================================================================
+// Event für das Drücken einer Maustaste
+//========================================================================================
+void GLScene::mousePressEvent(QMouseEvent *event)
+{
+	if (isMouseEnable){
+		
+	}
+}
+//========================================================================================
+// Event für Mausbewegungen
+//========================================================================================
+void GLScene::mouseMoveEvent(QMouseEvent *event)
+{
+	if (isMouseEnable){
+
+	}
+}
+
+//========================================================================================
+// Event für das Loslassen einer Maustaste
+//========================================================================================
+void GLScene::mouseReleaseEvent(QMouseEvent *event)
+{
+	if (isMouseEnable){
+
+	}
+}
+
+void GLScene::startGame(bool gameStarted){
+	if (!alreadyStarted){
+		alreadyStarted = gameStarted;
+	}
+	else{
+		const int result = MessageBox(nullptr, TEXT("A game is already started, do you want to start a new Game?"), TEXT("Message"), MB_YESNO);
+		switch (result)
+		{
+		case IDYES:
+			// RESET GAME WIRD AUSGEFÜHRT
+			resetGame();
+			break;
+		}
+	}
+}
+
 void GLScene::updateFrame()
 {
 	if (!alreadyStarted) {
