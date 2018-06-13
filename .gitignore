@@ -1,7 +1,14 @@
-
+#alle binary dateien
 *.log
 *.tlog
 *.lastbuildstate
 *.ipch
 *.db
 *.obj
+#die Release und Debug Ordner
+Win32
+TouchScreen\Debug
+TouchScreen\Release
+TouchScreen\GeneratedFiles
+.vs
+UpgradeLog.htm
