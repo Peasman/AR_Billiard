@@ -5,6 +5,8 @@
 *.ipch
 *.db
 *.obj
+*.suo
+*.sln
 #die Release und Debug Ordner
 Win32
 /TouchScreen/Debug
