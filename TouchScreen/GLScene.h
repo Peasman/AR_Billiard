@@ -26,8 +26,8 @@ public slots:
 
 protected:
   
+  QPoint currentPos; // erste Mausposition
   QPoint lastPos; // letzte Mausposition
-  QPoint lastPos2; // letzte Mausposition
 
   void initializeGL();
   void resizeGL( int w, int h );

@@ -26,6 +26,7 @@ private slots:
   void startGame();
   void resetGame();
   void enableMouseControll();
+  void showAbout();
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event);
@@ -37,11 +38,12 @@ private:
 
 	QMenu *_fileMenu;
 	QMenu *_optionMenu;
-	QMenu *_aboutMenu;
+	QMenu *_helpMenu;
 	QAction *_startNewGame;
 	QAction *_resetGame;
 	QAction *_quitGame;
 	QAction *_mouseControll;
+	QAction *_about;
     QShortcut   *_shrtFullScreen,*_shrtQuit;
     QGridLayout *_gridLayout; 
     GLScene     *_scene;
