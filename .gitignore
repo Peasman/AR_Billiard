@@ -7,8 +7,8 @@
 *.obj
 #die Release und Debug Ordner
 Win32
-TouchScreen\Debug
-TouchScreen\Release
-TouchScreen\GeneratedFiles
+/TouchScreen/Debug
+/TouchScreen/Release
+/TouchScreen/GeneratedFiles/*
 .vs
 UpgradeLog.htm
