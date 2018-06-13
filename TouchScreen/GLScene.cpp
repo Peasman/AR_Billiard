@@ -6,9 +6,9 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <GL\glut.h>
 
 const float GLScene::eps = 0.01;
-
 GLScene::GLScene(QWidget *parent)
 	: QGLWidget(parent), _timerPeriod(4), _gameInit(60)
 {
@@ -114,24 +114,9 @@ void GLScene::resizeGL(int w, int h)
 	float scaleW = static_cast<float>(w) / _w;
 	float scaleH = static_cast<float>(h) / _h;
 
-	_racketLeft.x *= scaleW;
-	_racketLeft.y *= scaleH;
-	_racketLeft.vx *= scaleW;
-	_racketLeft.vy *= scaleH;
-
-	_racketRight.x *= scaleW;
-	_racketRight.y *= scaleH;
-	_racketRight.vx *= scaleW;
-	_racketRight.vy *= scaleH;
-
-	_puck.x *= scaleW;
-	_puck.y *= scaleH;
 
 	_w = static_cast<float>(w);
 	_h = static_cast<float>(h);
-
-	_puckSize = _h / 30.0f;
-	_racketSize = _h / 10.0f;
 	_ballSize = _h / 40.0f;
 	glViewport(0, 0, w, h);
 
@@ -297,7 +282,11 @@ void GLScene::handleTouchPoints(const QList<QTouchEvent::TouchPoint> &points)
 }
 
 void GLScene::updateBallVelocity(Ball& ball)
-{
+{	
+
+	if (ball.color == Color::White) {
+		ball.vx = 1;
+	}
 	const float friction = 1.5f;
 	const float rfriction = 0.001f;
 	rotate(rfriction * ball.omega, ball.vx, ball.vy);
@@ -329,9 +318,10 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 {
 
 	//TODO Collision mit Löchern
-	CollisionWithHole(ball);
+	//CollisionWithHole(ball);
 	if (ball.exists)
 	{
+		
 		if (ball.y + _ballSize > _h) // unterer Rand
 		{
 			ball.vy *= -1.0f;
@@ -340,7 +330,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 		if (ball.x + _ballSize > _w) //Rechter Rand
 		{
 			ball.vx *= -1.0f;
-			ball.x -= 2.0 * (ball.x + _ballSize - _h);
+			ball.x -= 2.0 * (ball.x + _ballSize - _w);
 		}
 		if (ball.y - _ballSize < 0.0f) //oberer Rand
 		{
@@ -350,8 +340,9 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 		if (ball.x - _ballSize < 0.0f) // Linker Rand
 		{
 			ball.vx *= -1.0f;
-			ball.x -= 2.0 * (ball.x - _ballSize - _h);
+			ball.x -= 2.0 * (ball.x - _ballSize);
 		}
+		
 		for (int i = 0; i < 16; i++)
 		{
 			Ball& currentBall = _balls[i];
@@ -387,6 +378,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 				// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
 				ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
 			}
+			
 		}
 	}
 }
@@ -399,99 +391,18 @@ void GLScene::updatePhysics()
 	//Alle Kugeln Kollidieren lassen
 	for (int i = 0; i < _balls.size(); i++)
 	{
-		updateBallVelocity(_balls[i]);
+		updateBallCollision(_balls[i], i);
 	}
 	for (int i = 0; i < _balls.size(); i++)
 	{
-		updateBallCollision(_balls[i], i);
-	}
-	/* // compute velocities
-	_racketLeft.vx        = _racketLeft.x - _racketLeft.xLast + 0.2 * _racketLeft.vx;
-	_racketLeft.vy        = _racketLeft.y - _racketLeft.yLast + 0.2 * _racketLeft.vy;
-	_racketLeft.omega     = _racketLeft.angle  - _racketLeft.angleLast + 0.1 * _racketLeft.omega;
-
-	// shift the time dependent values
-	_racketLeft.xLast     = _racketLeft.x;
-	_racketLeft.yLast     = _racketLeft.y;
-	_racketLeft.angleLast = _racketLeft.angle;
-
-	// compute velocities
-	_racketRight.vx         = _racketRight.x - _racketRight.xLast + 0.2 * _racketRight.vx;
-	_racketRight.vy         = _racketRight.y - _racketRight.yLast + 0.2 * _racketRight.vy;
-	_racketRight.omega      = _racketRight.angle - _racketRight.angleLast + 0.1 * _racketRight.omega;
-
-	// shift the time dependent values
-	_racketRight.xLast      = _racketRight.x;
-	_racketRight.yLast      = _racketRight.y;
-	_racketRight.angleLast  = _racketRight.angle; */
-
-	// update the puck
-	if (_puck.vx != 0.0 || _puck.vy != 0.0)
-		rotate(rfriction * _puck.omega, _puck.vx, _puck.vy);
-	_puck.x = _puck.x + _puck.vx;
-	_puck.y = _puck.y + _puck.vy;
-	_puck.angle = _puck.angle + _puck.omega;
-
-	// introduce some friction so game stays playable
-	_puck.vx *= friction;
-	_puck.vy *= friction;
-	_puck.omega *= friction;
-
-	// check for collision of borders
-	if (_puck.y + _puckSize > _h)
-	{
-		_puck.vy *= -1.0f;
-		_puck.y -= 2.0 * (_puck.y + _puckSize - _h);
+		updateBallVelocity(_balls[i]);
 	}
 
-	if (_puck.y - _puckSize < 0.0f)
-	{
-		_puck.vy *= -1.0f;
-		_puck.y -= 2.0 * (_puck.y - _puckSize);
-	}
 
-	/**************************************/
-	/* Hier Code f�r Seitenbande einf�gen */
-	/**************************************/
-	float goalScale = 0.5;
-
-	/* if (_puck.x - _puckSize < 0.0f){
-		if (_puck.y > goalScale / 2 * _h && _puck.y < (1 - goalScale / 2) * _h){
-
-		resetGame(1);
-		}
-		else{
-		_puck.vx *= -1.0f;
-		_puck.x -= 2.0 * (_puck.x - _puckSize);
-		}
-		}
-
-		if (_puck.x + _puckSize > _w){
-		if (_puck.y > goalScale / 2 * _h && _puck.y < (1 - goalScale / 2) * _h) {
-		resetGame(0);
-		}
-		else{
-		_puck.vx *= -1.0f;
-		_puck.x -= 2.0 * (_puck.x + _puckSize - _w);
-		}
-		}
-		*/
-
-	/**************************************/
-
-	// racket puck action
-	if (d(_puck.x, _puck.y, _racketLeft.x, _racketLeft.y) < _puckSize + _racketSize)
-	{
-		collidePuckRacket(_racketLeft);
-	}
-
-	if (d(_puck.x, _puck.y, _racketRight.x, _racketRight.y) < _puckSize + _racketSize)
-	{
-		collidePuckRacket(_racketRight);
-	}
 }
 void GLScene::initStandardBalls()
 {
+	_redBallHalf = loadTexture("C:\\Users\\fp16\\Documents\\Visual Studio 2013\\Projects\\AR_Billiard\\TouchScreen\\Debug\\textures\\BallRedFull.bmp");
 	std::cout << "Starte init" << std::endl;
 	for (int i = Orange; i != Length; i++)
 	{
@@ -500,8 +411,6 @@ void GLScene::initStandardBalls()
 		if (foo == White || foo == Black)
 		{
 			Ball currentBallHalf;
-			currentBallHalf.x = 0;
-			currentBallHalf.y = 0;
 			currentBallHalf.color = foo;
 			currentBallHalf.full = false;
 		_balls.push_back(currentBallHalf);
@@ -510,14 +419,10 @@ void GLScene::initStandardBalls()
 		else
 		{
 			Ball currentBallHalf;
-			currentBallHalf.x = 0;
-			currentBallHalf.y = 0;
 			currentBallHalf.color = foo;
 			currentBallHalf.full = false;
 			_balls.push_back(currentBallHalf);
 			Ball currentBallFull;
-			currentBallFull.x = 0;
-			currentBallFull.y = 0;
 			currentBallFull.color = foo;
 			currentBallFull.full = true;
 			_balls.push_back(currentBallFull);
@@ -533,7 +438,7 @@ void GLScene::resetGame()
 	}
 	
 	_balls[_balls.size() - 1].x = _w / 4;
-	_balls[_balls.size() - 1].y = _h / 2;
+	_balls[_balls.size() - 1].y = _h / 2 + (_ballSize);
 //	for (int i = 0; i < 16; i++) {
 
 	//}
@@ -542,10 +447,10 @@ void GLScene::resetGame()
 	{
 		for (int j = 1; j <= i; j++)
 		{
-			float yOffset = _h / 2.0f - i / 2.0f * (_ballSize*2 + 3.0f); //Hälfte der Höhe, - hälfte der Anzahl der Kugeln mal die Größe der Kugeln
+			float yOffset = -i + (_h / 2.0f - i / 2.0f * (_ballSize*2)); //Hälfte der Höhe, - hälfte der Anzahl der Kugeln mal die Größe der Kugeln
 			
 			_balls[currentPosition].x = _w / 3.0f * 2.0f + i * _ballSize*2; //Verschieben nach rechts von 3/4 der Width aus
-			_balls[currentPosition].y = yOffset + j * _ballSize*2;         //Verschieben nach unten/oben
+			_balls[currentPosition].y = yOffset + j * (_ballSize+1.0f) *2;         //Verschieben nach unten/oben
 			currentPosition++;
 		}
 	}
@@ -586,41 +491,91 @@ void GLScene::resetGame()
 }
 
 //Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
+
+GLuint GLScene::loadTexture(const char * filename) {
+	GLuint texture;
+	int width, height;
+
+	unsigned char * data;
+
+	FILE * file;
+
+	file = fopen(filename, "rb"); 
+	if (file == NULL) return 0;
+	width = 128;
+	height = 128;
+	data = (unsigned char *)malloc(width * height * 3);
+	//int size = fseek(file,);
+	fread(data, width * height * 3, 1, file);
+	fclose(file);
+
+	for (int i = 0; i < width * height; ++i)
+	{
+		int index = i * 3;
+		unsigned char R,G,B;
+		R = data[index];
+		G = data[index + 1];
+		B = data[index + 2];
+
+		data[index] = G;
+		data[index + 1] = R;
+		data[index + 2] = B;
+
+	}
+
+
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+	free(data);
+
+	return texture;
+}
 void GLScene::renderBall(Ball const &ball)
-{
+{	
 	GLfloat vertex[4];
 	GLfloat texcoord[2];
-	const GLfloat delta_angle = 2.0*M_PI / 32;
+	const int k = 128;
+	const GLfloat delta_angle = 2.0*M_PI / static_cast<float>(k);
 	
 	glPushMatrix();
 	glLoadIdentity();
-	const int k = 32;
-	float x1 = ball.x - _ballSize * 4;
-	float x2 = ball.x + _ballSize * 4;
-	float y1 = ball.y - _ballSize * 4;
-	float y2 = ball.y + _ballSize * 4;
 	glTranslatef(ball.x, ball.y, 0.0f);
 	glRotatef( ball.angle, 0.0, 0.0, 1.0 );
-	glScalef(_ballSize, _ballSize, 1.0f);
-	//glEnable(GL_TEXTURE_2D);
-	//glBindTexture(GL_TEXTURE_2D, texID);
-	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	//glScalef(_ballSize, _ballSize, 1.0f);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, _redBallHalf);
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glBegin(GL_TRIANGLE_FAN);
-	//vertex[0] = vertex[1] = vertex[2] = 0.0;
-	//vertex[3] = 1.0;
-	glVertex4fv(vertex);
-	glColor3f(1.0f, 1.0f, 1.0f);
+	texcoord[0] = -0.18;
+	texcoord[1] = 0.5;
+	glTexCoord2fv(texcoord);
+
+	//glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	
 	for (int i = 0; i <= k; ++i)
 	{
-		float x = cos(2.0 * M_PI * static_cast<float>(i) / k);
-		float y = sin(2.0 * M_PI * static_cast<float>(i) / k);
+		float x = cos((delta_angle * static_cast<float>(i)))*_ballSize;
+		float y = sin((delta_angle * static_cast<float>(i)))*_ballSize;
+		texcoord[0] = (cos(delta_angle * static_cast<float>(i)) -0.36) *0.5;
+		texcoord[1] = (sin(delta_angle * static_cast<float>(i)) +1.0) *0.5;
+		glTexCoord2fv(texcoord);
+		glVertex3f(x, y, 0.0f);
 
+		/*
 		switch (ball.color)
 		{
 		case (White) :
+
 			glColor3f(1.0f, 1.0f, 1.0f);
 			break;
 		case (Black) :
@@ -647,15 +602,24 @@ void GLScene::renderBall(Ball const &ball)
 		case (Blue) :
 			glColor3f(0.0f, 0.0f, 1.0f);
 		}
+		*/
 		//glColor3f(ball.color_r, ball.color_g, ball.color_b);
 		
-		glVertex3f(x, y, 0.0f);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		glRectf(x1, y1, x2, y2);
-
+		//glColor3f(1.0f, 1.0f, 1.0f);
 	}
+	
+	/*texcoord[0] = 1;
+	texcoord[1] = 0.5;
+	glTexCoord2fv(texcoord);
+
+	vertex[0] = _ballSize;
+	vertex[1] = 0.0;
+	vertex[2] = 0.0;
+	vertex[3] = 1.0;
+	glVertex4fv(vertex);*/
 	glEnd();
 	
+	glDisable(GL_TEXTURE_2D);
 	/*
 	glBegin(GL_POLYGON);
 	glColor3f(1.0f, 1.0f, 1.0f);
@@ -721,34 +685,3 @@ void GLScene::renderRacket(Racket const &racket)
 	glPopMatrix();
 }
 */
-void GLScene::collidePuckRacket(Racket const &racket)
-{
-	const float slip = 0.6;
-	float nx, ny, tx, ty;
-
-	// normal
-	nx = _puck.x - racket.x;
-	ny = _puck.y - racket.y;
-	normalize(nx, ny);
-
-	// tangent pointing to the left of normal
-	tx = -ny;
-	ty = nx;
-
-	// relative velocity
-	float vsumx = racket.vx - _puck.vx;
-	float vsumy = racket.vy - _puck.vy;
-
-	// coordinates in radial tangential coordinate frame
-	float vn = nx * vsumx + ny * vsumy;
-	float vt = tx * vsumx + ty * vsumy;
-	/*
-	_puck.x += nx * (vn + 0.1);
-	_puck.y += ny * (vn + 0.1);
-
-	_puck.vx += vn * nx;
-	_puck.vy += vn * ny;
-
-	Q_ASSERT(d(_puck.x, _puck.y, racket.x, racket.y) >= _puckSize + _racketSize);
-	_puck.omega = slip * -vt + _puck.omega - _racketSize / _puckSize * racket.omega; */
-}

@@ -79,10 +79,10 @@ protected:
 		  exists;                        // Noch im spiel?
 	  int number;                         //Noetig? Nummer der Kugel 
 	  float x = 0, y = 0,                          //Position x und y der Kugel
-		  xLast, yLast,                  //Letzte Position
-		  vx, vy,                        //Momentane Geschwindigkeit
-		  omega,                        //Momentane Winkelgeschwindigkeit
-		  angle, angleLast;              //Momentaner Winkel und letzter Winkel
+		  xLast=0, yLast=0,                  //Letzte Position
+		  vx=0, vy=0,                        //Momentane Geschwindigkeit
+		  omega=0,                        //Momentane Winkelgeschwindigkeit
+		  angle=0, angleLast=0;              //Momentaner Winkel und letzter Winkel
   };
   struct Racket
   {
@@ -137,18 +137,18 @@ protected:
   Puck _puck;
   Racket _racketLeft;
   Racket _racketRight;
+  GLuint _redBallHalf;
 
   float _puckSize, _racketSize,_ballSize;
 
   void renderPuck();
   void renderBall(Ball const& ball);
   void renderRacket( Racket const& racket );
-  void collidePuckRacket( Racket const& racket );
   void updateBallVelocity(Ball& ball);
   void updateBallCollision(Ball& ball, int index);
   void CollisionWithHole(Ball& ball);
   void initStandardBalls();
-
+  GLuint loadTexture(const char * filename);
   const int _timerPeriod;
   std::vector<Ball> _balls; //Liste der Kugeln die Momentan aktiv sind
   //Generell um Berechnungen während des Spielens zu verringern
