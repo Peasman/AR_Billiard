@@ -77,7 +77,7 @@ void GLScene::startGame(bool gameStarted){
 		resetGame();
 	}
 	else{
-		const int result = MessageBox(nullptr, TEXT("A game is already started, do you want to start a new Game?"), TEXT("Message"), MB_YESNO);
+		const int result = MessageBox(nullptr, TEXT("A game is already started, do you want to start a new Game?"), TEXT("Restart Game"), MB_YESNO);
 		switch (result)
 		{
 		case IDYES:
@@ -92,7 +92,7 @@ void GLScene::updateFrame()
 {
 	if (!alreadyStarted) {
 
-		const int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+		const int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("New Game"), MB_YESNO);
 		switch (result)
 		{
 		case IDNO:
