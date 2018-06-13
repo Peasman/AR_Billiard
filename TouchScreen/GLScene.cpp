@@ -505,7 +505,6 @@ void GLScene::initStandardBalls()
 			currentBallHalf.color = foo;
 			currentBallHalf.full = false;
 		_balls.push_back(currentBallHalf);
-		std::cout << "Schwarz oder Weiß: " << currentBallHalf.color << std::endl;
 
 		}
 		else
@@ -522,9 +521,6 @@ void GLScene::initStandardBalls()
 			currentBallFull.color = foo;
 			currentBallFull.full = true;
 			_balls.push_back(currentBallFull);
-
-			std::cout << "Farbehalb: " << currentBallHalf.color << std::endl;
-			std::cout << "Farbeganz: " << currentBallFull.color << std::endl;
 		}
 
 	}
@@ -536,7 +532,6 @@ void GLScene::resetGame()
 		initStandardBalls();
 	}
 	
-	std::random_shuffle(_balls.begin(), _balls.end()-1);
 	_balls[_balls.size() - 1].x = _w / 4;
 	_balls[_balls.size() - 1].y = _h / 2;
 //	for (int i = 0; i < 16; i++) {
@@ -593,6 +588,10 @@ void GLScene::resetGame()
 //Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
 void GLScene::renderBall(Ball const &ball)
 {
+	GLfloat vertex[4];
+	GLfloat texcoord[2];
+	const GLfloat delta_angle = 2.0*M_PI / 32;
+	
 	glPushMatrix();
 	glLoadIdentity();
 	const int k = 32;
@@ -603,8 +602,14 @@ void GLScene::renderBall(Ball const &ball)
 	glTranslatef(ball.x, ball.y, 0.0f);
 	glRotatef( ball.angle, 0.0, 0.0, 1.0 );
 	glScalef(_ballSize, _ballSize, 1.0f);
-	glBegin(GL_TRIANGLE_FAN);
+	//glEnable(GL_TEXTURE_2D);
+	//glBindTexture(GL_TEXTURE_2D, texID);
+	//glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
+	glBegin(GL_TRIANGLE_FAN);
+	//vertex[0] = vertex[1] = vertex[2] = 0.0;
+	//vertex[3] = 1.0;
+	glVertex4fv(vertex);
 	glColor3f(1.0f, 1.0f, 1.0f);
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	
@@ -661,6 +666,7 @@ void GLScene::renderBall(Ball const &ball)
 	glEnd();*/
 	glPopMatrix();
 }
+/*
 void GLScene::renderPuck()
 {
 
@@ -687,7 +693,8 @@ void GLScene::renderPuck()
 
 	glPopMatrix();
 }
-
+*/
+/*
 void GLScene::renderRacket(Racket const &racket)
 {
 	glPushMatrix();
@@ -713,7 +720,7 @@ void GLScene::renderRacket(Racket const &racket)
 
 	glPopMatrix();
 }
-
+*/
 void GLScene::collidePuckRacket(Racket const &racket)
 {
 	const float slip = 0.6;
