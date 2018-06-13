@@ -95,7 +95,7 @@ void TouchScreen::startGame()
 
 void TouchScreen::resetGame()
 {
-	const int result = MessageBox(nullptr, TEXT("Reset Game?"), TEXT("Message"), MB_YESNO);
+	const int result = MessageBox(nullptr, TEXT("Do you want to reset the game?"), TEXT("Reset Game"), MB_YESNO);
 	switch (result)
 	{
 		case IDYES:
