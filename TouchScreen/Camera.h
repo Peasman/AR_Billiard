@@ -1,13 +1,13 @@
 
 /**
   *
-  * Universitaet Dortmund 
+  * Universitaet Dortmund
   * Fakultaet fuer Informatik
-  * Lehrstuhl fuer Graphische System 
+  * Lehrstuhl fuer Graphische System
   *
   * Author: Thomas Kehrt
   * 12.04.2016
-*/
+  */
 
 
 #ifndef CAMERA_H
@@ -26,40 +26,43 @@ public:
 	Camera();
 	~Camera();
 
-  // Kamerahauptschleife
+	// Kamerahauptschleife
 	void mainLoop();
+	void consoleOutput(std::string description);
 
 private:
+	//Schachbrett anzeigen für Kalibrierung
+	void showChessboard();
 
-  // Verarbeitung der Eingabe
-  void dispatchKey( int key, cv::Mat img );
+	// Verarbeitung der Eingabe
+	void dispatchKey(int key, cv::Mat img);
 
-  // Bildschirmtext ins ein Bild einzeichnen
-  void printMessage( cv::Mat img );
+	// Bildschirmtext ins ein Bild einzeichnen
+	void printMessage(cv::Mat img);
 
-  // Wiedergabe der aufgenommenen Bilder
-  void playback();
+	// Wiedergabe der aufgenommenen Bilder
+	void playback();
 
-  // einige Flags zur Programmkontrolle
-  bool _terminate
-      , _showHelp
-      , _applyCalibration
-      , _flipDisplay
-      , _showEdges;
+	// einige Flags zur Programmkontrolle
+	bool _terminate
+		, _showHelp
+		, _applyCalibration
+		, _flipDisplay
+		, _showEdges;
 
-  // Bildspeicher für aufgenommene Bilder
-  std::list< cv::Mat > _images;
+	// Bildspeicher für aufgenommene Bilder
+	std::list< cv::Mat > _images;
 
-  // Wie das Fenster heisst
-  std::string _windowName;
+	// Wie das Fenster heisst
+	std::string _windowName;
 
-  // Strings für Bildschirmausgabe
-  // da OpenCV keinen Zeilenumbruch beherrscht
-  // ein Vektor von Zeilen
-  std::vector< std::string > _message;
+	// Strings für Bildschirmausgabe
+	// da OpenCV keinen Zeilenumbruch beherrscht
+	// ein Vektor von Zeilen
+	std::vector< std::string > _message;
 
-  // Ein Kalibrationsobjekt
-  Calibration _calibration;
+	// Ein Kalibrationsobjekt
+	Calibration _calibration;
 };
 
 #endif
