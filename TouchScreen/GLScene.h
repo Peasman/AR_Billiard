@@ -45,7 +45,7 @@ protected:
   
   QTimer *_timer;
   QShortcut *_shrtReset;
-
+  GLuint [2][8] textures;
   float _w, _h, _xpos, _ypos;
 
   enum Color{
