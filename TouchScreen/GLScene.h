@@ -49,7 +49,7 @@ protected:
   float _w, _h, _xpos, _ypos;
 
   enum Color{
-	  Orange=0, Blue, LightBlue, Red, Brown, Green, Yellow, Black, White, Length
+	  Yellow=0, Blue, Brown, Purple, Orange, Green, Red, Black, White, Length
   };
   struct Pool 
   {
