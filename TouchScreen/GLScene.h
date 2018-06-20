@@ -6,6 +6,7 @@
 #include <QEvent>
 #include <QTouchEvent>
 #include <QTimer>
+//#include <Camera.h>
 
 class GLScene : public QGLWidget
 {
@@ -25,19 +26,20 @@ public slots:
   void startGame(bool);
 
 protected:
-  
+
+	//Camera cam;
+	bool _calibrate = true;
+
+  QPoint currentPos; // erste Mausposition
   QPoint lastPos; // letzte Mausposition
-  QPoint lastPos2; // letzte Mausposition
 
   void initializeGL();
   void resizeGL( int w, int h );
   void paintGL();
 
-  bool event( QEvent * e );
 
   void updatePhysics();
 
-  void handleTouchPoints( const QList<QTouchEvent::TouchPoint> &points );
 
   // Maus-Event-Methoden
   void mousePressEvent(QMouseEvent *event);
@@ -47,11 +49,11 @@ protected:
   
   QTimer *_timer;
   QShortcut *_shrtReset;
-
+ // GLuint [2][8] textures;
   float _w, _h, _xpos, _ypos;
 
   enum Color{
-	  Orange=0, Blue, LightBlue, Red, Brown, Green, Yellow, Black, White, Length
+	  Yellow=0, Blue, Brown, Purple, Orange, Green, Red, Black, White, Length
   };
   struct Pool 
   {
@@ -76,13 +78,13 @@ protected:
 	  //glColor3f color;
 	  Color color;                        //Farbe
 	  bool full,                          //Halb oder ganz?
-		  exists;                        // Noch im spiel?
+		  exists=true;                        // Noch im spiel?
 	  int number;                         //Noetig? Nummer der Kugel 
 	  float x = 0, y = 0,                          //Position x und y der Kugel
-		  xLast, yLast,                  //Letzte Position
-		  vx, vy,                        //Momentane Geschwindigkeit
-		  omega,                        //Momentane Winkelgeschwindigkeit
-		  angle, angleLast;              //Momentaner Winkel und letzter Winkel
+		  xLast=0, yLast=0,                  //Letzte Position
+		  vx=0, vy=0,                        //Momentane Geschwindigkeit
+		  omega=0,                        //Momentane Winkelgeschwindigkeit
+		  angle=0, angleLast=0;              //Momentaner Winkel und letzter Winkel
   };
   struct Racket
   {
@@ -137,18 +139,18 @@ protected:
   Puck _puck;
   Racket _racketLeft;
   Racket _racketRight;
+  GLuint _redBallHalf;
 
   float _puckSize, _racketSize,_ballSize;
 
   void renderPuck();
   void renderBall(Ball const& ball);
   void renderRacket( Racket const& racket );
-  void collidePuckRacket( Racket const& racket );
   void updateBallVelocity(Ball& ball);
   void updateBallCollision(Ball& ball, int index);
   void CollisionWithHole(Ball& ball);
   void initStandardBalls();
-
+  GLuint loadTexture(const char * filename);
   const int _timerPeriod;
   std::vector<Ball> _balls; //Liste der Kugeln die Momentan aktiv sind
   //Generell um Berechnungen während des Spielens zu verringern
