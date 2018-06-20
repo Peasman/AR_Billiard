@@ -6,7 +6,6 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-
 #include <QObject>
 #include <QTimer>
 
@@ -23,11 +22,12 @@ public:
 	inline void startCalibration(){
 		_calibration = true;
 	}
+
 signals:
 
 	void calibrationValid();
 
-	private slots:
+private slots:
 
 	void capture();
 
