@@ -22,11 +22,12 @@ public:
 	inline void startCalibration(){
 		_calibration = true;
 	}
+
 signals:
 
 	void calibrationValid();
 
-	private slots:
+private slots:
 
 	void capture();
 
