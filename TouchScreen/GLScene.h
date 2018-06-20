@@ -6,7 +6,7 @@
 #include <QEvent>
 #include <QTouchEvent>
 #include <QTimer>
-//#include <Camera.h>
+#include <Camera.h>
 
 class GLScene : public QGLWidget
 {
@@ -20,6 +20,9 @@ public:
 
 	public slots:
 
+	void testPauseByInput();
+	void wait(int);
+
 	void updateFrame();
 	void resetGame();
 	void enableMouse(bool);
@@ -28,9 +31,9 @@ public:
 
 protected:
 
-	//Camera cam;
+	Camera cam;
+	bool _calibrationrunning = false;
 	bool _calibrateQuestion = true;
-	bool _renderChessboard = false;
 	void createChessboard();
 
 	QPoint currentPos; // erste Mausposition

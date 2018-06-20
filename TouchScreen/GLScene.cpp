@@ -7,6 +7,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <GL\glut.h>
+#include <time.h>
 
 const float GLScene::eps = 0.01;
 GLScene::GLScene(QWidget *parent)
@@ -85,29 +86,40 @@ void GLScene::startGame(bool gameStarted){
 	}
 }
 
+void GLScene::testPauseByInput(){
+	std::cout << "Press any key to continue .." << std::endl;
+	std::cin.get();
+}
+
+void GLScene::wait(int seconds)
+{
+	clock_t endwait;
+	endwait = clock() + seconds * CLOCKS_PER_SEC;
+	while (clock() < endwait) {}
+}
+
 void GLScene::updateFrame()
 {
-	if (!alreadyStarted) {
-		if (_calibrateQuestion){
-			_calibrateQuestion = false;
-			int result = MessageBox(nullptr, TEXT("Want to calibrate?"), TEXT("Message"), MB_YESNO);
-			switch (result)
-			{
-			case IDNO:
-				break;
-			case IDYES:
-				std::cout << "GLScene: Calibrate start" << std::endl;
-				//Hier schachbrett erzeugen
-				_renderChessboard = true;
-				createChessboard();
-				break;
-				//Kamera für Calibrate wird gestartet
-				//cam.startCalibration();
-				//Signal calibrationValid(),dann erst Startnewgame anzeigen
-				_renderChessboard = false;
-				break;
-			}
+	if (_calibrateQuestion){
+		_calibrateQuestion = false;
+		int result = MessageBox(nullptr, TEXT("Want to calibrate?"), TEXT("Message"), MB_YESNO);
+		switch (result)
+		{
+		case IDNO:
+			break;
+		case IDYES:
+			std::cout << "GLScene: Calibration start" << std::endl;
+			_calibrationrunning = true;
+			paintGL();
+			//Kamera für Calibrate wird gestartet
+			//cam.startCalibration();
+			while (!cam.getCalib()){}
+			std::cout << "GLScene: Calibration fertig!" << std::endl;
+			_calibrationrunning = false;
+			break;
 		}
+	}
+	if (!alreadyStarted) {
 		if (!_calibrateQuestion){
 			int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
 			switch (result)
@@ -122,8 +134,10 @@ void GLScene::updateFrame()
 			}
 		}
 	}
-	updatePhysics();
-	update();
+	if (!_calibrationrunning){
+		updatePhysics();
+		update();
+	}
 }
 
 void GLScene::initializeGL()
@@ -192,7 +206,11 @@ void GLScene::createChessboard(){
 
 void GLScene::paintGL()
 {
-	if (alreadyStarted){ // Farbe Spielfeld GREEN
+	if (_calibrationrunning){ // Schachbrett anzeigen/rendern
+		createChessboard();
+		return;
+	}
+	if (alreadyStarted && !_calibrationrunning){ // Farbe Spielfeld GREEN
 		// Fensterinhalt l�schen
 		glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // L�schfarbe setzen auf Billiard Pool Farbe
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
@@ -203,18 +221,14 @@ void GLScene::paintGL()
 		for (int i = 0; i < _balls.size(); i++) {
 			renderBall(_balls[i]);
 		}
+		return;
 	}
-	else if (_renderChessboard){ // Farbe bei Calibrate BLUE
-		createChessboard();
-	}
-	else{ // Start des Programms Farbe setzen BLACK
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
-
-		// zur ModelView-Matrix wechseln
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity(); // Identit�tsmatrix laden
-	}
+	// Start des Programms Farbe setzen BLACK
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
+	// zur ModelView-Matrix wechseln
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity(); // Identit�tsmatrix laden
 
 }
 
@@ -384,7 +398,7 @@ void GLScene::initStandardBalls()
 	for (int i = Yellow; i != Length; i++)
 	{
 		Color foo = static_cast<Color>(i);
-		std::cout << "Current color: " << foo << std::endl;
+		//std::cout << "Current color: " << foo << std::endl;
 		if (foo == White || foo == Black)
 		{
 			Ball currentBallHalf;
@@ -429,7 +443,7 @@ void GLScene::resetGame()
 
 			_balls[currentPosition].x = _w / 3.0f * 2.0f + i * _ballSize * 2; //Verschieben nach rechts von 3/4 der Width aus
 			_balls[currentPosition].y = yOffset + j * (_ballSize + 1.0f) * 2;         //Verschieben nach unten/oben
-			std::cout << "x: " << _balls[currentPosition].x << " y: " << _balls[currentPosition].y << std::endl;
+			//std::cout << "x: " << _balls[currentPosition].x << " y: " << _balls[currentPosition].y << std::endl;
 			currentPosition++;
 		}
 	}
@@ -585,7 +599,7 @@ void GLScene::renderBall(Ball const &ball)
 		*/
 		//glColor3f(ball.color_r, ball.color_g, ball.color_b);
 
-		//glColor3f(1.0f, 1.0f, 1.0f);
+		glColor3f(1.0f, 1.0f, 1.0f);
 	}
 
 	/*texcoord[0] = 1;

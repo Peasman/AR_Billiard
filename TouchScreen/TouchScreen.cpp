@@ -115,23 +115,21 @@ void TouchScreen::resetGame()
 	}
 	
 }
-bool b1 = true;
+
 void TouchScreen::calibrate(){
-	std::cout << "GLScene: Calibrate start" << std::endl;
-	_scene->changeCalibrateQuestionBool(b1);
-	//_scene->startCalibrate();
+	_scene->changeCalibrateQuestionBool(true);
 }
 
 void TouchScreen::toggleFullScreen()
 {
 	if (isFullScreen()){
 		_shrtFullScreen->setText("&Fullscreen");
-		_scene->changeCalibrateQuestionBool(b1);
+		_scene->changeCalibrateQuestionBool(true);
 		showNormal();
 	}
 	else{
 		_shrtFullScreen->setText("&Normalscreen");
-		_scene->changeCalibrateQuestionBool(b1);
+		_scene->changeCalibrateQuestionBool(true);
 		showFullScreen();
 	}
 }
