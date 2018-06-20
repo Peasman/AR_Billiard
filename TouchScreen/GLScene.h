@@ -45,7 +45,7 @@ protected:
   
   QTimer *_timer;
   QShortcut *_shrtReset;
-  GLuint [2][8] textures;
+  GLuint  _textures[2][8];
   float _w, _h, _xpos, _ypos;
 
   enum Color{
@@ -135,7 +135,6 @@ protected:
   Puck _puck;
   Racket _racketLeft;
   Racket _racketRight;
-  GLuint _redBallHalf;
 
   float _puckSize, _racketSize,_ballSize;
 
@@ -146,7 +145,7 @@ protected:
   void updateBallCollision(Ball& ball, int index);
   void CollisionWithHole(Ball& ball);
   void initStandardBalls();
-  GLuint loadTexture(const char * filename);
+  void loadTexture();
   const int _timerPeriod;
   std::vector<Ball> _balls; //Liste der Kugeln die Momentan aktiv sind
   //Generell um Berechnungen während des Spielens zu verringern
