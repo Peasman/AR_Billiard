@@ -33,7 +33,6 @@ protected:
   void resizeGL( int w, int h );
   void paintGL();
 
-
   void updatePhysics();
 
 
@@ -45,7 +44,7 @@ protected:
   
   QTimer *_timer;
   QShortcut *_shrtReset;
-  GLuint  _textures[2][8];
+  GLuint  _texture;
   float _w, _h, _xpos, _ypos;
 
   enum Color{
@@ -68,7 +67,10 @@ protected:
                  // negative werte -> mathematisch negative rotation ( mit dem uhrzeiger )
           angle;  // aktueller Winkel des Pucks
   };
-
+  struct Hole
+  {
+	  float x, y;
+  };
   struct Ball
   {
 	  //glColor3f color;
@@ -136,7 +138,7 @@ protected:
   Racket _racketLeft;
   Racket _racketRight;
 
-  float _puckSize, _racketSize,_ballSize;
+  float _puckSize, _racketSize,_ballSize,_holeSize;
 
   void renderPuck();
   void renderBall(Ball const& ball);
@@ -146,7 +148,11 @@ protected:
   void CollisionWithHole(Ball& ball);
   void initStandardBalls();
   void loadTexture();
+  void initHoles();
+  void renderHole(Hole const &hole);
+  void CollisionWithWall(Ball& ball);
   const int _timerPeriod;
+  std::vector<Hole> _holes;
   std::vector<Ball> _balls; //Liste der Kugeln die Momentan aktiv sind
   //Generell um Berechnungen während des Spielens zu verringern
   int _gameInit;

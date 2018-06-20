@@ -56,7 +56,6 @@ void GLScene::mouseMoveEvent(QMouseEvent *event)
 		float currentx = event->pos().x();
 		float currenty = event->pos().y() + 40.0f;
 		currentPos = QPoint(currentx, currenty);
-		std::cout << currentPos.x() << " y: " << currentPos.y() << std::endl;
 	}
 }
 
@@ -133,7 +132,18 @@ void GLScene::resizeGL(int w, int h)
 
 	_w = static_cast<float>(w);
 	_h = static_cast<float>(h);
-	_ballSize = _h / 40.0f;
+	_ballSize = _h / 38.5f;
+	_holeSize = _ballSize * 2;
+	for (int i = 0; i < 16; i++) {
+		Ball &ball = _balls[i];
+		ball.x = ball.x * scaleW;
+		ball.y = ball.y * scaleH;
+	}
+	for (int i = 0; i < 6; i++) {
+		Hole &hole = _holes[i];
+		hole.x = hole.x * scaleW;
+		hole.y = hole.y * scaleH;
+	}
 	glViewport(0, 0, w, h);
 
 	glMatrixMode(GL_PROJECTION);
@@ -153,15 +163,33 @@ void GLScene::paintGL()
 	for (int i = 0; i < _balls.size(); i++) {
 		renderBall(_balls[i]);
 	}
+	for (int i = 0; i < _holes.size(); i++){
+		renderHole(_holes[i]);
+	}
 
 }
-
+void GLScene::initHoles() {
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 2; j++) {
+			Hole hole;
+			hole.x = i* (_w / 2.0f);
+			hole.y = j* _h;
+			std::cout << "Hole x: " << hole.x << " Hole y: " << hole.y << std::endl;
+			std::cout << "w: " << _w << "_h " << _h << std::endl;
+			_holes.push_back(hole);
+		}
+	}
+}
 void GLScene::updateBallVelocity(Ball& ball)
 {
+	if (ball.color == Color::White) {
+		ball.vx = 10;
+		ball.vy = 0;
+	}
 
-	const float friction = 0.99f;
-	const float rfriction = 0.001f;
-	rotate(rfriction * ball.omega, ball.vx, ball.vy);
+	const float friction = 0.98f;
+	const float rfriction = 0.99f;
+	rotate(ball.omega, ball.vx, ball.vy);
 	ball.x = ball.x + ball.vx;
 	ball.y = ball.y + ball.vy;
 	ball.angle = ball.angle + ball.omega;
@@ -169,60 +197,71 @@ void GLScene::updateBallVelocity(Ball& ball)
 	// introduce some friction so game stays playable
 	ball.vx *= friction;
 	ball.vy *= friction;
-	ball.omega *= friction;
+	ball.omega *= rfriction;
 }
 void GLScene::CollisionWithHole(Ball& ball)
 {
-	for (int i = 0; i <= 2; i++)
-	{ // Von links nach rechts alle Löcher durch zählen
-		for (int j = 0; j <= 1; j++)
-		{ //Von Oben nach unten die Löcher prüfen
-			float dX = ball.x - i * _w / 2;
-			float dY = ball.y - j * _h;
-			if (sqrt(dX * dX + dY * dY) < _ballSize)
-			{
-				// TODO Dann ist im loch also löschen!!
-			}
+	for (int i = 0; i < 6; i++) {
+		float dX = ball.x - _holes[i].x;
+		float dY = ball.y - _holes[i].y;
+
+		if (sqrt(dX * dX + dY * dY) < _holeSize)
+		{
+			ball.exists = false;
+			std::cout << "Getroffen!" << std::endl;
+			// TODO Dann ist im loch also löschen!!
 		}
 	}
+}
+void GLScene::CollisionWithWall(Ball& ball) {
+
+	if (ball.y + _ballSize > _h) // unterer Rand
+	{
+		if ((ball.x >= _holeSize*1.5f && ball.x <= _w / 2 - _holeSize*1.5f)
+			|| ball.x >= _w / 2 + _holeSize*1.5f && ball.x <= _w - _holeSize*1.5f){
+			ball.vy *= -1.0f;
+			ball.y -= 2.0 * (ball.y + _ballSize - _h);
+		}
+	}
+	if (ball.x + _ballSize > _w) //Rechter Rand
+	{
+		if (ball.y <= _h - _holeSize*1.5f && ball.y >= _holeSize*1.5f) {
+			ball.vx *= -1.0f;
+			ball.x -= 2.0 * (ball.x + _ballSize - _w);
+		}
+
+	}
+	if (ball.y - _ballSize < 0.0f) //oberer Rand
+	{
+		if ((ball.x >= _holeSize*1.5f && ball.x <= _w / 2 - _holeSize*1.5f)
+			|| ball.x >= _w / 2 + _holeSize*1.5f && ball.x <= _w - _holeSize*1.5f){
+			ball.vy *= -1.0f;
+			ball.y -= 2.0 * (ball.y - _ballSize);
+		}
+	}
+	if (ball.x - _ballSize < 0.0f) // Linker Rand
+	{
+		if (ball.y <= _h - _holeSize*1.5f && ball.y >= _holeSize*1.5f) {
+			ball.vx *= -1.0f;
+			ball.x -= 2.0 * (ball.x - _ballSize);
+		}
+	}
+
 }
 void GLScene::updateBallCollision(Ball& ball, int index)
 {
 
 	//TODO Collision mit Löchern
-	//CollisionWithHole(ball);
-	if (ball.color == Color::White) {
-		ball.vx = 20.0f;
-		ball.vy = 0.0f;
-	}
+	CollisionWithHole(ball);
+	
 	if (ball.exists)
 	{
-
-		if (ball.y + _ballSize > _h) // unterer Rand
-		{
-			ball.vy *= -1.0f;
-			ball.y -= 2.0 * (ball.y + _ballSize - _h);
-		}
-		if (ball.x + _ballSize > _w) //Rechter Rand
-		{
-			ball.vx *= -1.0f;
-			ball.x -= 2.0 * (ball.x + _ballSize - _w);
-		}
-		if (ball.y - _ballSize < 0.0f) //oberer Rand
-		{
-			ball.vy *= -1.0f;
-			ball.y -= 2.0 * (ball.y - _ballSize);
-		}
-		if (ball.x - _ballSize < 0.0f) // Linker Rand
-		{
-			ball.vx *= -1.0f;
-			ball.x -= 2.0 * (ball.x - _ballSize);
-		}
+		CollisionWithWall(ball);
 		//Maus erkennung
-		/*float dist = d(currentPos.x(), currentPos.y(), ball.x, ball.y);
+		float dist = d(currentPos.x(), currentPos.y(), ball.x, ball.y);
 		//std::cout << dist << std::endl;
-		if (dist >0 && dist < _ballSize*2) {
-			const float slip = 0.6;
+		if (dist > 0 && dist < _ballSize * 2) {
+			const float slip = 0.1;
 			float nx, ny, tx, ty;
 
 			// normal
@@ -237,7 +276,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 			float mvx = (currentPos.x() - lastPos.x());
 			float mvy = (currentPos.y() - lastPos.y());
 			// relative velocity
-			float vsumx = mvx- ball.vx;
+			float vsumx = mvx - ball.vx;
 			float vsumy = mvy - ball.vy;
 
 			// coordinates in radial tangential coordinate frame
@@ -253,7 +292,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 			// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
 			//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
 		}
-		*/
+
 		for (int i = 0; i < 16; i++)
 		{
 			Ball& currentBall = _balls[i];
@@ -280,7 +319,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 
 					// coordinates in radial tangential coordinate frame
 					float vn = nx * vsumx + ny * vsumy;
-					float vt = tx * vsumx + ty * vsumy;
+					float vt = tx * vsumx/2 + ty * vsumy/2;
 
 					ball.x += nx * (vn + 1.0f);
 					ball.y += ny * (vn + 1.0f);
@@ -289,7 +328,8 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 					ball.vy += vn * ny;
 
 					// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
-					//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
+					//ball.omega = slip * -vt + ball.omega -  currentBall.omega;
+					//ball.omega =  slip * -vt + ball.omega + currentBall.omega;
 				}
 
 			}
@@ -299,7 +339,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 }
 void GLScene::updatePhysics()
 {
-	const float friction = 0.975;
+	const float friction = 0.9999;
 	const float rfriction = 0.001;
 
 	// update the rackets
@@ -318,12 +358,10 @@ void GLScene::updatePhysics()
 void GLScene::initStandardBalls()
 {
 	loadTexture();
-	std::cout << "Starte init" << std::endl;
 	for (int i = Yellow; i != Length; i++)
 	{
 		Color foo = static_cast<Color>(i);
-		std::cout << "Current color: " << foo << std::endl;
-		if (foo == White || foo == Black)
+		if (foo == White)
 		{
 			Ball currentBallHalf;
 			currentBallHalf.color = foo;
@@ -331,16 +369,24 @@ void GLScene::initStandardBalls()
 			_balls.push_back(currentBallHalf);
 
 		}
-		else
-		{
-			Ball currentBallHalf;
-			currentBallHalf.color = foo;
-			currentBallHalf.full = false;
-			_balls.push_back(currentBallHalf);
-			Ball currentBallFull;
-			currentBallFull.color = foo;
-			currentBallFull.full = true;
-			_balls.push_back(currentBallFull);
+		else {
+			if (foo == Black) {
+				Ball currentBallFull;
+				currentBallFull.color = foo;
+				currentBallFull.full = true;
+				_balls.push_back(currentBallFull);
+			}
+			else
+			{
+				Ball currentBallHalf;
+				currentBallHalf.color = foo;
+				currentBallHalf.full = false;
+				_balls.push_back(currentBallHalf);
+				Ball currentBallFull;
+				currentBallFull.color = foo;
+				currentBallFull.full = true;
+				_balls.push_back(currentBallFull);
+			}
 		}
 
 	}
@@ -350,13 +396,14 @@ void GLScene::resetGame()
 	//_balls.clear();
 	if (!alreadyStarted) {
 		initStandardBalls();
+		initHoles();
 	}
 
-	_balls[_balls.size() - 1].x = _w / 4;
-	_balls[_balls.size() - 1].y = _h / 2 + (_ballSize);
-	//	for (int i = 0; i < 16; i++) {
+	int size = _balls.size();
+	Ball &whiteball = _balls[size - 1];
+	whiteball.x = _w / 4.0f;
+	whiteball.y = _h / 2.0f + (_ballSize);
 
-		//}
 	int currentPosition = 0;
 	for (int i = 0; i <= 5; i++)
 	{
@@ -370,40 +417,18 @@ void GLScene::resetGame()
 			currentPosition++;
 		}
 	}
+	//swap position so black ball is middle
+	Ball &blackball = _balls[size - 2];
+	Ball &otherball = _balls[4];
+	float blackx = blackball.x;
+	float blacky = blackball.y;
+	float otherx = otherball.x;
+	float othery = otherball.y;
+	blackball.x = otherx;
+	blackball.y = othery;
+	otherball.x = blackx;
+	otherball.y = blacky;
 
-	/*
-	_racketLeft.x = 0.25 * _w;
-	_racketLeft.y = 0.5 * _h;
-	_racketLeft.xLast = _racketLeft.x;
-	_racketLeft.yLast = _racketLeft.y;
-	_racketLeft.vx = 0.0f;
-	_racketLeft.vy = 0.0f;
-	_racketLeft.angle = 0.0f;
-	_racketLeft.omega = 0.0f;
-	_racketLeft.tpid1 = -1;
-	_racketLeft.tpid2 = -1;
-
-	_racketRight.x = 0.75 * _w;
-	_racketRight.y = 0.5 * _h;
-	_racketRight.xLast = _racketRight.x;
-	_racketRight.yLast = _racketRight.y;
-	_racketRight.vx = 0.0f;
-	_racketRight.vy = 0.0f;
-	_racketRight.angle = M_PI / 2.0;
-	_racketRight.omega = 0.0f;
-	_racketRight.tpid1 = -1;
-	_racketRight.tpid2 = -1;
-	if (player == 0)
-	_puck.x = 0.35 * _w;
-	else
-	_puck.x = 0.65 * _w;
-	_puck.y = 0.5 * _h;
-
-	_puck.vx = 0.0f;
-	_puck.vy = 0.0f;
-	_puck.angle = M_PI;
-	_puck.omega = 0.0f;
-	*/
 }
 
 //Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
@@ -411,12 +436,9 @@ void GLScene::resetGame()
 void GLScene::loadTexture() {
 	//GLuint texture;
 	int width, height, fullwidth, fullheight;
-	fullwidth = 800;
-	fullheight = 200;
 	unsigned char * data;
-	unsigned char * dataStorage;
 	//TODO Richtiger Filename
-	const char * textureName = "Balls.bmp";
+	const char * textureName = "C:/Users/fp16/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
 	//file = fopen(filename, "rb"); 
@@ -424,56 +446,70 @@ void GLScene::loadTexture() {
 		std::cout << "Texture not found" << std::endl;
 		return;
 	}
-	width = 100;
-	height = 100;
-	dataStorage = (unsigned char *)malloc(800 * 200 * 3);
+	width = 800;
+	height = 200;
 	data = (unsigned char *)malloc(width * height * 3);
 	//int size = fseek(file,);
-	fread(data, fullwidth * fullheight * 3, 1, fullFile);
+	fread(data, width * height * 3, 1, fullFile);
+	fclose(fullFile);
 	//Full Balls:
-	for (int i = Color::White; i >= Color::Yellow; i--)
+	for (int j = 0; j < width * height; ++j)
 	{
-		for (int k = 0; k < 2; k++)
-		{
-			for (int j = 0; j < width * height; ++j)
-			{
 
-				int index = j * 3;
-				int dataIndex = i * width + j * 3 + k * height;
-				unsigned char R, G, B;
-				R = dataStorage[index];
-				G = dataStorage[index + 1];
-				B = dataStorage[index + 2];
+		int index = j * 3;
+		unsigned char R, G, B;
+		R = data[index];
+		G = data[index + 1];
+		B = data[index + 2];
 
-				data[index] = G;
-				data[index + 1] = R;
-				data[index + 2] = B;
-				glGenTextures(1, &_textures[k][i]);
-				glBindTexture(GL_TEXTURE_2D, _textures[k][i]);
-				glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+		data[index] = G;
+		data[index + 1] = R;
+		data[index + 2] = B;
 
-
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-				glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
-				free(data);
-			}
-
-		}
 	}
+	glGenTextures(1, &_texture);
+	glBindTexture(GL_TEXTURE_2D, _texture);
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+
 	//Half Balls:
+	free(data);
 
-
-
-
+}
+void GLScene::renderHole(Hole const &hole) {
+	GLfloat vertex[4];
+	GLfloat texcoord[2];
+	const int k = 256;
+	const GLfloat delta_angle = 2.0*M_PI / static_cast<float>(k);
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(hole.x, hole.y, 0.0f);
+	glBegin(GL_TRIANGLE_FAN);
+	glColor3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	for (int i = 0; i <= k; ++i)
+	{
+		float x = cos((delta_angle * static_cast<float>(i)))*_holeSize;
+		float y = sin((delta_angle * static_cast<float>(i)))*_holeSize;
+		glVertex3f(x, y, 0.0f);
+	}
+	glEnd();
+	glPopMatrix();
 }
 void GLScene::renderBall(Ball const &ball)
 {
+	if (!ball.exists) {
+		return;
+	}
 	GLfloat vertex[4];
 	GLfloat texcoord[2];
-	const int k = 128;
+	const int k = 256;
 	const GLfloat delta_angle = 2.0*M_PI / static_cast<float>(k);
 
 	glPushMatrix();
@@ -482,12 +518,28 @@ void GLScene::renderBall(Ball const &ball)
 	glRotatef(ball.angle, 0.0, 0.0, 1.0);
 	//glScalef(_ballSize, _ballSize, 1.0f);
 	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, _textures[ball.color][ball.full]);
+	glBindTexture(GL_TEXTURE_2D, _texture);
 	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glBegin(GL_TRIANGLE_FAN);
-	texcoord[0] = -0.18;
-	texcoord[1] = 0.5;
+	float currentx;
+	float currenty;
+	if (ball.color == Color::White) {
+		currenty = 0.25;
+		currentx = -0.0115f + (1.0f / 8.0f) * 8;
+	}
+	else {
+		if (ball.color == Color::Black) {
+			currenty = 0.75;
+			currentx = -0.0115f + (1.0f / 8.0f) * 8;
+		}
+		else {
+			currenty = 0.25f + (0.5f * (1 - ball.full));
+			currentx = -0.0115f + (1.0f / 8.0f) * (ball.color + 1);
+		}
+	}
+	texcoord[0] = currentx;
+	texcoord[1] = currenty;
 	glTexCoord2fv(texcoord);
 
 	//glColor3f(1.0f, 1.0f, 1.0f);
@@ -497,14 +549,14 @@ void GLScene::renderBall(Ball const &ball)
 	{
 		float x = cos((delta_angle * static_cast<float>(i)))*_ballSize;
 		float y = sin((delta_angle * static_cast<float>(i)))*_ballSize;
-		texcoord[0] = (cos(delta_angle * static_cast<float>(i)) - 0.36) *0.5;
-		texcoord[1] = (sin(delta_angle * static_cast<float>(i)) + 1.0) *0.5;
+		texcoord[0] = currentx + (cos(delta_angle * static_cast<float>(i))) *1.0f / 16.0f;
+		texcoord[1] = currenty + (sin(delta_angle * static_cast<float>(i))) *1.0f / 4.0f;
 		glTexCoord2fv(texcoord);
 		glVertex3f(x, y, 0.0f);
 
-		
-	
-		
+
+
+
 		//glColor3f(ball.color_r, ball.color_g, ball.color_b);
 
 		//glColor3f(1.0f, 1.0f, 1.0f);
@@ -536,54 +588,54 @@ void GLScene::renderBall(Ball const &ball)
 void GLScene::renderPuck()
 {
 
-	glPushMatrix();
-	glLoadIdentity();
-	const int k = 32;
-	glTranslatef(_puck.x, _puck.y, 0.0f);
-	glRotatef(_puck.angle, 0.0, 0.0, 1.0);
-	glScalef(_puckSize, _puckSize, 1.0f);
+glPushMatrix();
+glLoadIdentity();
+const int k = 32;
+glTranslatef(_puck.x, _puck.y, 0.0f);
+glRotatef(_puck.angle, 0.0, 0.0, 1.0);
+glScalef(_puckSize, _puckSize, 1.0f);
 
-	glBegin(GL_TRIANGLE_FAN);
+glBegin(GL_TRIANGLE_FAN);
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
+glColor3f(1.0f, 1.0f, 1.0f);
+glVertex3f(0.0f, 0.0f, 0.0f);
 
-	for (int i = 0; i <= k; ++i)
-	{
-		float x = cos(2.0 * M_PI * static_cast<float>(i) / k);
-		float y = sin(2.0 * M_PI * static_cast<float>(i) / k);
-		glColor3f(1, 1, 1);
-		glVertex3f(x, y, 0.0f);
-	}
-	glEnd();
+for (int i = 0; i <= k; ++i)
+{
+float x = cos(2.0 * M_PI * static_cast<float>(i) / k);
+float y = sin(2.0 * M_PI * static_cast<float>(i) / k);
+glColor3f(1, 1, 1);
+glVertex3f(x, y, 0.0f);
+}
+glEnd();
 
-	glPopMatrix();
+glPopMatrix();
 }
 */
 /*
 void GLScene::renderRacket(Racket const &racket)
 {
-	glPushMatrix();
-	glLoadIdentity();
-	const int k = 32;
-	glTranslatef(racket.x, racket.y, 0.0f);
-	glRotatef(360 * racket.angle / (2 * M_PI), 0.0, 0.0, 1.0);
-	glScalef(_racketSize, _racketSize, 1.0f);
+glPushMatrix();
+glLoadIdentity();
+const int k = 32;
+glTranslatef(racket.x, racket.y, 0.0f);
+glRotatef(360 * racket.angle / (2 * M_PI), 0.0, 0.0, 1.0);
+glScalef(_racketSize, _racketSize, 1.0f);
 
-	glBegin(GL_TRIANGLE_FAN);
+glBegin(GL_TRIANGLE_FAN);
 
-	glColor3f(1.0f, 1.0f, 1.0f);
-	glVertex3f(0.0f, 0.0f, 0.0f);
+glColor3f(1.0f, 1.0f, 1.0f);
+glVertex3f(0.0f, 0.0f, 0.0f);
 
-	for (int i = 0; i <= k; ++i)
-	{
-		float x = cos(2.0f * M_PI * static_cast<float>(i) / k);
-		float y = sin(2.0f * M_PI * static_cast<float>(i) / k);
-		glColor3f(abs(x), 0.2f, abs(y));
-		glVertex3f(x, y, 0.0f);
-	}
-	glEnd();
+for (int i = 0; i <= k; ++i)
+{
+float x = cos(2.0f * M_PI * static_cast<float>(i) / k);
+float y = sin(2.0f * M_PI * static_cast<float>(i) / k);
+glColor3f(abs(x), 0.2f, abs(y));
+glVertex3f(x, y, 0.0f);
+}
+glEnd();
 
-	glPopMatrix();
+glPopMatrix();
 }
 */
