@@ -9,6 +9,7 @@ TouchScreen::TouchScreen(QWidget *parent)
 {
 
   ui.setupUi(this);
+  setWindowFlags(Qt::MSWindowsFixedSizeDialogHint);
 
   _fileMenu = menuBar()->addMenu(tr("&File"));
   _optionMenu = menuBar()->addMenu(tr("&Option"));
@@ -23,8 +24,13 @@ TouchScreen::TouchScreen(QWidget *parent)
   createActions();
   _fileMenu->addAction(_startNewGame);
   _fileMenu->addAction(_resetGame);
+  _fileMenu->addAction(_calibrate);
+  _fileMenu->addSeparator();
   _fileMenu->addAction(_quitGame);
+
   _optionMenu->addAction(_mouseControll);
+  _optionMenu->addAction(_shrtFullScreen);
+ 
   _helpMenu->addAction(_about);
   
 }
@@ -38,23 +44,27 @@ void TouchScreen::createActions()
 	_mouseControll->setCheckable(true);
 	connect(_mouseControll, SIGNAL(triggered()), this, SLOT(enableMouseControll()));
 
-	_quitGame = new QAction(tr("&Close Game"), this);
-	connect(_quitGame, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
-
 	_resetGame = new QAction(tr("&Reset Game"), this);
 	connect(_resetGame, SIGNAL(triggered()), this, SLOT(resetGame()));
 
 	_startNewGame = new QAction(tr("&Start New Game"), this);
 	connect(_startNewGame, SIGNAL(triggered()), this, SLOT(startGame()));
 
-	_shrtFullScreen = new QShortcut(QKeySequence("Ctrl+F"), this);
-	connect(_shrtFullScreen, SIGNAL(activated()), this, SLOT(toggleFullScreen()));
+	_calibrate = new QAction(tr("&Calibrate"), this);
+	connect(_calibrate, SIGNAL(triggered()), this, SLOT(calibrate()));
+
+	_about = new QAction(tr("&About AR_Biliard"), this);
+	connect(_about, SIGNAL(triggered()), this, SLOT(showAbout()));
+
+	_shrtFullScreen = new QAction(tr("&Fullscreen"), this);
+	connect(_shrtFullScreen, SIGNAL(triggered()), this, SLOT(toggleFullScreen()));
 
 	_shrtQuit = new QShortcut(QKeySequence("Ctrl+Q"), this);
 	connect(_shrtQuit, SIGNAL(activated()), QApplication::instance(), SLOT(quit()));
 
-	_about = new QAction(tr("&About AR_Biliard"), this);
-	connect(_about, SIGNAL(triggered()), this, SLOT(showAbout()));
+	_quitGame = new QAction(tr("&Close Game"), this);
+	connect(_quitGame, SIGNAL(triggered()), QApplication::instance(), SLOT(quit()));
+
 }
 
 void TouchScreen::showAbout(){
@@ -105,12 +115,24 @@ void TouchScreen::resetGame()
 	}
 	
 }
+bool b1 = true;
+void TouchScreen::calibrate(){
+	std::cout << "GLScene: Calibrate start" << std::endl;
+	_scene->changeCalibrateQuestionBool(b1);
+	//_scene->startCalibrate();
+}
 
 void TouchScreen::toggleFullScreen()
 {
-  if ( isFullScreen() )
-    showNormal();
-  else
-    showFullScreen();
+	if (isFullScreen()){
+		_shrtFullScreen->setText("&Fullscreen");
+		_scene->changeCalibrateQuestionBool(b1);
+		showNormal();
+	}
+	else{
+		_shrtFullScreen->setText("&Normalscreen");
+		_scene->changeCalibrateQuestionBool(b1);
+		showFullScreen();
+	}
 }
 

@@ -6,6 +6,7 @@
 #include <QEvent>
 #include <QTouchEvent>
 #include <QTimer>
+//#include <Camera.h>
 
 class GLScene : public QGLWidget
 {
@@ -25,7 +26,10 @@ public slots:
   void startGame(bool);
 
 protected:
-  
+
+	//Camera cam;
+	bool _calibrate = true;
+
   QPoint currentPos; // erste Mausposition
   QPoint lastPos; // letzte Mausposition
 
@@ -45,6 +49,7 @@ protected:
   QTimer *_timer;
   QShortcut *_shrtReset;
   GLuint  _texture;
+
   float _w, _h, _xpos, _ypos;
 
   enum Color{

@@ -27,6 +27,7 @@ private slots:
   void resetGame();
   void enableMouseControll();
   void showAbout();
+  void calibrate();
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event);
@@ -34,6 +35,7 @@ protected:
 private:
 	bool _mouseFunction;
 	bool _startGame;
+
 	Ui::TouchScreenClass ui;
 
 	QMenu *_fileMenu;
@@ -44,7 +46,9 @@ private:
 	QAction *_quitGame;
 	QAction *_mouseControll;
 	QAction *_about;
-    QShortcut   *_shrtFullScreen,*_shrtQuit;
+	QAction *_shrtFullScreen;
+	QAction *_calibrate;
+    QShortcut   *_shrtQuit;
     QGridLayout *_gridLayout; 
     GLScene     *_scene;
 };
