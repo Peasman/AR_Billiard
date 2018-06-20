@@ -11,16 +11,15 @@ public:
 	Detection();
 	~Detection();
 
-	struct DetectedCue{
-		float pos_x;
-		float pos_y;
-		float dir_x;
-		float dir_y;
-	};
-	DetectedCue detectCue(cv::Mat img);
+	double _curr_x_1, _curr_y_1, _last_x_1, _last_y_1;
+	double _curr_x_2, _curr_y_2, _last_x_2, _last_y_2;
+	cv::Scalar _thresholdsLow, _thresholdsHigh;
+	bool _valid = false;
+
+
+	void detectCue(cv::Mat img);
 	void runTest();
-	void drawAxis(cv::Mat& img, cv::Point p, cv::Point q, cv::Scalar colour);
-	double getOrientation(std::vector<cv::Point> &, cv::Mat&);
+	std::vector<int> analysePoints(std::vector<cv::Point> &);
 private:
 	std::string _windowName;
 };

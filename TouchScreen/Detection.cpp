@@ -2,23 +2,89 @@
 
 using namespace cv;
 using namespace std;
-
 Detection::Detection()
-	:
-	_windowName("Test")
-{}
+{
+	_thresholdsLow = cv::Scalar(0, 0, 0);
+	_thresholdsHigh = cv::Scalar(50, 50, 50);
+}
 
+void Detection::detectCue(cv::Mat imageOriginal){
+	// convert the capture fram from BGR TO HSV
+	cv::Mat imageThresholded;
 
-Detection::DetectedCue Detection::detectCue(cv::Mat imageOriginal){
+	// threshold RGB picture (maybe HSV better)
+	cv::inRange(imageOriginal, _thresholdsLow, _thresholdsHigh, imageThresholded);
+
+	// morphological filtering to remove small gaps
+	cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
+	cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
+
+	cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
+	cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
+
+	// get coordinates of detected object
+	cv::Mat nonZeroCoordinates = cv::Mat::zeros(imageOriginal.size(), CV_8UC3);
+	cv::findNonZero(imageThresholded, nonZeroCoordinates);
+
+	// fill points in std::vector
+	vector<cv::Point> pts;
+	for (int i = 0; i < nonZeroCoordinates.total(); i++){
+		pts.push_back(nonZeroCoordinates.at<cv::Point>(i));
+	}
+
+	std::vector<int> indices;
+	if (pts.size() > 0){
+		indices = analysePoints(pts);
+	}
 	
-	DetectedCue p = {
-		0.0f, 0.0f, 0.0f, 0.0f
-	};
-	return p;
+	// if no end points detected in picture, set detection to invalid
+	if (indices.size() == 0){
+		_valid = false;
+		return;
+	}
+
+	_valid = true;
+	// move old detection to last 
+	_last_x_1 = _curr_x_1;
+	_last_y_1 = _curr_y_1;
+	_last_x_2 = _curr_x_2;
+	_last_y_2 = _curr_y_2;
+
+	cv::Point2d pt1 = pts[indices[0]];
+	cv::Point2d pt2 = pts[indices[1]];
+
+	// calculate distances of current point to last points
+	double dx = (_last_x_1 - pt1.x) * (_last_x_1 - pt1.x);
+	double dy = (_last_y_1 - pt1.x) * (_last_y_1 - pt1.x);
+	double dist1_1 = sqrt(dx + dy);
+	//double dist1_2 = (last_x_2 - pt1.x) * (last_x_2 - pt1.x) + (last_y_2 - pt1.x) * (last_y_2 - pt1.x);
+	dx = (_last_x_1 - pt2.x) * (_last_x_1 - pt2.x);
+	dy = (_last_y_1 - pt2.x) * (_last_y_1 - pt2.x);
+	double dist2_1 = sqrt(dx + dy);
+	//double dist2_2 = (last_x_1 - pt2.x) * (last_x_1 - pt2.x) + (last_y_1 - pt2.x) * (last_y_1 - pt2.x);
+
+	std::cout << "Detection: p1(" << pt1.x << ", " << pt1.y << "), pt2(" << pt2.x << ", " << pt2.y << ")" << std::endl;
+	std::cout << "Last: p1(" << _last_x_1 << ", " << _last_y_1 << "), pt2(" << _last_x_2 << ", " << _last_y_1 << ")" << std::endl;
+	std::cout << "Dist 1 to 1: " << dist1_1 << ", Dist 2 to 1: " << dist2_1 << std::endl;
+
+	// check which of the points is closer to last point #1 
+	if (dist1_1 < dist2_1){
+		_curr_x_1 = pt1.x;
+		_curr_y_1 = pt1.y;
+		_curr_x_2 = pt2.x;
+		_curr_y_2 = pt2.y;
+	}
+	else{
+		_curr_x_1 = pt2.x;
+		_curr_y_1 = pt2.y;
+		_curr_x_2 = pt1.x;
+		_curr_y_2 = pt1.y;
+	}
 }
 
 void Detection::runTest(){
-	int waitKeyValue = 10; // 60 Hz
+	_windowName = "Test";
+	int waitKeyValue = 10; // 100 Hz
 
 	cv::VideoCapture videoCapture(0);
 	if (!videoCapture.isOpened()) {
@@ -26,18 +92,7 @@ void Detection::runTest(){
 		return;
 	}
 
-	int lowValueBlue = 0;
-	int highValueBlue = 40;
-
-	int lowValueGreen = 0;
-	int highValueGreen = 40;
-
-	int lowValueRed = 0;
-	int highValueRed = 40;
-
-	int iLastX = -1;
-	int iLastY = -1;
-
+	
 	//Capture temporary imag from the camera
 	cv::Mat imageTemp;
 	videoCapture.read(imageTemp);
@@ -52,33 +107,15 @@ void Detection::runTest(){
 
 		videoCapture.read(imageOriginal);
 
-		cv::Mat imageGray;
-
-		//convert the capture fram from BGR TO HSV
-		cv::Mat imageThresholded;
-
-		cv::inRange(imageOriginal, cv::Scalar(lowValueBlue, lowValueGreen, lowValueRed), cv::Scalar(highValueBlue, highValueGreen, highValueRed), imageThresholded);
-
-		cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-		cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-		
-		cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-		cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5)));
-		
-		cv::Mat nonZeroCoordinates;
-		cv::findNonZero(imageThresholded, nonZeroCoordinates);
-
-		vector<cv::Point> pts;
-
-		for (int i = 0; i < nonZeroCoordinates.total(); i++){
-			pts.push_back(nonZeroCoordinates.at<cv::Point>());
+		detectCue(imageOriginal);
+		if (_valid){
+			cv::circle(imageAxis, cv::Point((int)_curr_x_1, (int)_curr_y_1), 3, cv::Scalar(0, 0, 255), CV_FILLED, 8, 0);
+			cv::circle(imageAxis, cv::Point((int)_curr_x_2, (int)_curr_y_2), 3, cv::Scalar(0, 255, 0), CV_FILLED, 8, 0);
 		}
-
-		getOrientation(pts, imageAxis);
-
-		imageOriginal = imageThresholded;
+		
 		// Anzeige des Ausgabebildes
-		cv::imshow(_windowName, imageOriginal);
+		imageOriginal = imageOriginal + imageAxis;
+			cv::imshow(_windowName, imageOriginal);
 		// Auf Benutzereingabe warten und die Benutzereingabe verarbeiten
 		int key = cv::waitKey(waitKeyValue);
 		if (key == 'e'){
@@ -86,27 +123,7 @@ void Detection::runTest(){
 		}
 	}
 }
-void Detection::drawAxis(cv::Mat& img, cv::Point p, cv::Point q, cv::Scalar colour)
-{
-	double angle;
-	double hypotenuse;
-	angle = atan2((double)p.y - q.y, (double)p.x - q.x); // angle in radians
-	hypotenuse = sqrt((double)(p.y - q.y) * (p.y - q.y) + (p.x - q.x) * (p.x - q.x));
-	//    double degrees = angle * 180 / CV_PI; // convert radians to degrees (0-180 range)
-	//    cout << "Degrees: " << abs(degrees - 180) << endl; // angle in 0-360 degrees range
-	// Here we lengthen the arrow by a factor of scale
-	q.x = (int)(p.x - 0.2 * hypotenuse * cos(angle));
-	q.y = (int)(p.y - 0.2 * hypotenuse * sin(angle));
-	cv::line(img, p, q, colour, 1, CV_AA);
-	// create the arrow hooks
-	p.x = (int)(q.x + 9 * cos(angle + CV_PI / 4));
-	p.y = (int)(q.y + 9 * sin(angle + CV_PI / 4));
-	cv::line(img, p, q, colour, 1, CV_AA);
-	p.x = (int)(q.x + 9 * cos(angle - CV_PI / 4));
-	p.y = (int)(q.y + 9 * sin(angle - CV_PI / 4));
-	cv::line(img, p, q, colour, 1, CV_AA);
-}
-double Detection::getOrientation(std::vector<cv::Point> & pts, cv::Mat& img)
+std::vector<int> Detection::analysePoints(std::vector<cv::Point> & pts)
 {
 	//Construct a buffer used by the pca analysis
 	int sz = static_cast<int>(pts.size());
@@ -128,16 +145,48 @@ double Detection::getOrientation(std::vector<cv::Point> & pts, cv::Mat& img)
 	{
 		eigen_vecs[i] = cv::Point2d(pca_analysis.eigenvectors.at<double>(i, 0),
 			pca_analysis.eigenvectors.at<double>(i, 1));
-		eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
+		eigen_val[i] = pca_analysis.eigenvalues.at<double>(i);
 	}
-	cv::circle(img, cntr, 3, cv::Scalar(255, 0, 255), 2);
-	cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0].x * eigen_val[0]), static_cast<int>(eigen_vecs[0].y * eigen_val[0]));
-	cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1].x * eigen_val[1]), static_cast<int>(eigen_vecs[1].y * eigen_val[1]));
-	drawAxis(img, cntr, p1, cv::Scalar(0, 255, 0));
-	drawAxis(img, cntr, p2, cv::Scalar(255, 255, 0));
-	double angle = atan2(eigen_vecs[0].y, eigen_vecs[0].x); // orientation in radians
-	return angle;
+
+	double norm = cv::norm(eigen_vecs[0]);
+
+	int biggestIndex = -1, smallestIndex = -1;
+	double biggestScalar, smallestScalar;
+
+	for (int i = 0; i < data_pts.rows; ++i){
+		//cv::Point2d pts_centered = cv::Point2d(pts[i].x - cntr.x, pts[i].y - cntr.y);
+		double ptc_x = pts[i].x - cntr.x;
+		double ptc_y = pts[i].y - cntr.y;
+		//double dot = eigen_vecs[0].dot(pts_centered);
+		double dot = eigen_vecs[0].x*ptc_x + eigen_vecs[0].y*ptc_y;
+		double d1 = dot / norm;
+
+		//cv::Point2d ap = cv::Point2d(d1 * princ.x, d1 * princ.y);
+		//cv::Point2d p = cv::Point2d(ap.x + cntr.x, ap.y + cntr.y);
+		double px = d1 * eigen_vecs[0].x + cntr.x;
+		double py = d1 * eigen_vecs[0].y + cntr.y;
+		
+		pts[i].x = (int)px;
+		pts[i].y = (int)py;
+
+		if (smallestIndex == -1 || d1 < smallestScalar){
+			smallestIndex = i;
+			smallestScalar = d1;
+		}
+		if (biggestIndex == -1 || d1 > biggestScalar){
+			biggestIndex = i;
+			biggestScalar = d1;
+		}
+	}
+	std::vector<int> indices;
+	indices.push_back(smallestIndex);
+	indices.push_back(biggestIndex);
+	return indices;
 }
+
+
+
+
 
 /*
 
