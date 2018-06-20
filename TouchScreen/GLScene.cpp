@@ -424,7 +424,7 @@ GLuint GLScene::loadTexture(const char * filename) {
 	//int size = fseek(file,);
 	fread(data, width * height * 3, 1, file);
 	fclose(file);
-	for(int i = Color::Yellow; i < =)
+	//for(int i = Color::Yellow; i < =)
 	for (int i = 0; i < width * height; ++i)
 	{
 		int index = i * 3;
