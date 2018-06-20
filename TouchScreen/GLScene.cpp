@@ -88,20 +88,42 @@ void GLScene::startGame(bool gameStarted){
 	}
 }
 
+int resultt;
+int result2 = 0;
+
 void GLScene::updateFrame()
 {
 	if (!alreadyStarted) {
+		if (_calibrate){
+			_calibrate = false;
+			resultt = MessageBox(nullptr, TEXT("Want to calibrate?"), TEXT("Message"), MB_YESNO);
+			switch (resultt)
+			{
+			case IDNO:
+				break;
+			case IDYES:
+				std::cout << "GLScene: Calibrate start" << std::endl;
+				//Hier schachbrett erzeugen
+				//####
 
-		const int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("New Game"), MB_YESNO);
-		switch (result)
-		{
-		case IDNO:
-			QApplication::quit();
-		case IDYES:
-			// RESET GAME WIRD AUSGEFÜHRT
-			alreadyStarted = true;
-			resetGame();
-			break;
+				//Kamera für Calibrate wird gestartet
+				//cam.startCalibration();
+				//Signal calibrationValid(),dann erst Startnewgame anzeigen
+				break;
+			}
+		}
+		if (!_calibrate){
+			result2 = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+			switch (result2)
+			{
+			case IDNO:
+				QApplication::quit();
+				break;
+			case IDYES:
+				alreadyStarted = true;
+				resetGame();
+				break;
+			}
 		}
 	}
 	updatePhysics();
@@ -143,15 +165,17 @@ void GLScene::resizeGL(int w, int h)
 
 void GLScene::paintGL()
 {
-	// Fensterinhalt l�schen
-	glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // L�schfarbe setzen auf Billiard Pool Farbe
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
+	if (alreadyStarted && !_calibrate){
+		// Fensterinhalt l�schen
+		glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // L�schfarbe setzen auf Billiard Pool Farbe
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
 
-	// zur ModelView-Matrix wechseln
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity(); // Identit�tsmatrix laden
-	for (int i = 0; i < _balls.size(); i++) {
-		renderBall(_balls[i]);
+		// zur ModelView-Matrix wechseln
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity(); // Identit�tsmatrix laden
+		for (int i = 0; i < _balls.size(); i++) {
+			renderBall(_balls[i]);
+		}
 	}
 	
 }

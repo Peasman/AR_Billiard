@@ -19,19 +19,22 @@ Calibration::Calibration()
 		for (int col = 0; col < 7; ++col)
 		{
 			int index = row * 7 + col;
-			_patternWorldCoordinates[index][0] = static_cast<float>(col)* 25.0f;
-			_patternWorldCoordinates[index][1] = static_cast<float>(row)* 25.0f;
+			_patternWorldCoordinates[index][0] = static_cast<float>(col)* 29.0f;
+			_patternWorldCoordinates[index][1] = static_cast<float>(row)* 29.0f;
 			_patternWorldCoordinates[index][2] = 0.0f;
 		}
 	}
 }
 
+
 Calibration::~Calibration()
 {}
 
+
+
+
 void Calibration::run(std::list< cv::Mat > inputImages)
 {
-
 	// Speicher fuer die Patterneckpunkte in Bildkoordinaten
 	std::vector< std::vector< cv::Point2f > > patternCorners;
 
@@ -51,22 +54,25 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 		// suche das Pattern
 		bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
 
-		if (!found) {
-			// wurde das Pattern gefunden?
-			// Nein: Ausgabe generieren
-			std::cerr << "Pattern nicht gefunden!" << std::endl;
+		// wurde das Pattern gefunden?
+		// Nein: Ausgabe generieren
+		if (!found){
+			std::cout << "Pattern nicht gefunden" << std::endl;
 		}
 		// Ja: hier weiter
 		else
 		{
-			std::cout << "Pattern gefunden" << std::endl;
+
+			std::cout << "Muster gefunden" << std::endl;
 			// Counter erhoehen
 			goodCount++;
 			// Zwischespeicher enthaelt valide Werte
 			// in globalen Puffer einfuegen
 			patternCorners.push_back(pointBuffer);
+
 			// ebenso fuer Weltkoordinaten
 			patternWorldBuffer.push_back(_patternWorldCoordinates);
+
 			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
 			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
 		}
@@ -74,32 +80,28 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 	}
 
 	// genug gute Bilder gefunden?
-	if (goodCount >= 4)
+	if (goodCount > 0)
 	{
-		std::cout << "goodcount" << std::endl;
+
+		std::cout << "Gute bilder gefunden" << std::endl;
 		// schalte die Kalibrierung gueltig
 		_calibrationValid = true;
-		// Speicher fuer extrinsische Kalibrierungen reservieren
 
-		/* ALTERNATIVE
+		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
-		// Kalibrierung durchfuehren
-		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs);
-		*/
 
-		_cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
 		// Kalibrierung durchfuehren
-		cv::Size size = cv::Size(inputImages.begin()->rows, inputImages.begin()->cols);
-		//std::cout << size << std::endl;
-		cv::calibrateCamera(patternWorldBuffer, patternCorners, size, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs);
+		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs, 0);
+
 	}
-	// nicht genug Daten -> keine gueltige Kalibrierung
 	else{
-		std::cerr << "Nicht genug Daten gefunden!" << std::endl;
-		_calibrationValid = false;
+		// nicht genug Daten -> keine gueltige Kalibrierung
+		std::cout << "Nicht genug Daten gefunden!" << std::endl;
 	}
 }
+
+
 
 cv::Mat Calibration::undistort(cv::Mat img)
 {
