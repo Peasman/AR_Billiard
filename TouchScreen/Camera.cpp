@@ -11,11 +11,11 @@ Camera::Camera()
 		std::cout << "CAM: Öffnung der Kamera fehlgeschlagen!" << std::endl;
 		exit(0);
 	}
-
+	
 	//Timer erstellt alle 16ms ein Bild
 	std::cout << "CAM: Calibration Timer started" << std::endl;
 	_timer = new QTimer(this);
-	connect(_timer, SIGNAL(timeout()), this, SLOT(capture()));
+	connect(_timer, SIGNAL(timeout()), this, SLOT(testSignal()));
 	_timer->start(16);
 }
 
@@ -42,7 +42,6 @@ void Camera::eval(cv::Mat img)
 // Image versuchen zu kalibrieren
 void Camera::calibrate(cv::Mat img)
 {
-	std::cout << "CAM: Calibration from Image start until finish" << std::endl;
 	bool success = false;
 	_images.clear();
 	_images.push_back(img);
@@ -53,6 +52,7 @@ void Camera::calibrate(cv::Mat img)
 	// calibration valid then leave calibration mode
 	if (success)
 	{
+		std::cout << "CAM: Calibration finished" << std::endl;
 		_calibration = false;
 		emit calibrationValid();
 	}

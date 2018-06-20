@@ -7,6 +7,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <GL\glut.h>
+#include <time.h>
 
 const float GLScene::eps = 0.01;
 GLScene::GLScene(QWidget *parent)
@@ -58,7 +59,6 @@ void GLScene::mouseMoveEvent(QMouseEvent *event)
 		currentPos = QPoint(currentx, currenty);
 	}
 }
-
 //========================================================================================
 // Event für das Loslassen einer Maustaste
 //========================================================================================
@@ -68,10 +68,9 @@ void GLScene::mouseReleaseEvent(QMouseEvent *event)
 
 	}
 }
+void GLScene::startGame(bool gameStarted){
+	if (!alreadyStarted){
 
-
-void GLScene::startGame(bool gameStarted) {
-	if (!alreadyStarted) {
 		alreadyStarted = gameStarted;
 		resetGame();
 	}
@@ -87,33 +86,43 @@ void GLScene::startGame(bool gameStarted) {
 	}
 }
 
-int resultt;
-int result2 = 0;
+void GLScene::testPauseByInput(){
+	std::cout << "Press any key to continue .." << std::endl;
+	std::cin.get();
+}
+
+void GLScene::wait(int seconds)
+{
+	clock_t endwait;
+	endwait = clock() + seconds * CLOCKS_PER_SEC;
+	while (clock() < endwait) {}
+}
 
 void GLScene::updateFrame()
 {
-	if (!alreadyStarted) {
-		if (_calibrate){
-			_calibrate = false;
-			resultt = MessageBox(nullptr, TEXT("Want to calibrate?"), TEXT("Message"), MB_YESNO);
-			switch (resultt)
-			{
-			case IDNO:
-				break;
-			case IDYES:
-				std::cout << "GLScene: Calibrate start" << std::endl;
-				//Hier schachbrett erzeugen
-				//####
-
-				//Kamera für Calibrate wird gestartet
-				//cam.startCalibration();
-				//Signal calibrationValid(),dann erst Startnewgame anzeigen
-				break;
-			}
+	if (_calibrateQuestion){
+		_calibrateQuestion = false;
+		int result = MessageBox(nullptr, TEXT("Want to calibrate?"), TEXT("Message"), MB_YESNO);
+		switch (result)
+		{
+		case IDNO:
+			break;
+		case IDYES:
+			std::cout << "GLScene: Calibration start" << std::endl;
+			_calibrationrunning = true;
+			paintGL();
+			//Kamera für Calibrate wird gestartet
+			//cam.startCalibration();
+			while (!cam.getCalib()){}
+			std::cout << "GLScene: Calibration fertig!" << std::endl;
+			_calibrationrunning = false;
+			break;
 		}
-		if (!_calibrate){
-			result2 = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
-			switch (result2)
+	}
+	if (!alreadyStarted) {
+		if (!_calibrateQuestion){
+			int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+			switch (result)
 			{
 			case IDNO:
 				QApplication::quit();
@@ -125,8 +134,10 @@ void GLScene::updateFrame()
 			}
 		}
 	}
-	updatePhysics();
-	update();
+	if (!_calibrationrunning){
+		updatePhysics();
+		update();
+	}
 }
 
 void GLScene::initializeGL()
@@ -173,9 +184,45 @@ void GLScene::resizeGL(int w, int h)
 	glOrtho(0.0f, _w, 0.0f, _h, 1.0f, -1.0f);
 }
 
+void GLScene::changeCalibrateQuestionBool(bool value){
+	_calibrateQuestion = value;
+}
+
+void GLScene::createChessboard(){
+	bool color = true;
+	int w = this->width();
+	int h = this->height();
+	// Anzahl kacheln berechnen für Breite und Höhe
+	int hor, vert;
+	// Seitenlänge pro Kachel
+	int sl = 100;
+	// Anzahl Kacheln pro Seite berechnen
+	hor = w / sl + 1;
+	vert = h / sl + 1;
+	//for each width and height draw a rectangle with a specific color
+	for (int i = 0; i < hor; ++i) {
+		for (int j = 0; j < vert; ++j) {
+			//Farbe pro Kachel auf dem Schachbrett
+			if (color)
+				glColor3f(1, 1, 1);
+			else
+				glColor3f(0, 0, 0);
+			color = !color;
+			//draw a rectangle in the ith row and jth column
+			glRecti(i*sl, j*sl, (i + 1)*sl, (j + 1)*sl);
+		}
+		if (vert % 2 == 0) color = !color; //switch color order at end of row if necessary
+	}
+}
+
 void GLScene::paintGL()
 {
-	if (alreadyStarted && !_calibrate){
+	if (_calibrationrunning){ // Schachbrett anzeigen/rendern
+		createChessboard();
+		return;
+	}
+	if (alreadyStarted && !_calibrationrunning)
+  { // Farbe Spielfeld GREEN
 		// Fensterinhalt l�schen
 		glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // L�schfarbe setzen auf Billiard Pool Farbe
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
@@ -183,13 +230,25 @@ void GLScene::paintGL()
 		// zur ModelView-Matrix wechseln
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity(); // Identit�tsmatrix laden
-		for (int i = 0; i < _balls.size(); i++) {
+		for (int i = 0; i < _balls.size(); i++)
+    {
 			renderBall(_balls[i]);
 		}
-	}
-	for (int i = 0; i < _holes.size(); i++){
+    for (int i = 0; i < _holes.size(); i++)
+    {
 		renderHole(_holes[i]);
 	}
+		return;
+	}
+	// Start des Programms Farbe setzen BLACK
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
+	// zur ModelView-Matrix wechseln
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity(); // Identit�tsmatrix laden
+
+}
+
 
 }
 void GLScene::initHoles() {
@@ -206,6 +265,7 @@ void GLScene::initHoles() {
 }
 void GLScene::updateBallVelocity(Ball& ball)
 {
+
 	if (ball.color == Color::White) {
 		ball.vx = 10;
 		ball.vy = 0;
@@ -238,6 +298,7 @@ void GLScene::CollisionWithHole(Ball& ball)
 	}
 }
 void GLScene::CollisionWithWall(Ball& ball) {
+
 
 	if (ball.y + _ballSize > _h) // unterer Rand
 	{
@@ -284,18 +345,20 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 		//Maus erkennung
 		float dist = d(currentPos.x(), currentPos.y(), ball.x, ball.y);
 		//std::cout << dist << std::endl;
+
 		if (dist > 0 && dist < _ballSize * 2) {
 			const float slip = 0.1;
 			float nx, ny, tx, ty;
 
-			// normal
-			nx = ball.x - lastPos.x();
-			ny = ball.y - lastPos.y();
-			normalize(nx, ny);
+		// normal
+		nx = ball.x - lastPos.x();
+		ny = ball.y - lastPos.y();
+		normalize(nx, ny);
 
-			// tangent pointing to the left of normal
-			tx = -ny;
-			ty = nx;
+		// tangent pointing to the left of normal
+		tx = -ny;
+		ty = nx;
+
 
 			float mvx = (currentPos.x() - lastPos.x());
 			float mvy = (currentPos.y() - lastPos.y());
@@ -303,18 +366,18 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 			float vsumx = mvx - ball.vx;
 			float vsumy = mvy - ball.vy;
 
-			// coordinates in radial tangential coordinate frame
-			float vn = nx * vsumx + ny * vsumy;
-			float vt = tx * vsumx + ty * vsumy;
+		// coordinates in radial tangential coordinate frame
+		float vn = nx * vsumx + ny * vsumy;
+		float vt = tx * vsumx + ty * vsumy;
 
-			ball.x += nx * (vn + 0.1);
-			ball.y += ny * (vn + 0.1);
+		ball.x += nx * (vn + 0.1);
+		ball.y += ny * (vn + 0.1);
 
-			ball.vx += vn * nx;
-			ball.vy += vn * ny;
+		ball.vx += vn * nx;
+		ball.vy += vn * ny;
 
-			// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
-			//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
+		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
+		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
 		}
 
 		for (int i = 0; i < 16; i++)
@@ -385,6 +448,7 @@ void GLScene::initStandardBalls()
 	for (int i = Yellow; i != Length; i++)
 	{
 		Color foo = static_cast<Color>(i);
+
 		if (foo == White)
 		{
 			Ball currentBallHalf;
@@ -415,6 +479,7 @@ void GLScene::initStandardBalls()
 
 	}
 }
+
 void GLScene::resetGame()
 {
 	//_balls.clear();
@@ -437,6 +502,7 @@ void GLScene::resetGame()
 
 			_balls[currentPosition].x = _w / 3.0f * 2.0f + i * _ballSize * 2; //Verschieben nach rechts von 3/4 der Width aus
 			_balls[currentPosition].y = yOffset + j * (_ballSize + 1.0f) * 2;         //Verschieben nach unten/oben
+
 			std::cout << "x: " << _balls[currentPosition].x << " y: " << _balls[currentPosition].y << std::endl;
 			currentPosition++;
 		}
@@ -461,6 +527,7 @@ void GLScene::loadTexture() {
 	//GLuint texture;
 	int width, height, fullwidth, fullheight;
 	unsigned char * data;
+
 	//TODO Richtiger Filename
 	const char * textureName = "C:/Users/fp16/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
 	FILE * fullFile;
@@ -480,6 +547,7 @@ void GLScene::loadTexture() {
 	for (int j = 0; j < width * height; ++j)
 
 	{
+
 
 		int index = j * 3;
 		unsigned char R, G, B;
@@ -527,8 +595,10 @@ void GLScene::renderHole(Hole const &hole) {
 	glEnd();
 	glPopMatrix();
 }
+
 void GLScene::renderBall(Ball const &ball)
 {
+
 	if (!ball.exists) {
 		return;
 	}
@@ -574,12 +644,11 @@ void GLScene::renderBall(Ball const &ball)
 	{
 		float x = cos((delta_angle * static_cast<float>(i)))*_ballSize;
 		float y = sin((delta_angle * static_cast<float>(i)))*_ballSize;
+
 		texcoord[0] = currentx + (cos(delta_angle * static_cast<float>(i))) *1.0f / 16.0f;
 		texcoord[1] = currenty + (sin(delta_angle * static_cast<float>(i))) *1.0f / 4.0f;
 		glTexCoord2fv(texcoord);
 		glVertex3f(x, y, 0.0f);
-
-
 
 
 		//glColor3f(ball.color_r, ball.color_g, ball.color_b);

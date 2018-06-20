@@ -57,13 +57,13 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 		// wurde das Pattern gefunden?
 		// Nein: Ausgabe generieren
 		if (!found){
-			std::cout << "Pattern nicht gefunden" << std::endl;
+			std::cout << "CALIB: Pattern nicht gefunden" << std::endl;
 		}
 		// Ja: hier weiter
 		else
 		{
 
-			std::cout << "Muster gefunden" << std::endl;
+			std::cout << "CALIB: Muster gefunden" << std::endl;
 			// Counter erhoehen
 			goodCount++;
 			// Zwischespeicher enthaelt valide Werte
@@ -83,7 +83,7 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 	if (goodCount > 0)
 	{
 
-		std::cout << "Gute bilder gefunden" << std::endl;
+		std::cout << "CALIB: Gute bilder gefunden" << std::endl;
 		// schalte die Kalibrierung gueltig
 		_calibrationValid = true;
 
@@ -97,7 +97,7 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 	}
 	else{
 		// nicht genug Daten -> keine gueltige Kalibrierung
-		std::cout << "Nicht genug Daten gefunden!" << std::endl;
+		std::cout << "CALIB: Nicht genug Daten gefunden!" << std::endl;
 	}
 }
 

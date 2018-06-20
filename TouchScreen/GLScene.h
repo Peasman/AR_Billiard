@@ -6,29 +6,36 @@
 #include <QEvent>
 #include <QTouchEvent>
 #include <QTimer>
-//#include <Camera.h>
+#include <Camera.h>
 
 class GLScene : public QGLWidget
 {
 
-  Q_OBJECT
+	Q_OBJECT
 
 public:
 
-  GLScene( QWidget *parent );
+	GLScene(QWidget *parent);
 
 
-public slots:
+	public slots:
 
-  void updateFrame();
-  void resetGame();
-  void enableMouse(bool);
-  void startGame(bool);
+	void testPauseByInput();
+	void wait(int);
+
+	void updateFrame();
+	void resetGame();
+	void enableMouse(bool);
+	void startGame(bool);
+	void changeCalibrateQuestionBool(bool);
 
 protected:
 
-	//Camera cam;
-	bool _calibrate = true;
+		Camera cam;
+	bool _calibrationrunning = false;
+	bool _calibrateQuestion = true;
+	void createChessboard();
+
 
   QPoint currentPos; // erste Mausposition
   QPoint lastPos; // letzte Mausposition
