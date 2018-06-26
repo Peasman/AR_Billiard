@@ -7,7 +7,6 @@
 #include <QTouchEvent>
 #include <QTimer>
 #include <Camera.h>
-
 class GLScene : public QGLWidget
 {
 
@@ -56,7 +55,9 @@ protected:
   QTimer *_timer;
   QShortcut *_shrtReset;
   GLuint  _texture;
-
+  const bool FULL = true;
+  const bool HALF = false;
+  
   float _w, _h, _xpos, _ypos;
 
   enum Color{
@@ -68,16 +69,6 @@ protected:
           topBound, bottomBound,              //Oben immer 0 bzw (1080 - 960)/2 = 60 (für das 2:1 Verhältnis) und unten 1020 
           midX, midY;                         //Fenstergröße/2, wird benötigt für Start und Löcher
     
-  };
-  struct Puck
-  {
-    
-    float x, y,   // position
-          vx, vy, // geschwindigkeit
-          omega,  // winkelgeschwindigket der rotation in 2 * pi / sek
-                  // positive werte -> mathematisch positive rotation ( gegen den uhrzeiger )
-                 // negative werte -> mathematisch negative rotation ( mit dem uhrzeiger )
-          angle;  // aktueller Winkel des Pucks
   };
   struct Hole
   {
@@ -98,20 +89,19 @@ protected:
   };
   struct Racket
   {
-    float x, y,             // aktuelle position
-          xLast, yLast,     // letzte position
-          vx, vy,           // geschwindigkeit
-          omega,            // winkelgeschwindigket der rotation in 2 * pi / sek
-                            // positive werte -> mathematisch positive rotation ( gegen den uhrzeiger )
-                            // negative werte -> mathematisch negative rotation ( mit dem uhrzeiger )
-          angle, angleLast; // aktueller und letzter Winkel des Rackets
-          
-    int   tpid1, tpid2;     // touchpoint ids f�r rotationsverfolgung
-    float tpx1, tpy1,       // touchpoint positionen rotationsverfolgung
-          tpx2, tpy2;
-    float tpx1Last, tpy1Last, // touchpoint positionen rotationsverfolgung, letzte werte
-          tpx2Last, tpy2Last;
+	  float x, y,             // aktuelle position
+		  xLast, yLast,     // letzte position
+		  vx, vy,           // geschwindigkeit
+		  omega,            // winkelgeschwindigket der rotation in 2 * pi / sek
+							// positive werte -> mathematisch positive rotation ( gegen den uhrzeiger )
+							// negative werte -> mathematisch negative rotation ( mit dem uhrzeiger )
+		  angle, angleLast; // aktueller und letzter Winkel des Rackets
   };
+	struct Player
+	{
+		int num;
+		bool ballType;
+	};
   inline float d( float x1, float y1, float x2, float y2 )
   {
     float dx = x1 - x2;
@@ -145,16 +135,12 @@ protected:
     x = xnew;
     y = ynew;
   }
-
-  Puck _puck;
-  Racket _racketLeft;
-  Racket _racketRight;
-
+  Racket racket;
+  Player players[2];
+  int currentPlayer = 0;
   float _puckSize, _racketSize,_ballSize,_holeSize;
 
-  void renderPuck();
   void renderBall(Ball const& ball);
-  void renderRacket( Racket const& racket );
   void updateBallVelocity(Ball& ball);
   void updateBallCollision(Ball& ball, int index);
   void CollisionWithHole(Ball& ball);
@@ -163,6 +149,11 @@ protected:
   void initHoles();
   void renderHole(Hole const &hole);
   void CollisionWithWall(Ball& ball);
+  void CollisionWithMouse(Ball& ball);
+  void CollisionWithRacket(Ball& ball);
+  bool StillMoving();
+  bool VerifyWin();
+  bool BallTypeStillExists(bool ballType);
   const int _timerPeriod;
   std::vector<Hole> _holes;
   std::vector<Ball> _balls; //Liste der Kugeln die Momentan aktiv sind
