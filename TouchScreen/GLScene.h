@@ -35,6 +35,7 @@ protected:
 	bool _calibrationrunning = false;
 	bool _calibrateQuestion = true;
 	void createChessboard();
+	bool gocalib = false;
 
 	QPoint currentPos; // erste Mausposition
 	QPoint lastPos; // letzte Mausposition
