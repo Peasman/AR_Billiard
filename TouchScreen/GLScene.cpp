@@ -131,7 +131,10 @@ void GLScene::updateFrame()
 		}
 
 		cv::Mat img = cam.capture();
+		cv::Mat flipped;
+		cv::flip(img, flipped, 1);
 		det.detectCue(img);
+
 		if (det._valid){
 			invalidFrames = 0;
 			racket.x = det._curr_x_1;
@@ -477,6 +480,68 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 	float dist = d(x, y, ball.x, ball.y);
 	//std::cout << dist << std::endl;
 
+	float dx = x - xLast;
+	float dy = y - yLast;
+
+	float dxs = dx * dx;
+	float dys = dy * dy;
+
+	float cx = ball.x - xLast;
+	float cy = ball.y - yLast;
+
+	float dem = ((cx / dx) * (cx / dx)) - (cx * cx - _ballSize * _ballSize) / dxs;
+	if (dem > 0){
+		float s1 = -cx / dxs + sqrt(dem);
+		float s2 = -cx / dxs - sqrt(dem);
+
+		float s = (s1 > s2) ? s2 : s1;
+
+		if (s < 1){
+			x = xLast + s * dx;
+			y = yLast + s * dy;
+
+			const float slip = 0.1;
+			float nx, ny, tx, ty;
+
+			// normal
+			nx = ball.x - x;
+			ny = ball.y - y;
+			normalize(nx, ny);
+
+			// tangent pointing to the left of normal
+			tx = -ny;
+			ty = nx;
+
+			//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
+			float mvx = (x - xLast);
+			float mvy = (y - yLast);
+			// relative velocity
+			float vsumx = mvx - ball.vx;
+			float vsumy = mvy - ball.vy;
+
+			// coordinates in radial tangential coordinate frame
+			float vn = nx * vsumx + ny * vsumy;
+			float vt = tx * vsumx + ty * vsumy;
+
+			ball.x += nx * (vn + 0.1);
+			ball.y += ny * (vn + 0.1);
+
+			ball.vx += vn * nx;
+			ball.vy += vn * ny;
+		}
+	}
+
+	
+
+
+
+
+	//dx^2 + dy^2 = r^2
+
+	// gerade = (x,y) + t * (dx, dy)
+
+
+	/* old collision
 	if (dist > 0 && dist < _ballSize * 2) {
 		const float slip = 0.1;
 		float nx, ny, tx, ty;
@@ -491,8 +556,8 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 		ty = nx;
 
 		//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
-		float mvx = (x - racket.xLast);
-		float mvy = (y - racket.yLast);
+		float mvx = (x - xLast);
+		float mvy = (y - yLast);
 		// relative velocity
 		float vsumx = mvx - ball.vx;
 		float vsumy = mvy - ball.vy;
@@ -509,7 +574,7 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
 		//TODO Rotation fixen/ausprobieren bei kö
 		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
-	}
+	}*/
 }
 //Überprüft ob sich noch Kugeln bewegen / ob schon der andere Spieler anfangen darf
 /*
