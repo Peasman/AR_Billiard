@@ -92,7 +92,9 @@ protected:
   struct Racket
   {
 	  float x, y,             // aktuelle position
+		  x2, y2,
 		  xLast, yLast,     // letzte position
+		  x2Last, y2Last,
 		  vx, vy,           // geschwindigkeit
 		  omega,            // winkelgeschwindigket der rotation in 2 * pi / sek
 							// positive werte -> mathematisch positive rotation ( gegen den uhrzeiger )
@@ -141,8 +143,10 @@ protected:
   Player players[2];
   int currentPlayer = 0;
   float _puckSize, _racketSize,_ballSize,_holeSize;
-
+  int invalidFrames = 0;
+  int maxInvalidFrames = 30;
   void renderBall(Ball const& ball);
+  void renderRacket(float  x, float y, bool other);
   void updateBallVelocity(Ball& ball);
   void updateBallCollision(Ball& ball, int index);
   void CollisionWithHole(Ball& ball);
@@ -152,7 +156,7 @@ protected:
   void renderHole(Hole const &hole);
   void CollisionWithWall(Ball& ball);
   void CollisionWithMouse(Ball& ball);
-  void CollisionWithRacket(Ball& ball);
+  void CollisionWithRacket(Ball& ball, bool other);
   bool StillMoving();
   bool VerifyWin();
   bool BallTypeStillExists(bool ballType);
