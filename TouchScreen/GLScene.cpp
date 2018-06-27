@@ -110,17 +110,13 @@ void GLScene::updateFrame()
 		case IDYES:
 			std::cout << "GLScene: Calibration start" << std::endl;
 			_calibrationrunning = true;
-			paintGL();
-			//Kamera für Calibrate wird gestartet
-			//cam.startCalibration();
-			while (!cam.getCalib()) {}
-			std::cout << "GLScene: Calibration fertig!" << std::endl;
-			_calibrationrunning = false;
-			break;
+			gocalib = true;
+			return;
 		}
 	}
-	if (!alreadyStarted) {
-		if (!_calibrateQuestion) {
+	if (!_calibrationrunning){
+		if (!alreadyStarted) {
+
 			int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
 			switch (result)
 			{
@@ -130,14 +126,53 @@ void GLScene::updateFrame()
 			case IDYES:
 				alreadyStarted = true;
 				resetGame();
-				break;
+				return;
 			}
 		}
-	}
-	if (!_calibrationrunning) {
-		nextPlayer();
+
+
+		cv::Mat img = cam.capture();
+		det.detectCue(img);
+		if (det._valid){
+			invalidFrames = 0;
+			racket.x = det._curr_x_1;
+			racket.y = det._curr_y_1;
+			racket.x2 = det._curr_x_2;
+			racket.y2 = det._curr_y_2;
+			racket.xLast = det._last_x_1;
+			racket.yLast = det._last_y_1;
+			racket.x2Last = det._last_x_2;
+			racket.y2Last = det._last_y_2;
+		}
+		else
+		{
+			invalidFrames++;
+		}
+		if (invalidFrames > maxInvalidFrames)
+		{
+			racket.vx = 0;
+			racket.vy = 0;
+			racket.x = 0;
+			racket.y = 0;
+			racket.x2 = 0;
+			racket.y2 = 0;
+			racket.xLast = 0;
+			racket.yLast = 0;
+			racket.x2Last = 0;
+			racket.y2Last = 0;
+		}
 		updatePhysics();
 		update();
+	}
+	if (gocalib)
+	{
+		_calibrationrunning = true;
+		// Kamera für Calibrate wird gestartet
+		cam.startCalibration();
+		gocalib = false;
+	}
+	if(!cam.getCalib()){
+		_calibrationrunning = false;
 	}
 }
 
@@ -187,6 +222,7 @@ void GLScene::resizeGL(int w, int h)
 
 void GLScene::changeCalibrateQuestionBool(bool value) {
 	_calibrateQuestion = value;
+	gocalib = value;
 }
 
 void GLScene::createChessboard() {
@@ -195,11 +231,13 @@ void GLScene::createChessboard() {
 	int h = this->height();
 	// Anzahl kacheln berechnen für Breite und Höhe
 	int hor, vert;
+	hor = vert = 8;
 	// Seitenlänge pro Kachel
-	int sl = 100;
+	float slh = h / hor;
+	float slw = w / vert;
 	// Anzahl Kacheln pro Seite berechnen
-	hor = w / sl + 1;
-	vert = h / sl + 1;
+	std::cout << "w: " << w << " h: " << h << std::endl;
+	std::cout << "Hor: " << hor << " vert: " << vert << std::endl;
 	//for each width and height draw a rectangle with a specific color
 	for (int i = 0; i < hor; ++i) {
 		for (int j = 0; j < vert; ++j) {
@@ -209,8 +247,8 @@ void GLScene::createChessboard() {
 			else
 				glColor3f(0, 0, 0);
 			color = !color;
-			//draw a rectangle in the ith row and jth column
-			glRecti(i*sl, j*sl, (i + 1)*sl, (j + 1)*sl);
+			//draw a rectangle in the i-th row and j-th column
+			glRecti(i*slw, j*slh, (i + 1)*slw, (j + 1)*slh);
 		}
 		if (vert % 2 == 0) color = !color; //switch color order at end of row if necessary
 	}
@@ -218,10 +256,15 @@ void GLScene::createChessboard() {
 
 void GLScene::paintGL()
 {
-	if (_calibrationrunning) { // Schachbrett anzeigen/rendern
+	if (_calibrationrunning){ // Schachbrett anzeigen/rendern
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		std::cout << "GLScene: Schachbrett zeichnen!" << std::endl;
+
 		createChessboard();
+		cam.run();
 		return;
-	}
+		}
 	if (alreadyStarted && !_calibrationrunning)
 	{ // Farbe Spielfeld GREEN
 		  // Fensterinhalt l�schen
@@ -231,6 +274,11 @@ void GLScene::paintGL()
 		// zur ModelView-Matrix wechseln
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity(); // Identit�tsmatrix laden
+
+		if (det._valid){
+			renderRacket(racket.x, racket.y, true);
+			renderRacket(racket.x2, racket.y2, false);
+		}
 		for (int i = 0; i < _balls.size(); i++)
 		{
 			renderBall(_balls[i]);
@@ -241,12 +289,15 @@ void GLScene::paintGL()
 		}
 		return;
 	}
-	// Start des Programms Farbe setzen BLACK
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
-	// zur ModelView-Matrix wechseln
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity(); // Identit�tsmatrix laden
+	if (!alreadyStarted && !_calibrationrunning){
+		// Start des Programms Farbe setzen BLACK
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
+		// zur ModelView-Matrix wechseln
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity(); // Identit�tsmatrix laden
+		return;
+	}
 
 }
 
@@ -264,7 +315,6 @@ void GLScene::initHoles() {
 }
 void GLScene::updateBallVelocity(Ball& ball)
 {
-
 
 	const float friction = 0.98f;
 	const float rfriction = 0.99f;
@@ -454,47 +504,49 @@ void GLScene::CollisionWithMouse(Ball& ball)
 }
 //Kollisionserkennung für den Kö
 //TODO immer erkennen oder nur wenn kein Ball sich bewegt?
-void GLScene::CollisionWithRacket(Ball& ball)
-{
-	if (!turnRunning) {
+void GLScene::CollisionWithRacket(Ball& ball, bool other)
+{	
+	float x = (other) ? racket.x2 : racket.x;
+	float y = (other) ? racket.y2 : racket.y;
+	float xLast = (other) ? racket.x2Last : racket.xLast;
+	float yLast = (other) ? racket.y2Last : racket.yLast;
+	
+	float dist = d(x, y, ball.x, ball.y);
+	//std::cout << dist << std::endl;
 
-		float dist = d(racket.x, racket.y, ball.x, ball.y);
-		//std::cout << dist << std::endl;
+	if (dist > 0 && dist < _ballSize * 2) {
+		const float slip = 0.1;
+		float nx, ny, tx, ty;
 
-		if (dist > 0 && dist < _ballSize * 2) {
-			const float slip = 0.1;
-			float nx, ny, tx, ty;
+		// normal
+		nx = ball.x - x;
+		ny = ball.y - y;
+		normalize(nx, ny);
 
-			// normal
-			nx = ball.x - racket.x;
-			ny = ball.y - racket.y;
-			normalize(nx, ny);
+		// tangent pointing to the left of normal
+		tx = -ny;
+		ty = nx;
 
-			// tangent pointing to the left of normal
-			tx = -ny;
-			ty = nx;
+		//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
+		float mvx = (x - racket.xLast);
+		float mvy = (y - racket.yLast);
+		// relative velocity
+		float vsumx = mvx - ball.vx;
+		float vsumy = mvy - ball.vy;
 
-			//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
-			float mvx = (racket.x - racket.xLast);
-			float mvy = (racket.y - racket.yLast);
-			// relative velocity
-			float vsumx = mvx - ball.vx;
-			float vsumy = mvy - ball.vy;
+		// coordinates in radial tangential coordinate frame
+		float vn = nx * vsumx + ny * vsumy;
+		float vt = tx * vsumx + ty * vsumy;
 
-			// coordinates in radial tangential coordinate frame
-			float vn = nx * vsumx + ny * vsumy;
-			float vt = tx * vsumx + ty * vsumy;
+		ball.x += nx * (vn + 0.1);
+		ball.y += ny * (vn + 0.1);
 
-			ball.x += nx * (vn + 0.1);
-			ball.y += ny * (vn + 0.1);
-
-			ball.vx += vn * nx;
-			ball.vy += vn * ny;
-			turnRunning = true;
-			// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
-			//TODO Rotation fixen/ausprobieren bei kö
-			//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
-		}
+		ball.vx += vn * nx;
+		ball.vy += vn * ny;
+    turnRunning = true;
+		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
+		//TODO Rotation fixen/ausprobieren bei kö
+		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
 	}
 }
 //Überprüft ob sich noch Kugeln bewegen / ob schon der andere Spieler anfangen darf
@@ -573,7 +625,10 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 		//TODO Checken ob das so funzt (Nur Kollision mit weißer kugel möglich/ keine Fouls in dem Sinne möglich
 		if(!StillMoving() && ball.color == Color::White)
 		{
-			CollisionWithRacket(ball);
+			if (invalidFrames < maxInvalidFrames){ 
+				CollisionWithRacket(ball, false);
+				CollisionWithRacket(ball, true);
+			}
 		}
 	}
 }
@@ -674,14 +729,19 @@ void GLScene::resetGame()
 	blackball.y = othery;
 	otherball.x = blackx;
 	otherball.y = blacky;
-	racket.x = 0;
-	racket.y = 0;
 	racket.angle = 0;
 	racket.angleLast = 0;
 	racket.omega = 0;
 	racket.vx = 0;
 	racket.vy = 0;
-
+	racket.x = 0;
+	racket.y = 0;
+	racket.x2 = 0;
+	racket.y2 = 0;
+	racket.xLast = 0;
+	racket.yLast = 0;
+	racket.x2Last = 0;
+	racket.y2Last = 0;
 }
 
 //Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
@@ -692,7 +752,7 @@ void GLScene::loadTexture() {
 	unsigned char * data;
 
 	//TODO Richtiger Filename
-	const char * textureName = "C:/Users/fp16/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
+	const char * textureName = "C:/Users/fp17/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
 	//file = fopen(filename, "rb"); 
@@ -815,4 +875,29 @@ void GLScene::renderBall(Ball const &ball)
 
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
+}
+
+void GLScene::renderRacket(float x, float y, bool other){
+	GLfloat vertex[4];
+	GLfloat texcoord[2];
+	const int k = 256;
+	const GLfloat delta_angle = 2.0*M_PI / static_cast<float>(k);
+	glPushMatrix();
+	glLoadIdentity();
+	glTranslatef(x, y, 0.0f);
+	glBegin(GL_TRIANGLE_FAN);
+	if (other)
+		glColor3f(1.0f, 0.0f, 0.0f);
+	else
+		glColor3f(1.0f, 1.0f, 0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	for (int i = 0; i <= k; ++i)
+	{
+		float x = cos((delta_angle * static_cast<float>(i)))*_ballSize/4;
+		float y = sin((delta_angle * static_cast<float>(i)))*_ballSize/4;
+		glVertex3f(x, y, 0.0f);
+	}
+	glEnd();
+	glPopMatrix();
+
 }
