@@ -533,7 +533,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 
 		}
 		//TODO Checken ob das so funzt (Nur Kollision mit weißer kugel möglich/ keine Fouls in dem Sinne möglich
-		if(!StillMoving && ball.color == Color::White)
+		if(!StillMoving() && ball.color == Color::White)
 		{
 			CollisionWithRacket(ball);
 		}

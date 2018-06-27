@@ -5,11 +5,14 @@
 Camera::Camera()
 {
 	// oeffne die erste Kamera
+	
 	_camera.open(0);
 
 	if (!_camera.isOpened()){
 		std::cout << "CAM: Öffnung der Kamera fehlgeschlagen!" << std::endl;
-		exit(0);
+		std::string s;
+		//exit(0);
+		return;
 	}
 	
 	//Timer erstellt alle 16ms ein Bild
