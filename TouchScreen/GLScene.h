@@ -16,7 +16,12 @@ class GLScene : public QGLWidget
 public:
 
 	GLScene(QWidget *parent);
-
+	struct Player
+	{
+		int num;
+		bool ballType;
+		bool colorSet = false;
+	};
 
 	public slots:
 
@@ -101,11 +106,7 @@ protected:
 							// negative werte -> mathematisch negative rotation ( mit dem uhrzeiger )
 		  angle, angleLast; // aktueller und letzter Winkel des Rackets
   };
-	struct Player
-	{
-		int num;
-		bool ballType;
-	};
+
   inline float d( float x1, float y1, float x2, float y2 )
   {
     float dx = x1 - x2;
@@ -141,8 +142,10 @@ protected:
   }
   Racket racket;
   Player players[2];
+  bool again = false, definitlyNotAgain = false;
   int currentPlayer = 0;
   float _puckSize, _racketSize,_ballSize,_holeSize;
+  bool turnRunning = false;
   int invalidFrames = 0;
   int maxInvalidFrames = 30;
   void renderBall(Ball const& ball);
@@ -156,6 +159,7 @@ protected:
   void renderHole(Hole const &hole);
   void CollisionWithWall(Ball& ball);
   void CollisionWithMouse(Ball& ball);
+  void nextPlayer();
   void CollisionWithRacket(Ball& ball, bool other);
   bool StillMoving();
   bool VerifyWin();
