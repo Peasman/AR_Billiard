@@ -26,72 +26,61 @@ Calibration::Calibration()
 
 Calibration::~Calibration(){}
 
-bool Calibration::run(std::list< cv::Mat > inputImages)
+void Calibration::run(std::list< cv::Mat >& inputImages)
 {
-	// Speicher fuer die Patterneckpunkte in Bildkoordinaten
+	// Speicher fuer die Patterneckpunkte in Bildkoordinaten (object)
 	std::vector< std::vector< cv::Point2f > > patternCorners;
 
-	// Speicher fuer die Patterneckpunkte in Weltkoordinaten
+	// Speicher fuer die Patterneckpunkte in Weltkoordinaten (image)
 	std::vector< std::vector< cv::Vec3f > > patternWorldBuffer;
 
 	// Anzahl der Bilder, in denen das Pattern gefunden wurde
 	int goodCount = 0;
-	size_t i = 0;
-	for (std::list < cv::Mat >::iterator img = inputImages.begin()
+	for (std::list < cv::Mat >::const_iterator img = inputImages.begin()
 		; img != inputImages.end()
-		; ++img, ++i)
+		; ++img)
 	{
-		std::cout << "CALIB: Bild kalibrieren" << std::endl;
-		/*
 		// Zwischenspeicher fuer Eckpunkte in Bildkoordinaten
 		std::vector< cv::Point2f > pointBuffer;
 
+		cv::imshow("",*img);
+
 		// suche das Pattern
-		bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
+		//bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
 
-		// wurde das Pattern gefunden?
-		// Nein: Ausgabe generieren
-		if (!found){
-			std::cout << "CALIB: Pattern nicht gefunden" << std::endl;
-		}
+		//// wurde das Pattern gefunden?
+		//if (!found)
+		//	// Nein: Ausgabe generieren
+		//	std::cout << "CALIB: Pattern nicht gefunden!" << std::endl;
 		// Ja: hier weiter
-		else
-		{
-			std::cout << "CALIB: Muster gefunden" << std::endl;
-			// Counter erhoehen
-			goodCount++;
-			// Zwischespeicher enthaelt valide Werte
-			// in globalen Puffer einfuegen
-			patternCorners.push_back(pointBuffer);
-
-			// ebenso fuer Weltkoordinaten
-			patternWorldBuffer.push_back(_patternWorldCoordinates);
-
-			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
-			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
-		}*/
+		//else
+		//{
+		//	// Counter erhoehen
+		//	goodCount++;
+		//	// Zwischespeicher enthaelt valide Werte
+		//	// in globalen Puffer einfuegen
+		//	patternCorners.push_back(pointBuffer);
+		//	// ebenso fuer Weltkoordinaten
+		//	patternWorldBuffer.push_back(_patternWorldCoordinates);
+		//	// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
+		//	//cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
+		//}
 	}
 
 	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
-		std::cout << "CALIB: Gute bilder gefunden" << std::endl;
 		// schalte die Kalibrierung gueltig
 		_calibrationValid = true;
-
 		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
-
 		// Kalibrierung durchfuehren
-		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs, 0);
-		return true;
+		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs);
 	}
-	else{
-		// nicht genug Daten -> keine gueltige Kalibrierung
-		std::cout << "CALIB: Nicht genug Daten gefunden!" << std::endl;
-		return false;
-	}
+	// nicht genug Daten -> keine gueltige Kalibrierung
+	else
+		std::cout << "CALIB: Nicht genug gute Bilder gefunden!" << std::endl;
 }
 
 cv::Mat Calibration::undistort(cv::Mat img)

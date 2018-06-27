@@ -15,7 +15,7 @@ public:
 	~Calibration();
 
 	// Kalibrierung berechnen
-	bool run(std::list< cv::Mat > inputImages);
+	void run(std::list< cv::Mat >& inputImages);
 
 	// Kalibrierung anwenden
 	cv::Mat undistort(cv::Mat img);

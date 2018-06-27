@@ -22,9 +22,6 @@ GLScene::GLScene(QWidget *parent)
 	connect(_timer, SIGNAL(timeout()), this, SLOT(updateFrame()));
 
 	_timer->start(_timerPeriod);
-
-	// initialize physics struct with zero
-	//resetGame();
 }
 //TODO ?
 void initGame()
@@ -109,12 +106,11 @@ void GLScene::updateFrame()
 			break;
 		case IDYES:
 			std::cout << "GLScene: Calibration start" << std::endl;
-			_calibrationrunning = true;
-			gocalib = true;
+			cam.startCalibration();
 			return;
 		}
 	}
-	if (!_calibrationrunning){
+	if (!cam.getCalibStatus()){
 		if (!alreadyStarted) {
 
 			int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
@@ -129,26 +125,16 @@ void GLScene::updateFrame()
 				return;
 			}
 		}
-
+		/*
 		cv::Mat img = cam.capture();
 		det.detectCue(img);
 		racket.x = det._curr_x_1;
 		racket.y = det._curr_y_1;
 		racket.xLast = det._last_x_1;
 		racket.yLast = det._last_y_1;
-
+		*/
 		updatePhysics();
 		update();
-	}
-	if (gocalib)
-	{
-		_calibrationrunning = true;
-		// Kamera für Calibrate wird gestartet
-		cam.startCalibration();
-		gocalib = false;
-	}
-	if(!cam.getCalib()){
-		_calibrationrunning = false;
 	}
 }
 
@@ -198,7 +184,6 @@ void GLScene::resizeGL(int w, int h)
 
 void GLScene::changeCalibrateQuestionBool(bool value) {
 	_calibrateQuestion = value;
-	gocalib = value;
 }
 
 void GLScene::createChessboard() {
@@ -211,9 +196,6 @@ void GLScene::createChessboard() {
 	// Seitenlänge pro Kachel
 	float slh = h / hor;
 	float slw = w / vert;
-	// Anzahl Kacheln pro Seite berechnen
-	std::cout << "w: " << w << " h: " << h << std::endl;
-	std::cout << "Hor: " << hor << " vert: " << vert << std::endl;
 	//for each width and height draw a rectangle with a specific color
 	for (int i = 0; i < hor; ++i) {
 		for (int j = 0; j < vert; ++j) {
@@ -232,14 +214,14 @@ void GLScene::createChessboard() {
 
 void GLScene::paintGL()
 {
-	if (_calibrationrunning){ // Schachbrett anzeigen/rendern
+	if (cam.getCalibStatus()){ // Schachbrett anzeigen/rendern
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		std::cout << "GLScene: Schachbrett zeichnen!" << std::endl;
 		createChessboard();
 		return;
 		}
-	if (alreadyStarted && !_calibrationrunning)
+	if (alreadyStarted && !cam.getCalibStatus())
 	{ // Farbe Spielfeld GREEN
 		  // Fensterinhalt l�schen
 		glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // L�schfarbe setzen auf Billiard Pool Farbe
@@ -258,7 +240,7 @@ void GLScene::paintGL()
 		}
 		return;
 	}
-	if (!alreadyStarted && !_calibrationrunning){
+	if (!alreadyStarted && !cam.getCalibStatus()){
 		// Start des Programms Farbe setzen BLACK
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen

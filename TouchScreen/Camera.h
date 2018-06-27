@@ -21,15 +21,13 @@ public:
 	cv::Mat capture();
 	cv::Mat img;
 
-	void run();
-
-	inline bool getCalib(){
-		return _calibration;
-	}
-
 	// Kamerahauptschleife
 	inline void startCalibration(){
 		_calibration = true;
+	}
+
+	inline bool getCalibStatus(){
+		return _calibration;
 	}
 
 signals:
@@ -38,12 +36,12 @@ signals:
 
 private slots:
 
+	void run();
+
 private:
 
 	Calibration _calibrationObject;
 	std::list< cv::Mat > _images;
-	void eval(cv::Mat img);
-	void calibrate(cv::Mat img);
 
 	bool _calibration = false;
 	cv::VideoCapture _camera;
