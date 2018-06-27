@@ -135,6 +135,7 @@ void GLScene::updateFrame()
 		}
 	}
 	if (!_calibrationrunning) {
+		nextPlayer();
 		updatePhysics();
 		update();
 	}
@@ -164,18 +165,18 @@ void GLScene::resizeGL(int w, int h)
 
 
 	_w = static_cast<float>(w);
-	_h = static_cast<float>(h);
+	_h = 0.5f * w; //static_cast<float>(h);
 	_ballSize = _h / 38.5f;
 	_holeSize = _ballSize * 2;
 	for (int i = 0; i < 16; i++) {
 		Ball &ball = _balls[i];
-		ball.x = ball.x * scaleW;
-		ball.y = ball.y * scaleH;
+		ball.x = ball.x * scaleW ;
+		ball.y = ball.y * scaleW *0.5f;
 	}
 	for (int i = 0; i < 6; i++) {
 		Hole &hole = _holes[i];
 		hole.x = hole.x * scaleW;
-		hole.y = hole.y * scaleH;
+		hole.y = hole.y * scaleW * 0.5f;
 	}
 	glViewport(0, 0, w, h);
 
@@ -264,10 +265,6 @@ void GLScene::initHoles() {
 void GLScene::updateBallVelocity(Ball& ball)
 {
 
-	if (ball.color == Color::White) {
-		ball.vx = 10;
-		ball.vy = 0;
-	}
 
 	const float friction = 0.98f;
 	const float rfriction = 0.99f;
@@ -287,7 +284,7 @@ void GLScene::CollisionWithHole(Ball& ball)
 		float dX = ball.x - _holes[i].x;
 		float dY = ball.y - _holes[i].y;
 
-		if (sqrt(dX * dX + dY * dY) < _holeSize)
+		if (sqrt(dX * dX + dY * dY) < _holeSize && ball.exists)
 		{
 			std::cout << "Getroffen! " << std::endl;
 			// Kugel verschwinden lassen
@@ -307,19 +304,37 @@ void GLScene::CollisionWithHole(Ball& ball)
 					//TODO Lose currentPlayer
 				}
 			}
+			if (ball.color == Color::White) {
+				definitlyNotAgain = true;
+				ball.x = _w / 4;
+				ball.y = _h / 2;
+				ball.vx = 0;
+				ball.vy = 0;
+				ball.exists = true;
+				return;
+			}
 			//Hat der Spieler die Richtige Farbe rein gemacht?
+			if (!players[currentPlayer].colorSet) {
+				players[currentPlayer].colorSet = true;
+				players[currentPlayer].ballType = ball.full;
+				int otherPlayerPosition = (currentPlayer + 1) % 2;
+				players[otherPlayerPosition].colorSet = true;
+				players[otherPlayerPosition].ballType = !ball.full;
+				std::cout << "Farbe angepasst auf " << players[currentPlayer].ballType << std::endl;
+			}
 			if (players[currentPlayer].ballType == ball.full)
 			{
 				//TODO Ja Dann Spieler weiterhin dran
 				std::cout << "Getroffen von Spieler " << currentPlayer << std::endl;
-
+				again = true;
 			}
 			else
 			{
 				std::cout << "Getroffen! Aber falsche Art von Spieler " << currentPlayer <<std::endl;
+				definitlyNotAgain = true;
 				//Nein dann nächster Spieler 
 				//TODO Listener für PlayerWechsel DIKO
-				currentPlayer = (currentPlayer + 1) % 2;
+				//currentPlayer = (currentPlayer + 1) % 2;
 			}
 		}
 	}
@@ -327,7 +342,25 @@ void GLScene::CollisionWithHole(Ball& ball)
 //Check wenn die Schwarze Kugel eingelocht wurde ob gewonnen oder verloren wurde.
 bool GLScene::VerifyWin()
 {
-	return !BallTypeStillExists(players[currentPlayer].ballType);
+	return BallTypeStillExists(players[currentPlayer].ballType);
+}
+void GLScene::nextPlayer() {
+	if (turnRunning){
+		if (!StillMoving()) {
+			if (again && !definitlyNotAgain)
+			{
+				currentPlayer = (currentPlayer + 1) % 2;
+				std::cout << "Spieler Wechsel" << std::endl;
+
+			}
+			else {
+				std::cout << "Nochmal dran" << std::endl;
+			}
+			again = false;
+			definitlyNotAgain = false;
+			turnRunning = false;
+		}
+	}
 }
 bool GLScene::BallTypeStillExists(bool ballType)
 {
@@ -414,7 +447,7 @@ void GLScene::CollisionWithMouse(Ball& ball)
 
 		ball.vx += vn * nx;
 		ball.vy += vn * ny;
-
+		turnRunning = true;
 		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
 		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
 	}
@@ -423,41 +456,45 @@ void GLScene::CollisionWithMouse(Ball& ball)
 //TODO immer erkennen oder nur wenn kein Ball sich bewegt?
 void GLScene::CollisionWithRacket(Ball& ball)
 {
-	float dist = d(racket.x, racket.y, ball.x, ball.y);
-	//std::cout << dist << std::endl;
+	if (!turnRunning) {
 
-	if (dist > 0 && dist < _ballSize * 2) {
-		const float slip = 0.1;
-		float nx, ny, tx, ty;
+		float dist = d(racket.x, racket.y, ball.x, ball.y);
+		//std::cout << dist << std::endl;
 
-		// normal
-		nx = ball.x - racket.x;
-		ny = ball.y - racket.y;
-		normalize(nx, ny);
+		if (dist > 0 && dist < _ballSize * 2) {
+			const float slip = 0.1;
+			float nx, ny, tx, ty;
 
-		// tangent pointing to the left of normal
-		tx = -ny;
-		ty = nx;
+			// normal
+			nx = ball.x - racket.x;
+			ny = ball.y - racket.y;
+			normalize(nx, ny);
 
-		//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
-		float mvx = (racket.x - racket.xLast);
-		float mvy = (racket.y - racket.yLast);
-		// relative velocity
-		float vsumx = mvx - ball.vx;
-		float vsumy = mvy - ball.vy;
+			// tangent pointing to the left of normal
+			tx = -ny;
+			ty = nx;
 
-		// coordinates in radial tangential coordinate frame
-		float vn = nx * vsumx + ny * vsumy;
-		float vt = tx * vsumx + ty * vsumy;
+			//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
+			float mvx = (racket.x - racket.xLast);
+			float mvy = (racket.y - racket.yLast);
+			// relative velocity
+			float vsumx = mvx - ball.vx;
+			float vsumy = mvy - ball.vy;
 
-		ball.x += nx * (vn + 0.1);
-		ball.y += ny * (vn + 0.1);
+			// coordinates in radial tangential coordinate frame
+			float vn = nx * vsumx + ny * vsumy;
+			float vt = tx * vsumx + ty * vsumy;
 
-		ball.vx += vn * nx;
-		ball.vy += vn * ny;
-		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
-		//TODO Rotation fixen/ausprobieren bei kö
-		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
+			ball.x += nx * (vn + 0.1);
+			ball.y += ny * (vn + 0.1);
+
+			ball.vx += vn * nx;
+			ball.vy += vn * ny;
+			turnRunning = true;
+			// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
+			//TODO Rotation fixen/ausprobieren bei kö
+			//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
+		}
 	}
 }
 //Überprüft ob sich noch Kugeln bewegen / ob schon der andere Spieler anfangen darf
@@ -472,7 +509,7 @@ bool GLScene::StillMoving()
 		if(_balls[i].exists)
 		{
 			//TODO Threshold anpassen
-			if(_balls[i].vx  + _balls[i].vy > 0.5)
+			if(_balls[i].vx  > 0.5f ||  _balls[i].vy > 0.5f)
 			{
 				return true;
 			}
@@ -490,6 +527,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 	{
 		CollisionWithWall(ball);
 		//Maus erkennung
+		CollisionWithMouse(ball);
 		for (int i = 0; i < 16; i++)
 		{
 			Ball& currentBall = _balls[i];
@@ -611,15 +649,18 @@ void GLScene::resetGame()
 	int currentPosition = 0;
 	for (int i = 0; i <= 5; i++)
 	{
-		for (int j = 1; j <= i; j++)
+		for (int j = 0; j < i; j++)
 		{
 			float yOffset = -i + (_h / 2.0f - i / 2.0f * (_ballSize * 2)); //Hälfte der Höhe, - hälfte der Anzahl der Kugeln mal die Größe der Kugeln
 
 			_balls[currentPosition].x = _w / 3.0f * 2.0f + i * _ballSize * 2; //Verschieben nach rechts von 3/4 der Width aus
-			_balls[currentPosition].y = yOffset + j * (_ballSize + 1.0f) * 2;         //Verschieben nach unten/oben
+			_balls[currentPosition].y = yOffset + (j+1) * (_ballSize + 1.0f) * 2;         //Verschieben nach unten/oben
 
 			std::cout << "x: " << _balls[currentPosition].x << " y: " << _balls[currentPosition].y << std::endl;
 			currentPosition++;
+			_balls[currentPosition].vx = 0;
+			_balls[currentPosition].vy = 0;
+			_balls[currentPosition].exists = true;
 		}
 	}
 	//swap position so black ball is middle
