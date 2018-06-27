@@ -130,6 +130,13 @@ void GLScene::updateFrame()
 			}
 		}
 
+		cv::Mat img = cam.capture();
+		det.detectCue(img);
+		racket.x = det._curr_x_1;
+		racket.y = det._curr_y_1;
+		racket.xLast = det._last_x_1;
+		racket.yLast = det._last_y_1;
+
 		updatePhysics();
 		update();
 	}
