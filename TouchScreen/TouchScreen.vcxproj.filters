@@ -15,6 +15,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Dateien</Filter>
     </ClCompile>
+    <ClCompile Include="Detection.cpp">
+      <Filter>Source Dateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_TouchScreen.h" />
@@ -22,6 +25,9 @@
       <Filter>Header Dateien</Filter>
     </ClInclude>
     <ClInclude Include="Calibration.h">
+      <Filter>Header Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="Detection.h">
       <Filter>Header Dateien</Filter>
     </ClInclude>
   </ItemGroup>
