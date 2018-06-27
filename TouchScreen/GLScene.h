@@ -7,6 +7,7 @@
 #include <QTouchEvent>
 #include <QTimer>
 #include <Camera.h>
+#include <Detection.h>
 class GLScene : public QGLWidget
 {
 
@@ -28,7 +29,7 @@ public:
 	void changeCalibrateQuestionBool(bool);
 
 protected:
-
+	Detection det;
 	Camera cam;
 	bool _calibrationrunning = false;
 	bool _calibrateQuestion = true;

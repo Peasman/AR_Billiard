@@ -1,3 +1,6 @@
+#ifndef DETECTION_H
+#define DETECTION_H
+
 #include <opencv2/opencv.hpp>
 #include "opencv2/imgproc/imgproc.hpp"
 #include <vector>
@@ -19,8 +22,10 @@ public:
 
 	void detectCue(cv::Mat img);
 	void runTest();
-	std::vector<int> analysePoints(std::vector<cv::Point> &);
+	
 private:
+	std::vector<int> analysePoints(std::vector<cv::Point> &);
 	std::string _windowName;
 };
 
+#endif
