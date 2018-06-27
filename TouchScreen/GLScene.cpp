@@ -229,9 +229,7 @@ void GLScene::paintGL()
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		std::cout << "GLScene: Schachbrett zeichnen!" << std::endl;
-
 		createChessboard();
-		cam.run();
 		return;
 		}
 	if (alreadyStarted && !_calibrationrunning)

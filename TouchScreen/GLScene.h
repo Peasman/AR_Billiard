@@ -16,7 +16,6 @@ public:
 
 	GLScene(QWidget *parent);
 
-
 	public slots:
 
 	void testPauseByInput();
@@ -30,7 +29,7 @@ public:
 
 protected:
 
-		Camera cam;
+	Camera cam;
 	bool _calibrationrunning = false;
 	bool _calibrateQuestion = true;
 	void createChessboard();

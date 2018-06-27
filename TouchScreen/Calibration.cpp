@@ -41,8 +41,8 @@ bool Calibration::run(std::list< cv::Mat > inputImages)
 		; img != inputImages.end()
 		; ++img, ++i)
 	{
-		std::cout << "CALIB: Bild run " << i+1 << " / " << inputImages.size() << std::endl;
-		
+		std::cout << "CALIB: Bild kalibrieren" << std::endl;
+		/*
 		// Zwischenspeicher fuer Eckpunkte in Bildkoordinaten
 		std::vector< cv::Point2f > pointBuffer;
 
@@ -69,7 +69,7 @@ bool Calibration::run(std::list< cv::Mat > inputImages)
 
 			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
 			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
-		}
+		}*/
 	}
 
 	// genug gute Bilder gefunden?
@@ -111,7 +111,7 @@ void Calibration::printCalibration()
 	// keine Kalibrierung -> keine Asgabe
 	if (!_calibrationValid)
 	{
-		std::cout << "Calibration is invalid." << std::endl;
+		std::cout << "CALIB: Calibration is invalid." << std::endl;
 		return;
 	}
 

@@ -3,11 +3,11 @@
 
 #include "Calibration.h"
 
+#include <QObject>
+#include <QTimer>
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-#include <QObject>
-#include <QTimer>
 
 class Camera : public QObject
 {

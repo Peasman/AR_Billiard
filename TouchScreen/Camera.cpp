@@ -24,26 +24,28 @@ Camera::Camera()
 
 Camera::~Camera(){}
 
-// Bild aufnehmen
+// Bild aufnehmen und zuruekgeben
 cv::Mat Camera::capture()
 {
 	_camera.read(img);
 	return img;
 }
-
-void Camera::run(){
+// Bild auswerten (Kalibrieren oder Erkennen)
+void Camera::run()
+{
 	if (_calibration)
 		calibrate(img);
 	else
 		eval(img);
 }
 
+// Erkennen
 void Camera::eval(cv::Mat img)
 {
 	// Moritz Methode 
 }
 
-// Image versuchen zu kalibrieren
+// Kalibrieren
 void Camera::calibrate(cv::Mat img)
 {
 	_images.push_back(img);
@@ -53,12 +55,11 @@ void Camera::calibrate(cv::Mat img)
 	{
 		std::cout << "CAM: Calibration finished" << std::endl;
 		_calibration = false;
-		//emit calibrationValid();
 	}
 	// calibration invalid then leave calibration mode
 	else{
 		std::cout << "CAM: Calibration failed" << std::endl;
-		_calibration = false;
+		//_calibration = false;
 	}
 	_images.clear();
 }
