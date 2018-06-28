@@ -4,19 +4,16 @@
 
 Camera::Camera()
 {
-	// oeffne die erste Kamera
-	
 	_camera.open(0);
 
 	if (!_camera.isOpened()){
-		std::cout << "CAM: Öffnung der Kamera fehlgeschlagen!" << std::endl;
+		std::cout << "CAM: Öffnen der Kamera fehlgeschlagen!" << std::endl;
 		std::string s;
 		//exit(0);
 		return;
 	}
 	
-	//Timer erstellt alle 16ms ein Bild
-	//std::cout << "CAM: Calibration Timer started" << std::endl;
+	//Timer erstellt alle 16ms ein Bild ab Start des Programms
 	_timer = new QTimer(this);
 	connect(_timer, SIGNAL(timeout()), this, SLOT(run()));
 	_timer->start(16);
@@ -33,22 +30,25 @@ cv::Mat Camera::capture()
 // Bild auswerten (Kalibrieren oder Erkennen)
 void Camera::run()
 {
+	// Falls _calibration durch startCalibration() == true
 	if (_calibration)
 	{
+		// Speichere Bilder in Liste
 		_camera.read(img);
 		cv::Mat dest=img.clone();
 		_images.push_back(dest);
 		std::cout << "CAM: Get image: " << _images.size() << std::endl;
 		if (_images.size() > 50)
 		{
+			// und werte diese aus
 			std::cout << "CAM: Run calibration" << std::endl;
 			_calibrationObject.run(_images);
-			if (_calibrationObject.valid())
+			if (_calibrationObject.valid())//Falls erfolgreich
 			{
 				std::cout << "CAM: Calibration finished" << std::endl;
 				_calibration = false;
 			}
-			else
+			else//Falls nicht erfolgreich
 			{
 				std::cout << "CAM: Calibration failed" << std::endl;
 				_calibration = false;

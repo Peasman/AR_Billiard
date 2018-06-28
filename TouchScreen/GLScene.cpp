@@ -97,41 +97,42 @@ void GLScene::wait(int seconds)
 
 void GLScene::updateFrame()
 {
+	//Falls _calibrateQuestion==true -> zeige beim naechsten Frame MsgBox an
 	if (_calibrateQuestion) {
 		_calibrateQuestion = false;
 		int result = MessageBox(nullptr, TEXT("Want to calibrate?"), TEXT("Message"), MB_YESNO);
 		switch (result)
 		{
 		case IDNO:
-			break;
+			return;
 		case IDYES:
 			std::cout << "GLScene: Calibration start" << std::endl;
 			cam.startCalibration();
 			return;
 		}
 	}
-	if (!cam.getCalibStatus()){
-		if (!alreadyStarted) {
-
+	if (!cam.getCalibStatus()){//Falls Kalibrierung nicht läuft
+		if (!alreadyStarted) {//und Spiel noch nicht gestartet ist
+			// -> MsgBox
 			int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
 			switch (result)
 			{
-			case IDNO:
+			case IDNO: //Ende
 				QApplication::quit();
 				break;
-			case IDYES:
+			case IDYES: //Neues Spiel starten
 				alreadyStarted = true;
 				resetGame();
 				return;
 			}
 		}
-		/*
+		/*Detection
 
 		cv::Mat img = cam.capture();
 		cv::Mat flipped;
 		cv::flip(img, flipped, 1);
 		det.detectCue(img);
-		*/
+		
 		if (det._valid){
 			invalidFrames = 0;
 			racket.x = det._curr_x_1;
@@ -159,7 +160,7 @@ void GLScene::updateFrame()
 			racket.yLast = 0;
 			racket.x2Last = 0;
 			racket.y2Last = 0;
-		}
+		}*/
 		updatePhysics();
 		update();
 	}
@@ -214,6 +215,7 @@ void GLScene::changeCalibrateQuestionBool(bool value) {
 }
 
 void GLScene::createChessboard() {
+	std::cout << "GLScene: Schachbrett zeichnen!" << std::endl;
 	bool color = true;
 	int w = this->width();
 	int h = this->height();
@@ -244,19 +246,18 @@ void GLScene::paintGL()
 	if (cam.getCalibStatus()){ // Schachbrett anzeigen/rendern
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		std::cout << "GLScene: Schachbrett zeichnen!" << std::endl;
 		createChessboard();
 		return;
 		}
 	if (alreadyStarted && !cam.getCalibStatus())
 	{ // Farbe Spielfeld GREEN
-		  // Fensterinhalt l�schen
-		glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // L�schfarbe setzen auf Billiard Pool Farbe
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer l�schen
+		  // Fensterinhalt loeschen
+		glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // Loeschfarbe setzen auf Billiard Pool Farbe
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer loeschen
 
 		// zur ModelView-Matrix wechseln
 		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity(); // Identit�tsmatrix laden
+		glLoadIdentity(); // Identitaetsmatrix laden
 
 		if (det._valid){
 			renderRacket(racket.x, racket.y, true);

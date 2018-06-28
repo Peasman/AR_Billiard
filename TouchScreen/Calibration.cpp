@@ -43,28 +43,28 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		// Zwischenspeicher fuer Eckpunkte in Bildkoordinaten
 		std::vector< cv::Point2f > pointBuffer;
 
-		cv::imshow("",*img);
+		cv::imshow("Check image", *img);
 
 		// suche das Pattern
-		//bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
+		bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
 
-		//// wurde das Pattern gefunden?
-		//if (!found)
-		//	// Nein: Ausgabe generieren
-		//	std::cout << "CALIB: Pattern nicht gefunden!" << std::endl;
-		// Ja: hier weiter
-		//else
-		//{
-		//	// Counter erhoehen
-		//	goodCount++;
-		//	// Zwischespeicher enthaelt valide Werte
-		//	// in globalen Puffer einfuegen
-		//	patternCorners.push_back(pointBuffer);
-		//	// ebenso fuer Weltkoordinaten
-		//	patternWorldBuffer.push_back(_patternWorldCoordinates);
-		//	// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
-		//	//cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
-		//}
+		// wurde das Pattern gefunden?
+		if (!found)
+			// Nein: Ausgabe generieren
+			std::cout << "CALIB: Pattern nicht gefunden!" << std::endl;
+		//Ja: hier weiter
+		else
+		{
+			// Counter erhoehen
+			goodCount++;
+			// Zwischespeicher enthaelt valide Werte
+			// in globalen Puffer einfuegen
+			patternCorners.push_back(pointBuffer);
+			// ebenso fuer Weltkoordinaten
+			patternWorldBuffer.push_back(_patternWorldCoordinates);
+			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
+//			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
+		}
 	}
 
 	// genug gute Bilder gefunden?
