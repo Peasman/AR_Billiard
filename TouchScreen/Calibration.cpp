@@ -2,10 +2,10 @@
 #include <iomanip>
 
 Calibration::Calibration()
-	: _patternWorldCoordinates(7 * 7)
+	: _patternWorldCoordinates(15 * 7)
 	, _cameraMatrix(3, 3, CV_64F)
 	, _distortionCoeffs(8, 1, CV_64F)
-	, _patternSize(7, 7)
+	, _patternSize(15,7)
 	, _calibrationValid(false)
 {
 	// erzeuge die Weltkoordinaten fuer das Kalibrierbild
@@ -14,7 +14,7 @@ Calibration::Calibration()
 	// wichtig, daher wird das Pattern eben in der xy-Ebene angenommen
 	for (int row = 0; row < 7; ++row)
 	{
-		for (int col = 0; col < 7; ++col)
+		for (int col = 0; col < 15; ++col)
 		{
 			int index = row * 7 + col;
 			_patternWorldCoordinates[index][0] = static_cast<float>(col)* 29.0f;
@@ -36,20 +36,17 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 
 	// Anzahl der Bilder, in denen das Pattern gefunden wurde
 	int goodCount = 0;
-	for (std::list < cv::Mat >::const_iterator img = inputImages.begin()
+	for (std::list < cv::Mat >::iterator img = inputImages.begin()
 		; img != inputImages.end()
 		; ++img)
 	{
 		// Zwischenspeicher fuer Eckpunkte in Bildkoordinaten
-		std::vector< cv::Point2f > pointBuffer;
-
-		cv::imshow("Check image", *img);
+		cv::Mat pointBuffer;
 
 		// suche das Pattern
-		bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
-
+		//bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
 		// wurde das Pattern gefunden?
-		if (!found)
+		if (!findChessboardCorners(*img, _patternSize, pointBuffer))
 			// Nein: Ausgabe generieren
 			std::cout << "CALIB: Pattern nicht gefunden!" << std::endl;
 		//Ja: hier weiter

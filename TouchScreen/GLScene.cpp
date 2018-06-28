@@ -217,14 +217,15 @@ void GLScene::changeCalibrateQuestionBool(bool value) {
 void GLScene::createChessboard() {
 	std::cout << "GLScene: Schachbrett zeichnen!" << std::endl;
 	bool color = true;
-	int w = this->width();
-	int h = this->height();
+	int w = _w;
+	int h = _h;
 	// Anzahl kacheln berechnen für Breite und Höhe
 	int hor, vert;
-	hor = vert = 8;
+	hor = 16;
+	vert = 8;
 	// Seitenlänge pro Kachel
-	float slh = h / hor;
-	float slw = w / vert;
+	float slh = h / vert;
+	float slw = w / hor;
 	//for each width and height draw a rectangle with a specific color
 	for (int i = 0; i < hor; ++i) {
 		for (int j = 0; j < vert; ++j) {

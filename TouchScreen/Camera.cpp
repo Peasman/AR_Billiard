@@ -37,8 +37,10 @@ void Camera::run()
 		_camera.read(img);
 		cv::Mat dest=img.clone();
 		_images.push_back(dest);
+		//cv::imshow("Check image", dest);
+
 		std::cout << "CAM: Get image: " << _images.size() << std::endl;
-		if (_images.size() > 50)
+		if (_images.size() > 0)
 		{
 			// und werte diese aus
 			std::cout << "CAM: Run calibration" << std::endl;
