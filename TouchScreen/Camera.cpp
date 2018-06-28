@@ -27,6 +27,15 @@ cv::Mat Camera::capture()
 	_camera.read(img);
 	return img;
 }
+cv::Point2f Camera::camera2world(float x, float y){
+	cv::Point2f pt(x, y);
+
+	
+
+
+	return pt;
+}
+
 // Bild auswerten (Kalibrieren oder Erkennen)
 void Camera::run()
 {
@@ -40,7 +49,7 @@ void Camera::run()
 		//cv::imshow("Check image", dest);
 
 		std::cout << "CAM: Get image: " << _images.size() << std::endl;
-		if (_images.size() > 0)
+		if (_images.size() >= 25)
 		{
 			// und werte diese aus
 			std::cout << "CAM: Run calibration" << std::endl;

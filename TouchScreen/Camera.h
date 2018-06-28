@@ -21,7 +21,8 @@ public:
 	cv::Mat capture();
 	cv::Mat img;
 
-	// Kamerahauptschleife
+	cv::Point2f camera2world(float x, float y);
+	
 	inline void startCalibration(){
 		_calibration = true;
 	}
