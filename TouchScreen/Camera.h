@@ -22,8 +22,9 @@ public:
 	cv::Mat img;
 
 	cv::Point2f camera2world(float x, float y);
-	
+
 	inline void startCalibration(){
+		std::cout << "CAM: Get image: " << std::ends;
 		_calibration = true;
 	}
 
@@ -35,12 +36,13 @@ signals:
 
 	void calibrationValid();
 
-private slots:
+	private slots:
 
 	void run();
 
 private:
 
+	int _maximgs;
 	Calibration _calibrationObject;
 	std::list< cv::Mat > _images;
 

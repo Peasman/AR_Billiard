@@ -106,6 +106,7 @@ void GLScene::updateFrame()
 		case IDNO:
 			return;
 		case IDYES:
+			std::cout << std::endl;
 			std::cout << "GLScene: Calibration start" << std::endl;
 			cam.startCalibration();
 			return;
@@ -215,7 +216,6 @@ void GLScene::changeCalibrateQuestionBool(bool value) {
 }
 
 void GLScene::createChessboard() {
-	std::cout << "GLScene: Schachbrett zeichnen!" << std::endl;
 	bool color = true;
 	int w = _w;
 	int h = _h;

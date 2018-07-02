@@ -4,41 +4,40 @@
 Calibration::Calibration()
 	: _cameraMatrix(3, 3, CV_64F)
 	, _distortionCoeffs(8, 1, CV_64F)
-	, _patternSize(15,7)
+	, _patternSize(15, 7)
 	, _calibrationValid(false)
-{
-	// erzeuge die Weltkoordinaten fuer das Kalibrierbild
-	// Kantenlänge ist 29 mm
-	// Weltkoordinaten sind nur in relativer Position der Eckpunkte
-	// wichtig, daher wird das Pattern eben in der xy-Ebene angenommen
-
-}
+{}
 
 Calibration::~Calibration(){}
 
 void Calibration::run(std::list< cv::Mat >& inputImages)
 {
+	int _idximg = 0;
+	// erzeuge die Weltkoordinaten fuer das Kalibrierbild
+	// Kantenlänge ist 29 mm
+	// Weltkoordinaten sind nur in relativer Position der Eckpunkte
+	// wichtig, daher wird das Pattern eben in der xy-Ebene angenommen
 	float a = 29.0f;
 	for (int y = 0; y < 7; y++){
 		for (int x = 0; x < 15; x++){
 			// static_cast<float>()?
-			_patternWorldCoordinates.push_back(cv::Point3f(x*a, y*a, 0));
+			_patternWorldCoordinates.push_back(cv::Point3f(x*a, y*a, 0)); //z = 0
 		}
 	}
 
 	/*
 	for (int row = 0; row < 7; ++row)
 	{
-		for (int col = 0; col < 15; ++col)
-		{
-			cv::Vec3f vec;
-			int index = row * 7 + col;
-			vec[0] = static_cast<float>(col)* 29.0f;
-			vec[1] = static_cast<float>(row)* 29.0f;
-			vec[2] = 0.0f;
+	for (int col = 0; col < 15; ++col)
+	{
+	cv::Vec3f vec;
+	int index = row * 7 + col;
+	vec[0] = static_cast<float>(col)* 29.0f;
+	vec[1] = static_cast<float>(row)* 29.0f;
+	vec[2] = 0.0f;
 
-			_patternWorldCoordinates.push_back(vec);
-		}
+	_patternWorldCoordinates.push_back(vec);
+	}
 	}*/
 	// Speicher fuer die Patterneckpunkte in Bildkoordinaten (object)
 	std::vector< std::vector< cv::Point2f > > patternCorners;
@@ -54,20 +53,18 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 	{
 		// Zwischenspeicher fuer Eckpunkte in Bildkoordinaten
 		std::vector< cv::Point2f > pointBuffer;
-		cv:: Mat pointBuf;
+		cv::Mat pointBuf;
 		bool found = actually_findChessboardCorners(*img, _patternSize, pointBuf, 0);
-			//cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
+		//cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
 
 		pointBuffer.assign((cv::Point2f*)pointBuf.datastart, (cv::Point2f*)pointBuf.dataend);
-		// suche das Pattern
+		// aktuelles Image-Index erhoehen
+		_idximg++;
 		// wurde das Pattern gefunden?
 		if (!found)
-			// Nein: Ausgabe generieren
-			std::cout << "CALIB: Pattern nicht gefunden!" << std::endl;
-		//Ja: hier weiter
+			std::cout << "CALIB: " << _idximg << " / " << inputImages.size() << " Pattern NICHT gefunden" << std::endl;
 		else
 		{
-			// Counter erhoehen
 			goodCount++;
 			// Zwischespeicher enthaelt valide Werte
 			// in globalen Puffer einfuegen
@@ -75,15 +72,14 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 			// ebenso fuer Weltkoordinaten
 			patternWorldBuffer.push_back(_patternWorldCoordinates);
 			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
-//			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
+			//			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
 		}
 	}
 
 	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
-		// schalte die Kalibrierung gueltig
-		_calibrationValid = true;
+		std::cout << "CALIB: Pattern gefunden -> Undistortion .." << std::endl;
 		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
@@ -94,40 +90,41 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		cv::Point2f upperLeftPt = patternCorners[0][0];
 		cv::Point2f lowerRightPt = patternCorners[0][(15 * 7) - 1];
 
-		std::cout << "Distorted: " << std::endl;
-		std::cout << "Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
-		std::cout << "Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
- 
-		std::cout << "Undistorted: " << std::endl;
+		std::cout << "CALIB: Distorted: " << std::endl;
+		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
+		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
 
 		upperLeftPt = undistortPoint(upperLeftPt);
 		lowerRightPt = undistortPoint(lowerRightPt);
-		std::cout << "Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
-		std::cout << "Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
 
+		std::cout << "CALIB: Undistorted: " << std::endl;
+		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
+		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
+
+		// schalte die Kalibrierung gueltig
+		_calibrationValid = true;
 	}
 	// nicht genug Daten -> keine gueltige Kalibrierung
 	else
-		std::cout << "CALIB: Nicht genug gute Bilder gefunden!" << std::endl;
+	{
+		std::cout << "CALIB: Nicht genug gute Bilder gefunden" << std::endl;
+	}
 }
 bool Calibration::actually_findChessboardCorners(cv::Mat& frame, cv::Size& size, cv::Mat& corners, int flags) {
 	int count = size.area();
 	corners.create(count, 1, CV_32FC2);
 	CvMat _image = frame;
-	bool ok = cvFindChessboardCorners(&_image, size,
-		reinterpret_cast<CvPoint2D32f*>(corners.data),
-		&count, flags) > 0;
-	return ok;
+	return cvFindChessboardCorners(&_image, size, reinterpret_cast<CvPoint2D32f*>(corners.data), &count, flags) > 0;
 }
 
 cv::Point2f Calibration::undistortPoint(cv::Point2f point){
 
-	std::vector<cv::Point2f> pts;
-	pts.push_back(point);
+	std::vector<cv::Point2f> in;
+	in.push_back(point);
 
 	std::vector<cv::Point2f> out;
 
-	cv::undistortPoints(pts, out, _cameraMatrix, _distortionCoeffs);
+	cv::undistortPoints(in, out, _cameraMatrix, _distortionCoeffs);
 
 	return *(out.begin());
 }

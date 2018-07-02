@@ -42,7 +42,7 @@ private:
 	// extrinsische Kalibrierung fuer jedes einzelne Bild
 	std::vector< cv::Mat> _rvecs    // Rotation
 		, _tvecs;   // Translation
-	
+
 	cv::vector< cv::Point2f> corners;
 
 
