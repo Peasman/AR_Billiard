@@ -8,16 +8,13 @@
 #include <math.h>
 #include <GL\glut.h>
 #include <time.h>
-#include "TouchScreen.h"
-#include "Qlabel"
-#include <qlabel.h>
-#include <string>
-#include <QString>
 
 const float GLScene::eps = 0.01;
-GLScene::GLScene(QWidget *parent): QGLWidget(parent), _timerPeriod(4), _gameInit(60)
+GLScene::GLScene(QWidget *parent)
+	: QGLWidget(parent), _timerPeriod(4), _gameInit(60)
 {
 	setAttribute(Qt::WA_AcceptTouchEvents);
+
 	_shrtReset = new QShortcut(QKeySequence("Ctrl+R"), this);
 	connect(_shrtReset, SIGNAL(activated()), this, SLOT(resetGame()));
 
@@ -25,39 +22,12 @@ GLScene::GLScene(QWidget *parent): QGLWidget(parent), _timerPeriod(4), _gameInit
 	connect(_timer, SIGNAL(timeout()), this, SLOT(updateFrame()));
 
 	_timer->start(_timerPeriod);
-	addLabel();
-	// initialize physics struct with zero
-	//resetGame();
 }
-
 //TODO ?
 void initGame()
 {
 
 }
-
-//TouchScreen test;
-int GLScene::GetCurrentPlayer(){
-	return currentPlayer;
-}
-
-
-void GLScene::addLabel(){
-	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(GetPlayer(0).ballType);
-	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
-	std::cout <<" QLABEL: " << inputCurrentPlayer.toStdString() << std::endl;
-	_currentPlayerLabel->setGeometry(QRect(300, 380, 100, 25));
-
-	//QColor bg_color(0.0f, 0.4f, 0.0f, 1.0f);
-	QPalette sample_palette;
-	sample_palette.setColor(QPalette::Background, QColor::fromRgb(0.0f, 0.4f, 0.0f, 1.0f));
-	sample_palette.setColor(QPalette::WindowText, Qt::white);
-	QWidget::setAttribute(Qt::WA_TranslucentBackground);
-
-	_currentPlayerLabel->setAutoFillBackground(true);
-	_currentPlayerLabel->setPalette(sample_palette);
-}
-
 bool alreadyStarted = false;
 bool isMouseEnable = false;
 
@@ -65,65 +35,15 @@ bool isMouseEnable = false;
 void GLScene::enableMouse(bool isEnable) {
 	isMouseEnable = isEnable;
 }
-
 //========================================================================================
 // Event für das Drücken einer Maustaste
 //========================================================================================
 void GLScene::mousePressEvent(QMouseEvent *event)
 {
-	addLabel();
 	if (!isMouseEnable) {
 		currentPos = event->pos();
 	}
 }
-
-/*
-bool _initballType = false;
-void GLScene::updateLabel(){
-	std::cout << "KLICKKLICKKLICK" << std::endl;
-	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(GetPlayer(GetCurrentPlayer()).ballType);
-
-	_currentPlayerLabel->setText(inputCurrentPlayer);
-
-
-	if (!_initballType){
-		std::cout << "INITIALBALLTYPE IST REIN GEGANGEN " << std::endl;
-		initialBallTyp();
-		_initballType = true;
-	}
-}
-
-void GLScene::addLabel(){
-
-	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(GetPlayer(0).ballType);
-	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
-	_currentPlayerLabel->setGeometry(QRect(300, 80, 100, 25));
-
-}
-
-void GLScene::initialBallTyp(){
-	bool i = GetPlayer(GetCurrentPlayer()).ballType;
-	if (i == true){
-		QString inputHalf = "BallType of Player1: FULL";
-		_playerHalf = new QLabel(inputHalf, this);
-		_playerHalf->setGeometry(QRect(400, 80, 150, 25));
-
-		QString inputFull = "BallType of Player2: Half ";
-		_playerFull = new QLabel(inputFull, this);
-		_playerFull->setGeometry(QRect(550, 80, 150, 25));
-	}
-	if (i == false){
-		QString inputHalf = "BallType of Player1: Half";
-		_playerHalf = new QLabel(inputHalf, this);
-		_playerHalf->setGeometry(QRect(400, 80, 150, 25));
-
-		QString inputFull = "BallType of Player2: Full ";
-		_playerFull = new QLabel(inputFull, this);
-		_playerFull->setGeometry(QRect(550,80, 150, 25));
-	}
-}
-*/
-
 //========================================================================================
 // Event für Mausbewegungen
 //========================================================================================
@@ -136,7 +56,6 @@ void GLScene::mouseMoveEvent(QMouseEvent *event)
 		currentPos = QPoint(currentx, currenty);
 	}
 }
-
 //========================================================================================
 // Event für das Loslassen einer Maustaste
 //========================================================================================
@@ -146,12 +65,6 @@ void GLScene::mouseReleaseEvent(QMouseEvent *event)
 
 	}
 }
-
-GLScene::Player GLScene::GetPlayer(int num)
-{
-	return players[num];
-}
-
 void GLScene::startGame(bool gameStarted) {
 	if (!alreadyStarted) {
 
@@ -216,38 +129,38 @@ void GLScene::updateFrame()
 		}
 		/*Detection
 
-
 		cv::Mat img = cam.capture();
 		cv::Mat flipped;
 		cv::flip(img, flipped, 1);
 		det.detectCue(img);
+
 		if (det._valid){
-			invalidFrames = 0;
-			racket.x = det._curr_x_1;
-			racket.y = det._curr_y_1;
-			racket.x2 = det._curr_x_2;
-			racket.y2 = det._curr_y_2;
-			racket.xLast = det._last_x_1;
-			racket.yLast = det._last_y_1;
-			racket.x2Last = det._last_x_2;
-			racket.y2Last = det._last_y_2;
+		invalidFrames = 0;
+		racket.x = det._curr_x_1;
+		racket.y = det._curr_y_1;
+		racket.x2 = det._curr_x_2;
+		racket.y2 = det._curr_y_2;
+		racket.xLast = det._last_x_1;
+		racket.yLast = det._last_y_1;
+		racket.x2Last = det._last_x_2;
+		racket.y2Last = det._last_y_2;
 		}
 		else
 		{
-			invalidFrames++;
+		invalidFrames++;
 		}
 		if (invalidFrames > maxInvalidFrames)
 		{
-			racket.vx = 0;
-			racket.vy = 0;
-			racket.x = 0;
-			racket.y = 0;
-			racket.x2 = 0;
-			racket.y2 = 0;
-			racket.xLast = 0;
-			racket.yLast = 0;
-			racket.x2Last = 0;
-			racket.y2Last = 0;
+		racket.vx = 0;
+		racket.vy = 0;
+		racket.x = 0;
+		racket.y = 0;
+		racket.x2 = 0;
+		racket.y2 = 0;
+		racket.xLast = 0;
+		racket.yLast = 0;
+		racket.x2Last = 0;
+		racket.y2Last = 0;
 		}*/
 		updatePhysics();
 		update();
@@ -283,7 +196,7 @@ void GLScene::resizeGL(int w, int h)
 	_holeSize = _ballSize * 2;
 	for (int i = 0; i < 16; i++) {
 		Ball &ball = _balls[i];
-		ball.x = ball.x * scaleW ;
+		ball.x = ball.x * scaleW;
 		ball.y = ball.y * scaleW *0.5f;
 	}
 	for (int i = 0; i < 6; i++) {
@@ -336,17 +249,16 @@ void GLScene::paintGL()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		createChessboard();
 		return;
-		}
+	}
 	if (alreadyStarted && !cam.getCalibStatus())
 	{ // Farbe Spielfeld GREEN
-		  // Fensterinhalt loeschen
+		// Fensterinhalt loeschen
 		glClearColor(0.0f, 0.4f, 0.0f, 1.0f);               // Loeschfarbe setzen auf Billiard Pool Farbe
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Farb und Tiefenpuffer loeschen
 
 		// zur ModelView-Matrix wechseln
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity(); // Identitaetsmatrix laden
-
 
 		if (det._valid){
 			renderRacket(racket.x, racket.y, true);
@@ -386,7 +298,6 @@ void GLScene::initHoles() {
 		}
 	}
 }
-
 void GLScene::updateBallVelocity(Ball& ball)
 {
 
@@ -402,7 +313,6 @@ void GLScene::updateBallVelocity(Ball& ball)
 	ball.vy *= friction;
 	ball.omega *= rfriction;
 }
-
 void GLScene::CollisionWithHole(Ball& ball)
 {
 	for (int i = 0; i < 6; i++) {
@@ -415,56 +325,19 @@ void GLScene::CollisionWithHole(Ball& ball)
 			// Kugel verschwinden lassen
 			ball.exists = false;
 			//Wenn die Schwarze Kugel im Loch landet
-			if(ball.color == Color::Black)
+			if (ball.color == Color::Black)
 			{
-				if(VerifyWin())
+				if (VerifyWin())
 				{
 					std::cout << "Schwarze Kugel von Spieler " << currentPlayer << " und dadurch gewonnen! " << std::endl;
 
-					std::string curPlayer = std::to_string(currentPlayer);
-					std::string player = std::string("Player: ");
-					std::string hasWon = std::string(" has WON!");
-					std::string mixed = std::string(player + curPlayer + hasWon);
-					MessageBoxA(NULL, mixed.c_str(), "WON!", MB_OK);
-
-					int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
-					switch (result)
-					{
-					case IDNO:
-						QApplication::quit();
-						break;
-					case IDYES:
-
-						alreadyStarted = true;
-						resetGame();
-						break;
-					}
-
 					//TODO Win currentPlayer
-				} else
+				}
+				else
 				{
 					std::cout << "Schwarze Kugel von Spieler " << currentPlayer << " und dadurch verloren... " << std::endl;
-					
-					std::string curPlayer = std::to_string(currentPlayer);
-					std::string player = std::string("Player: ");
-					std::string hasWon = std::string(" has LOST!");
-					std::string mixed = std::string(player + curPlayer + hasWon);
-					MessageBoxA(NULL, mixed.c_str(), "LOST!", MB_OK);
 
 					//TODO Lose currentPlayer
-					int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
-					switch (result)
-					{
-					case IDNO:
-						QApplication::quit();
-						break;
-					case IDYES:
-
-						alreadyStarted = true;
-						resetGame();
-						break;
-					}
-
 				}
 			}
 			if (ball.color == Color::White) {
@@ -489,21 +362,19 @@ void GLScene::CollisionWithHole(Ball& ball)
 			{
 				//TODO Ja Dann Spieler weiterhin dran
 				std::cout << "Getroffen von Spieler " << currentPlayer << std::endl;
-
 				again = true;
 			}
 			else
 			{
-				std::cout << "Getroffen! Aber falsche Art von Spieler " << currentPlayer <<std::endl;
+				std::cout << "Getroffen! Aber falsche Art von Spieler " << currentPlayer << std::endl;
 				definitlyNotAgain = true;
 				//Nein dann nächster Spieler 
 				//TODO Listener für PlayerWechsel DIKO
-				currentPlayer = (currentPlayer + 1) % 2;
+				//currentPlayer = (currentPlayer + 1) % 2;
 			}
 		}
 	}
 }
-
 //Check wenn die Schwarze Kugel eingelocht wurde ob gewonnen oder verloren wurde.
 bool GLScene::VerifyWin()
 {
@@ -527,7 +398,6 @@ void GLScene::nextPlayer() {
 		}
 	}
 }
-
 bool GLScene::BallTypeStillExists(bool ballType)
 {
 	//Alle Kuglen außer der Weißen und Schwarzen
@@ -537,7 +407,7 @@ bool GLScene::BallTypeStillExists(bool ballType)
 		if (_balls[i].full == ballType)
 		{
 			return true;
-		} 
+		}
 	}
 	return false;
 }
@@ -578,7 +448,6 @@ void GLScene::CollisionWithWall(Ball& ball) {
 	}
 
 }
-
 //Kollisionserkennung für die Maus
 void GLScene::CollisionWithMouse(Ball& ball)
 {
@@ -619,82 +488,46 @@ void GLScene::CollisionWithMouse(Ball& ball)
 		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
 	}
 }
-
 //Kollisionserkennung für den Kö
 //TODO immer erkennen oder nur wenn kein Ball sich bewegt?
 void GLScene::CollisionWithRacket(Ball& ball, bool other)
-{	
+{
 	float x = (other) ? racket.x2 : racket.x;
 	float y = (other) ? racket.y2 : racket.y;
 	float xLast = (other) ? racket.x2Last : racket.xLast;
 	float yLast = (other) ? racket.y2Last : racket.yLast;
-	
-	float dist = d(x, y, ball.x, ball.y);
-	//std::cout << dist << std::endl;
 
-	float dx = x - xLast;
-	float dy = y - yLast;
 
-	float dxs = dx * dx;
-	float dys = dy * dy;
+	// d = xy - xyLast # direction vector from xyLast to xy
+	// f = xyLast - center # direction vector from center to xyLast
+	float dx = xLast - x, dy = yLast - y;
+	float fx = xLast - ball.x, fy = yLast - ball.y;
 
-	float cx = ball.x - xLast;
-	float cy = ball.y - yLast;
+	// a = np.dot(d, d)
+	// b = 2 * np.dot(d, f)
+	// c = np.dot(f, f) - radius**2
+	// dis = b**2 - 4 * a*c
 
-	float dem = ((cx / dx) * (cx / dx)) - (cx * cx - _ballSize * _ballSize) / dxs;
-	if (dem > 0){
-		float s1 = -cx / dxs + sqrt(dem);
-		float s2 = -cx / dxs - sqrt(dem);
+	float a = dot(dx, dy, dx, dy);
+	float b = 2 * dot(dx, dy, fx, fy);
+	float c = dot(fx, fy, fx, fy) - _ballSize;
 
-		float s = (s1 > s2) ? s2 : s1;
+	float dis = b*b - 4 * a * c;
 
-		if (s < 1){
-			x = xLast + s * dx;
-			y = yLast + s * dy;
-
-			const float slip = 0.1;
-			float nx, ny, tx, ty;
-
-			// normal
-			nx = ball.x - x;
-			ny = ball.y - y;
-			normalize(nx, ny);
-
-			// tangent pointing to the left of normal
-			tx = -ny;
-			ty = nx;
-
-			//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
-			float mvx = (x - xLast);
-			float mvy = (y - yLast);
-			// relative velocity
-			float vsumx = mvx - ball.vx;
-			float vsumy = mvy - ball.vy;
-
-			// coordinates in radial tangential coordinate frame
-			float vn = nx * vsumx + ny * vsumy;
-			float vt = tx * vsumx + ty * vsumy;
-
-			ball.x += nx * (vn + 0.1);
-			ball.y += ny * (vn + 0.1);
-
-			ball.vx += vn * nx;
-			ball.vy += vn * ny;
-		}
+	if (dis < 0){
+		// no collision
+		return;
 	}
-
-	
-
-
-
-
-	//dx^2 + dy^2 = r^2
-
-	// gerade = (x,y) + t * (dx, dy)
+	dis = sqrt(dis);
+	float t1 = (-b - dis) / (2 * a); // always the first point
+	float t2 = (-b + dis) / (2 * a);
 
 
-	/* old collision
-	if (dist > 0 && dist < _ballSize * 2) {
+	if (t1 >= 0 && t1 <= 1){
+		// calculate collision point
+		x = xLast + t1 * dx;
+		y = yLast + t1 * dy;
+
 		const float slip = 0.1;
 		float nx, ny, tx, ty;
 
@@ -721,28 +554,42 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 		ball.x += nx * (vn + 0.1);
 		ball.y += ny * (vn + 0.1);
 
-		ball.vx += vn * nx;
-		ball.vy += vn * ny;
-    turnRunning = true;
-		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
-		//TODO Rotation fixen/ausprobieren bei kö
-		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
-	}*/
+		ball.vx += t1 * vn * nx;
+		ball.vy += t1 * vn * ny;
+		turnRunning = true;
+		if (t2 > 1){
+			// Poke
+		}
+		else{
+			// Impale
+		}
+	}
+	else if (t2 >= 0 && t2 <= 1){
+		// Exit Wound
+	}
+	else{
+		// FallShort, Past, CompletelyInside"
+	}
+
+
+	// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
+	//TODO Rotation fixen/ausprobieren bei kö
+	//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
 }
 
 //Überprüft ob sich noch Kugeln bewegen / ob schon der andere Spieler anfangen darf
 /*
- * Gibt False zurück wenn sich keine Kugel mehr bewegt.True wenn sich noch mindestens eine bewegt
- * Kugeln die nicht mehr im Spiel sind werden ignoriert
- */
+* Gibt False zurück wenn sich keine Kugel mehr bewegt.True wenn sich noch mindestens eine bewegt
+* Kugeln die nicht mehr im Spiel sind werden ignoriert
+*/
 bool GLScene::StillMoving()
 {
-	for(int i = 0; i <16;i++)
+	for (int i = 0; i <16; i++)
 	{
-		if(_balls[i].exists)
+		if (_balls[i].exists)
 		{
 			//TODO Threshold anpassen
-			if(_balls[i].vx  > 0.5f ||  _balls[i].vy > 0.5f)
+			if (_balls[i].vx  > 0.5f || _balls[i].vy > 0.5f)
 			{
 				return true;
 			}
@@ -750,7 +597,6 @@ bool GLScene::StillMoving()
 	}
 	return false;
 }
-
 void GLScene::updateBallCollision(Ball& ball, int index)
 {
 
@@ -805,16 +651,15 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 
 		}
 		//TODO Checken ob das so funzt (Nur Kollision mit weißer kugel möglich/ keine Fouls in dem Sinne möglich
-		if(!StillMoving() && ball.color == Color::White)
+		if (!StillMoving() && ball.color == Color::White)
 		{
-			if (invalidFrames < maxInvalidFrames){ 
+			if (invalidFrames < maxInvalidFrames){
 				CollisionWithRacket(ball, false);
 				CollisionWithRacket(ball, true);
 			}
 		}
 	}
 }
-
 void GLScene::updatePhysics()
 {
 	const float friction = 0.9999;
@@ -833,7 +678,6 @@ void GLScene::updatePhysics()
 
 
 }
-
 void GLScene::initStandardBalls()
 {
 	loadTexture();
@@ -874,9 +718,6 @@ void GLScene::initStandardBalls()
 
 void GLScene::resetGame()
 {
-	players[0].num = 1;
-	players[1].num = 2;
-
 	//_balls.clear();
 	if (!alreadyStarted) {
 		initStandardBalls();
@@ -896,7 +737,7 @@ void GLScene::resetGame()
 			float yOffset = -i + (_h / 2.0f - i / 2.0f * (_ballSize * 2)); //Hälfte der Höhe, - hälfte der Anzahl der Kugeln mal die Größe der Kugeln
 
 			_balls[currentPosition].x = _w / 3.0f * 2.0f + i * _ballSize * 2; //Verschieben nach rechts von 3/4 der Width aus
-			_balls[currentPosition].y = yOffset + (j+1) * (_ballSize + 1.0f) * 2;         //Verschieben nach unten/oben
+			_balls[currentPosition].y = yOffset + (j + 1) * (_ballSize + 1.0f) * 2;         //Verschieben nach unten/oben
 
 			std::cout << "x: " << _balls[currentPosition].x << " y: " << _balls[currentPosition].y << std::endl;
 			currentPosition++;
@@ -931,8 +772,8 @@ void GLScene::resetGame()
 	racket.y2Last = 0;
 }
 
-
 //Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
+
 void GLScene::loadTexture() {
 	//GLuint texture;
 	int width, height, fullwidth, fullheight;
@@ -985,7 +826,6 @@ void GLScene::loadTexture() {
 	free(data);
 
 }
-
 void GLScene::renderHole(Hole const &hole) {
 	GLfloat vertex[4];
 	GLfloat texcoord[2];
@@ -1081,8 +921,8 @@ void GLScene::renderRacket(float x, float y, bool other){
 	glVertex3f(0.0f, 0.0f, 0.0f);
 	for (int i = 0; i <= k; ++i)
 	{
-		float x = cos((delta_angle * static_cast<float>(i)))*_ballSize/4;
-		float y = sin((delta_angle * static_cast<float>(i)))*_ballSize/4;
+		float x = cos((delta_angle * static_cast<float>(i)))*_ballSize / 4;
+		float y = sin((delta_angle * static_cast<float>(i)))*_ballSize / 4;
 		glVertex3f(x, y, 0.0f);
 	}
 	glEnd();
