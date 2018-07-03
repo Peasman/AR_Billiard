@@ -1,6 +1,7 @@
 #include "Camera.h"
 
 #include <iostream>
+#include <GL\glut.h>
 
 Camera::Camera()
 {
@@ -61,7 +62,7 @@ void Camera::run()
 				std::cout << std::endl;
 				_calibration = false; //Beende Calibration
 			}
-			else//Falls nicht erfolgreich
+			else// Falls nicht erfolgreich
 			{
 				std::cout << "CAM: Calibration failed, try again .." << std::endl;
 				std::cout << std::endl;

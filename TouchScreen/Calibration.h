@@ -1,11 +1,8 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
-
 #include <opencv2\opencv.hpp>
 #include <list>
-
-
 
 class Calibration
 {
@@ -22,8 +19,6 @@ public:
 	cv::Point2f undistortPoint(cv::Point2f point);
 	// Ausgabe der Kalibrierung auf der Konsole
 	void printCalibration();
-
-
 	// Zustand der Kalibrierung veroeffentlichen
 	inline bool valid() const { return _calibrationValid; }
 
@@ -41,10 +36,9 @@ private:
 
 	// extrinsische Kalibrierung fuer jedes einzelne Bild
 	std::vector< cv::Mat> _rvecs    // Rotation
-		, _tvecs;   // Translation
+						, _tvecs;   // Translation
 
 	cv::vector< cv::Point2f> corners;
-
 
 	// die Anzahl der Eckpunkte im Kalibrierpattern
 	cv::Size _patternSize;

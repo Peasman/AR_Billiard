@@ -2,7 +2,6 @@
 #define CAMERA_H
 
 #include "Calibration.h"
-
 #include <QObject>
 #include <QTimer>
 #include <opencv2/opencv.hpp>
@@ -18,6 +17,7 @@ public:
 	Camera();
 	~Camera();
 
+	void setupCam();
 	cv::Mat capture();
 	cv::Mat img;
 

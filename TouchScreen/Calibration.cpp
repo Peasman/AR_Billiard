@@ -58,11 +58,12 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		//cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
 
 		pointBuffer.assign((cv::Point2f*)pointBuf.datastart, (cv::Point2f*)pointBuf.dataend);
-		// aktuelles Image-Index erhoehen
-		_idximg++;
 		// wurde das Pattern gefunden?
-		if (!found)
+		if (!found){
+			// aktuelles Image-Index erhoehen
+			_idximg++;
 			std::cout << "CALIB: " << _idximg << " / " << inputImages.size() << " Pattern NICHT gefunden" << std::endl;
+		}
 		else
 		{
 			goodCount++;
@@ -79,7 +80,7 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
-		std::cout << "CALIB: Pattern gefunden -> Undistortion .." << std::endl;
+		std::cout << "CALIB: " << ++_idximg << " / " << inputImages.size() << " Pattern gefunden -> Undistortion .." << std::endl;
 		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
@@ -117,8 +118,8 @@ bool Calibration::actually_findChessboardCorners(cv::Mat& frame, cv::Size& size,
 	return cvFindChessboardCorners(&_image, size, reinterpret_cast<CvPoint2D32f*>(corners.data), &count, flags) > 0;
 }
 
-cv::Point2f Calibration::undistortPoint(cv::Point2f point){
-
+cv::Point2f Calibration::undistortPoint(cv::Point2f point)
+{
 	std::vector<cv::Point2f> in;
 	in.push_back(point);
 
