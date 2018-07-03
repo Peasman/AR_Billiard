@@ -12,7 +12,7 @@
 #include <QLabel>
 #include <Camera.h>
 #include "TouchScreen.h"
-
+#include <Detection.h>
 class GLScene : public QGLWidget
 {
 
@@ -31,6 +31,7 @@ public:
 	int GetCurrentPlayer();
 	QLabel *_currentPlayerLabel;
 
+
 public slots:
 
 	void testPauseByInput();
@@ -43,10 +44,12 @@ public slots:
 	void addLabel();
 
 protected:
+	Detection det;
 	Camera cam;
 	bool _calibrationrunning = false;
 	bool _calibrateQuestion = true;
 	void createChessboard();
+	bool gocalib = false;
 
 	QPoint currentPos; // erste Mausposition
 	QPoint lastPos; // letzte Mausposition

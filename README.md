@@ -1,1 +1,1 @@
-Friedemann ist nen nab
+Super-duper Augmented Reality Billiard!

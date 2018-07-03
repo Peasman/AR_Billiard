@@ -1,7 +1,5 @@
 #include "Calibration.h"
-
 #include <iomanip>
-
 
 Calibration::Calibration()
 	: _patternWorldCoordinates(7 * 7)
@@ -26,14 +24,9 @@ Calibration::Calibration()
 	}
 }
 
+Calibration::~Calibration(){}
 
-Calibration::~Calibration()
-{}
-
-
-
-
-void Calibration::run(std::list< cv::Mat > inputImages)
+bool Calibration::run(std::list< cv::Mat > inputImages)
 {
 	// Speicher fuer die Patterneckpunkte in Bildkoordinaten
 	std::vector< std::vector< cv::Point2f > > patternCorners;
@@ -48,6 +41,8 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 		; img != inputImages.end()
 		; ++img, ++i)
 	{
+		std::cout << "CALIB: Bild run " << i+1 << " / " << inputImages.size() << std::endl;
+		
 		// Zwischenspeicher fuer Eckpunkte in Bildkoordinaten
 		std::vector< cv::Point2f > pointBuffer;
 
@@ -62,7 +57,6 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 		// Ja: hier weiter
 		else
 		{
-
 			std::cout << "CALIB: Muster gefunden" << std::endl;
 			// Counter erhoehen
 			goodCount++;
@@ -76,13 +70,11 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
 			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
 		}
-
 	}
 
 	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
-
 		std::cout << "CALIB: Gute bilder gefunden" << std::endl;
 		// schalte die Kalibrierung gueltig
 		_calibrationValid = true;
@@ -93,15 +85,14 @@ void Calibration::run(std::list< cv::Mat > inputImages)
 
 		// Kalibrierung durchfuehren
 		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs, 0);
-
+		return true;
 	}
 	else{
 		// nicht genug Daten -> keine gueltige Kalibrierung
 		std::cout << "CALIB: Nicht genug Daten gefunden!" << std::endl;
+		return false;
 	}
 }
-
-
 
 cv::Mat Calibration::undistort(cv::Mat img)
 {
@@ -115,18 +106,14 @@ cv::Mat Calibration::undistort(cv::Mat img)
 	return result;
 }
 
-
-
 void Calibration::printCalibration()
 {
-
 	// keine Kalibrierung -> keine Asgabe
 	if (!_calibrationValid)
 	{
 		std::cout << "Calibration is invalid." << std::endl;
 		return;
 	}
-
 
 	// Kameramatrix ausgeben
 	std::cout << "Camera Matrix:" << std::endl;
@@ -141,7 +128,6 @@ void Calibration::printCalibration()
 		std::cout << std::endl;
 	}
 
-
 	// Radiale Verzerrung ausgeben
 	std::cout << "radial distortion" << std::endl;
 	for (int i = 0; i < _distortionCoeffs.rows; ++i)
@@ -151,12 +137,10 @@ void Calibration::printCalibration()
 	}
 	std::cout << std::endl;
 
-
 	// tangentiale Verzerrung ausgeben
 	std::cout << "tangential distortion: " << std::endl;
 	std::cout << std::setw(14) << _distortionCoeffs.ptr< double >(2)[0]
 		<< std::setw(14) << _distortionCoeffs.ptr< double >(3)[0] << std::endl;
-
 
 	// extrinsische Kalibrierung ausgeben
 	for (size_t t = 0; t < _rvecs.size(); ++t)

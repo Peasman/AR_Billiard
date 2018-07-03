@@ -55,17 +55,13 @@ void Detection::detectCue(cv::Mat imageOriginal){
 
 	// calculate distances of current point to last points
 	double dx = (_last_x_1 - pt1.x) * (_last_x_1 - pt1.x);
-	double dy = (_last_y_1 - pt1.x) * (_last_y_1 - pt1.x);
+	double dy = (_last_y_1 - pt1.y) * (_last_y_1 - pt1.y);
 	double dist1_1 = sqrt(dx + dy);
 	//double dist1_2 = (last_x_2 - pt1.x) * (last_x_2 - pt1.x) + (last_y_2 - pt1.x) * (last_y_2 - pt1.x);
 	dx = (_last_x_1 - pt2.x) * (_last_x_1 - pt2.x);
-	dy = (_last_y_1 - pt2.x) * (_last_y_1 - pt2.x);
+	dy = (_last_y_1 - pt2.y) * (_last_y_1 - pt2.y);
 	double dist2_1 = sqrt(dx + dy);
 	//double dist2_2 = (last_x_1 - pt2.x) * (last_x_1 - pt2.x) + (last_y_1 - pt2.x) * (last_y_1 - pt2.x);
-
-	std::cout << "Detection: p1(" << pt1.x << ", " << pt1.y << "), pt2(" << pt2.x << ", " << pt2.y << ")" << std::endl;
-	std::cout << "Last: p1(" << _last_x_1 << ", " << _last_y_1 << "), pt2(" << _last_x_2 << ", " << _last_y_1 << ")" << std::endl;
-	std::cout << "Dist 1 to 1: " << dist1_1 << ", Dist 2 to 1: " << dist2_1 << std::endl;
 
 	// check which of the points is closer to last point #1 
 	if (dist1_1 < dist2_1){

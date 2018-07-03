@@ -18,6 +18,11 @@ public:
 	Camera();
 	~Camera();
 
+	cv::Mat capture();
+	cv::Mat img;
+
+	void run();
+
 	inline bool getCalib(){
 		return _calibration;
 	}
@@ -25,7 +30,6 @@ public:
 	// Kamerahauptschleife
 	inline void startCalibration(){
 		_calibration = true;
-		std::cout << "CAM: Calibration from Image start until finish" << std::endl;
 	}
 
 signals:
@@ -33,8 +37,6 @@ signals:
 	void calibrationValid();
 
 private slots:
-
-	void capture();
 
 private:
 
