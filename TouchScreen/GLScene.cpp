@@ -332,12 +332,50 @@ void GLScene::CollisionWithHole(Ball& ball)
 					std::cout << "Schwarze Kugel von Spieler " << currentPlayer << " und dadurch gewonnen! " << std::endl;
 
 					//TODO Win currentPlayer
+					std::string curPlayer = std::to_string(currentPlayer);
+					std::string player = std::string("Player: ");
+					std::string hasWon = std::string(" has WON!");
+					std::string mixed = std::string(player + curPlayer + hasWon);
+					MessageBoxA(NULL, mixed.c_str(), "WON!", MB_OK);
+
+					int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+					switch (result)
+					{
+					case IDNO:
+						QApplication::quit();
+						break;
+					case IDYES:
+
+						alreadyStarted = true;
+						resetGame();
+						break;
+					}
+
 				}
 				else
 				{
 					std::cout << "Schwarze Kugel von Spieler " << currentPlayer << " und dadurch verloren... " << std::endl;
 
 					//TODO Lose currentPlayer
+					std::string curPlayer = std::to_string(currentPlayer);
+					std::string player = std::string("Player: ");
+					std::string hasWon = std::string(" has LOST!");
+					std::string mixed = std::string(player + curPlayer + hasWon);
+					MessageBoxA(NULL, mixed.c_str(), "LOST!", MB_OK);
+
+					//TODO Lose currentPlayer
+					int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+					switch (result)
+					{
+					case IDNO:
+						QApplication::quit();
+						break;
+					case IDYES:
+
+						alreadyStarted = true;
+						resetGame();
+						break;
+					}
 				}
 			}
 			if (ball.color == Color::White) {
