@@ -100,19 +100,30 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		cv::Mat undistorted = undistort(img);
 
 		cv::Mat R;
+
 		cv::Rodrigues(_rvecs[0], R);
-
-
-
+		std::cout << R<< std::endl;
 		cv::Mat rotated;
-		cv::warpAffine(img, rotated, T, 2);
-		cv::imshow("nab", img);
+		std::cout << "Rotating" << std::endl;
+		cv::Mat r1;
+		cv::vconcat(R.row(0), R.row(1),r1);
+		cv::invertAffineTransform(r1,r1);
+		std::cout << r1 << std::endl;
+		cv::imshow("Distorted", img);
+		cv::Mat undistord;
 
+		cv::undistort(img, undistord, _cameraMatrix, _distortionCoeffs);
+		cv::imshow("Undistorted", undistord);
+
+
+		cv::warpAffine(undistord,rotated, r1, img.size());
+		cv::imshow("Rotated", rotated);
+	
 
 		cv::Point2f upperLeftPt = patternCorners[0][0];
 		cv::Point2f lowerRightPt = patternCorners[0][(15 * 7) - 1];
 
-		std::cout << "CALIB: Distorted: " << std::endl;
+		std::cout << "CALIB		: Distorted: " << std::endl;
 		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
 		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
 
