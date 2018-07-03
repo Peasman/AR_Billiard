@@ -31,7 +31,6 @@ public:
 	int GetCurrentPlayer();
 	QLabel *_currentPlayerLabel;
 
-
 public slots:
 
 	void testPauseByInput();
@@ -46,10 +45,8 @@ public slots:
 protected:
 	Detection det;
 	Camera cam;
-	bool _calibrationrunning = false;
 	bool _calibrateQuestion = true;
 	void createChessboard();
-	bool gocalib = false;
 
 	QPoint currentPos; // erste Mausposition
 	QPoint lastPos; // letzte Mausposition

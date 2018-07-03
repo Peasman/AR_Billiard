@@ -2,12 +2,11 @@
 #define CAMERA_H
 
 #include "Calibration.h"
-
+#include <QObject>
+#include <QTimer>
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-#include <QObject>
-#include <QTimer>
 
 class Camera : public QObject
 {
@@ -18,32 +17,34 @@ public:
 	Camera();
 	~Camera();
 
+	void setupCam();
 	cv::Mat capture();
 	cv::Mat img;
 
-	void run();
+	cv::Point2f camera2world(float x, float y);
 
-	inline bool getCalib(){
-		return _calibration;
+	inline void startCalibration(){
+		std::cout << "CAM: Get image: " << std::ends;
+		_calibration = true;
 	}
 
-	// Kamerahauptschleife
-	inline void startCalibration(){
-		_calibration = true;
+	inline bool getCalibStatus(){
+		return _calibration;
 	}
 
 signals:
 
 	void calibrationValid();
 
-private slots:
+	private slots:
+
+	void run();
 
 private:
 
+	int _maximgs;
 	Calibration _calibrationObject;
 	std::list< cv::Mat > _images;
-	void eval(cv::Mat img);
-	void calibrate(cv::Mat img);
 
 	bool _calibration = false;
 	cv::VideoCapture _camera;

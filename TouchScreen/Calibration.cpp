@@ -2,96 +2,132 @@
 #include <iomanip>
 
 Calibration::Calibration()
-	: _patternWorldCoordinates(7 * 7)
-	, _cameraMatrix(3, 3, CV_64F)
+	: _cameraMatrix(3, 3, CV_64F)
 	, _distortionCoeffs(8, 1, CV_64F)
-	, _patternSize(7, 7)
+	, _patternSize(15, 7)
 	, _calibrationValid(false)
+{}
+
+Calibration::~Calibration(){}
+
+void Calibration::run(std::list< cv::Mat >& inputImages)
 {
+	int _idximg = 0;
 	// erzeuge die Weltkoordinaten fuer das Kalibrierbild
 	// Kantenlänge ist 29 mm
 	// Weltkoordinaten sind nur in relativer Position der Eckpunkte
 	// wichtig, daher wird das Pattern eben in der xy-Ebene angenommen
-	for (int row = 0; row < 7; ++row)
-	{
-		for (int col = 0; col < 7; ++col)
-		{
-			int index = row * 7 + col;
-			_patternWorldCoordinates[index][0] = static_cast<float>(col)* 29.0f;
-			_patternWorldCoordinates[index][1] = static_cast<float>(row)* 29.0f;
-			_patternWorldCoordinates[index][2] = 0.0f;
+	float a = 29.0f;
+	for (int y = 0; y < 7; y++){
+		for (int x = 0; x < 15; x++){
+			// static_cast<float>()?
+			_patternWorldCoordinates.push_back(cv::Point3f(x*a, y*a, 0)); //z = 0
 		}
 	}
-}
 
-Calibration::~Calibration(){}
+	/*
+	for (int row = 0; row < 7; ++row)
+	{
+	for (int col = 0; col < 15; ++col)
+	{
+	cv::Vec3f vec;
+	int index = row * 7 + col;
+	vec[0] = static_cast<float>(col)* 29.0f;
+	vec[1] = static_cast<float>(row)* 29.0f;
+	vec[2] = 0.0f;
 
-bool Calibration::run(std::list< cv::Mat > inputImages)
-{
-	// Speicher fuer die Patterneckpunkte in Bildkoordinaten
+	_patternWorldCoordinates.push_back(vec);
+	}
+	}*/
+	// Speicher fuer die Patterneckpunkte in Bildkoordinaten (object)
 	std::vector< std::vector< cv::Point2f > > patternCorners;
 
-	// Speicher fuer die Patterneckpunkte in Weltkoordinaten
-	std::vector< std::vector< cv::Vec3f > > patternWorldBuffer;
+	// Speicher fuer die Patterneckpunkte in Weltkoordinaten (image)
+	std::vector< std::vector< cv::Point3f > > patternWorldBuffer;
 
 	// Anzahl der Bilder, in denen das Pattern gefunden wurde
 	int goodCount = 0;
-	size_t i = 0;
 	for (std::list < cv::Mat >::iterator img = inputImages.begin()
 		; img != inputImages.end()
-		; ++img, ++i)
+		; ++img)
 	{
-		std::cout << "CALIB: Bild run " << i+1 << " / " << inputImages.size() << std::endl;
-		
 		// Zwischenspeicher fuer Eckpunkte in Bildkoordinaten
 		std::vector< cv::Point2f > pointBuffer;
+		cv::Mat pointBuf;
+		bool found = actually_findChessboardCorners(*img, _patternSize, pointBuf, 0);
+		//cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
 
-		// suche das Pattern
-		bool found = cv::findChessboardCorners(*img, _patternSize, pointBuffer);
-
+		pointBuffer.assign((cv::Point2f*)pointBuf.datastart, (cv::Point2f*)pointBuf.dataend);
 		// wurde das Pattern gefunden?
-		// Nein: Ausgabe generieren
 		if (!found){
-			std::cout << "CALIB: Pattern nicht gefunden" << std::endl;
+			// aktuelles Image-Index erhoehen
+			_idximg++;
+			std::cout << "CALIB: " << _idximg << " / " << inputImages.size() << " Pattern NICHT gefunden" << std::endl;
 		}
-		// Ja: hier weiter
 		else
 		{
-			std::cout << "CALIB: Muster gefunden" << std::endl;
-			// Counter erhoehen
 			goodCount++;
 			// Zwischespeicher enthaelt valide Werte
 			// in globalen Puffer einfuegen
 			patternCorners.push_back(pointBuffer);
-
 			// ebenso fuer Weltkoordinaten
 			patternWorldBuffer.push_back(_patternWorldCoordinates);
-
 			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
-			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
+			//			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
 		}
 	}
 
 	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
-		std::cout << "CALIB: Gute bilder gefunden" << std::endl;
-		// schalte die Kalibrierung gueltig
-		_calibrationValid = true;
-
+		std::cout << "CALIB: " << ++_idximg << " / " << inputImages.size() << " Pattern gefunden -> Undistortion .." << std::endl;
 		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
 
 		// Kalibrierung durchfuehren
-		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs, 0);
-		return true;
+		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs);
+
+		cv::Point2f upperLeftPt = patternCorners[0][0];
+		cv::Point2f lowerRightPt = patternCorners[0][(15 * 7) - 1];
+
+		std::cout << "CALIB: Distorted: " << std::endl;
+		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
+		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
+
+		upperLeftPt = undistortPoint(upperLeftPt);
+		lowerRightPt = undistortPoint(lowerRightPt);
+
+		std::cout << "CALIB: Undistorted: " << std::endl;
+		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
+		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
+
+		// schalte die Kalibrierung gueltig
+		_calibrationValid = true;
 	}
-	else{
-		// nicht genug Daten -> keine gueltige Kalibrierung
-		std::cout << "CALIB: Nicht genug Daten gefunden!" << std::endl;
-		return false;
+	// nicht genug Daten -> keine gueltige Kalibrierung
+	else
+	{
+		std::cout << "CALIB: Nicht genug gute Bilder gefunden" << std::endl;
 	}
+}
+bool Calibration::actually_findChessboardCorners(cv::Mat& frame, cv::Size& size, cv::Mat& corners, int flags) {
+	int count = size.area();
+	corners.create(count, 1, CV_32FC2);
+	CvMat _image = frame;
+	return cvFindChessboardCorners(&_image, size, reinterpret_cast<CvPoint2D32f*>(corners.data), &count, flags) > 0;
+}
+
+cv::Point2f Calibration::undistortPoint(cv::Point2f point)
+{
+	std::vector<cv::Point2f> in;
+	in.push_back(point);
+
+	std::vector<cv::Point2f> out;
+
+	cv::undistortPoints(in, out, _cameraMatrix, _distortionCoeffs);
+
+	return *(out.begin());
 }
 
 cv::Mat Calibration::undistort(cv::Mat img)
@@ -111,7 +147,7 @@ void Calibration::printCalibration()
 	// keine Kalibrierung -> keine Asgabe
 	if (!_calibrationValid)
 	{
-		std::cout << "Calibration is invalid." << std::endl;
+		std::cout << "CALIB: Calibration is invalid." << std::endl;
 		return;
 	}
 

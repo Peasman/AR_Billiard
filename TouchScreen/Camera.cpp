@@ -1,64 +1,73 @@
 #include "Camera.h"
 
 #include <iostream>
+#include <GL\glut.h>
 
 Camera::Camera()
 {
-	// oeffne die erste Kamera
-	
+	_maximgs = 20;
+
 	_camera.open(0);
 
 	if (!_camera.isOpened()){
-		std::cout << "CAM: Öffnung der Kamera fehlgeschlagen!" << std::endl;
-		std::string s;
-		//exit(0);
+		std::cout << "CAM: Öffnen der Kamera fehlgeschlagen!" << std::endl;
 		return;
 	}
-	
-	//Timer erstellt alle 16ms ein Bild
-	//std::cout << "CAM: Calibration Timer started" << std::endl;
-	//_timer = new QTimer(this);
-	//connect(_timer, SIGNAL(timeout()), this, SLOT(capture()));
-	//_timer->start(16);
+
+	//Timer erstellt alle 16ms ein Bild ab Start des Programms
+	_timer = new QTimer(this);
+	connect(_timer, SIGNAL(timeout()), this, SLOT(run()));
+	_timer->start(16);
 }
 
 Camera::~Camera(){}
 
-// Bild aufnehmen
+// Bild aufnehmen und zuruekgeben
 cv::Mat Camera::capture()
 {
 	_camera.read(img);
 	return img;
 }
 
-void Camera::run(){
+// Undistort gegebenen X,Y-Punkt und gibt diesen zuruek
+cv::Point2f Camera::camera2world(float x, float y){
+	cv::Point2f pt(x, y);
+
+	return _calibrationObject.undistortPoint(pt);
+}
+
+// Bild auswerten (Kalibrieren oder Erkennen)
+void Camera::run()
+{
+	// Falls _calibration durch startCalibration() == true
 	if (_calibration)
-		calibrate(img);
-	else
-		eval(img);
-}
-
-void Camera::eval(cv::Mat img)
-{
-	// Moritz Methode 
-}
-
-// Image versuchen zu kalibrieren
-void Camera::calibrate(cv::Mat img)
-{
-	_images.push_back(img);
-	std::cout << "CAM: Calibrate images" << std::endl;
-	// calibration valid then leave calibration mode
-	if (_calibrationObject.run(_images))
 	{
-		std::cout << "CAM: Calibration finished" << std::endl;
-		_calibration = false;
-		//emit calibrationValid();
+		// Speichere ein Bild in Liste
+		_camera.read(img);
+		cv::Mat dest = img.clone();
+		_images.push_back(dest);
+		//cv::imshow("Check image", dest); // Zeige Bild zur Ueberpruefung
+
+		std::cout << "." << std::ends;
+		if (_images.size() >= _maximgs) // Falls Anzahl aufgenommener Bilder >= _maximgs
+		{
+			std::cout << " (size:" << _images.size() << ")" << std::endl;
+			// Werte BIlder aus in Calibration
+			std::cout << "CAM: Run calibration" << std::endl;
+			_calibrationObject.run(_images);
+			_images.clear();
+			if (_calibrationObject.valid())//Falls erfolgreich
+			{
+				std::cout << "CAM: Calibration finished" << std::endl;
+				std::cout << std::endl;
+				_calibration = false; //Beende Calibration
+			}
+			else// Falls nicht erfolgreich
+			{
+				std::cout << "CAM: Calibration failed, try again .." << std::endl;
+				std::cout << std::endl;
+				_calibration = true; //Erneut Calibration
+			}
+		}
 	}
-	// calibration invalid then leave calibration mode
-	else{
-		std::cout << "CAM: Calibration failed" << std::endl;
-		_calibration = false;
-	}
-	_images.clear();
 }
