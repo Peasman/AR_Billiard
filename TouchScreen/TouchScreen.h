@@ -1,12 +1,9 @@
 #ifndef TOUCHSCREEN_H
 #define TOUCHSCREEN_H
-
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QShortcut>
 #include <QtWidgets/QGridLayout>
-
 #include "GLScene.h"
-
 #include "ui_TouchScreen.h"
 
 
@@ -35,9 +32,7 @@ protected:
 private:
 	bool _mouseFunction;
 	bool _startGame;
-
 	Ui::TouchScreenClass ui;
-
 	QMenu *_fileMenu;
 	QMenu *_optionMenu;
 	QMenu *_helpMenu;
