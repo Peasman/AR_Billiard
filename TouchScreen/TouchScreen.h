@@ -18,13 +18,13 @@ public:
     ~TouchScreen();
 
 private slots:
-  void toggleFullScreen();
+ // void toggleFullScreen();
   void createActions();
   void startGame();
-  void resetGame();
+ // void resetGame();
   void enableMouseControll();
   void showAbout();
-  void calibrate();
+ // void calibrate();
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event);
@@ -37,12 +37,12 @@ private:
 	QMenu *_optionMenu;
 	QMenu *_helpMenu;
 	QAction *_startNewGame;
-	QAction *_resetGame;
+//	QAction *_resetGame;
 	QAction *_quitGame;
 	QAction *_mouseControll;
 	QAction *_about;
-	QAction *_shrtFullScreen;
-	QAction *_calibrate;
+//	QAction *_shrtFullScreen;
+//	QAction *_calibrate;
     QShortcut   *_shrtQuit;
     QGridLayout *_gridLayout; 
     GLScene     *_scene;

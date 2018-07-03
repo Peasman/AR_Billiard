@@ -25,13 +25,10 @@ TouchScreen::TouchScreen(QWidget *parent)
 
   createActions();
   _fileMenu->addAction(_startNewGame);
-  _fileMenu->addAction(_resetGame);
-  _fileMenu->addAction(_calibrate);
   _fileMenu->addSeparator();
   _fileMenu->addAction(_quitGame);
 
   _optionMenu->addAction(_mouseControll);
-  _optionMenu->addAction(_shrtFullScreen);
  
   _helpMenu->addAction(_about);
 }
@@ -45,20 +42,11 @@ void TouchScreen::createActions()
 	_mouseControll->setCheckable(true);
 	connect(_mouseControll, SIGNAL(triggered()), this, SLOT(enableMouseControll()));
 
-	_resetGame = new QAction(tr("&Reset Game"), this);
-	connect(_resetGame, SIGNAL(triggered()), this, SLOT(resetGame()));
-
 	_startNewGame = new QAction(tr("&Start New Game"), this);
 	connect(_startNewGame, SIGNAL(triggered()), this, SLOT(startGame()));
 
-	_calibrate = new QAction(tr("&Calibrate"), this);
-	connect(_calibrate, SIGNAL(triggered()), this, SLOT(calibrate()));
-
 	_about = new QAction(tr("&About AR_Biliard"), this);
 	connect(_about, SIGNAL(triggered()), this, SLOT(showAbout()));
-
-	_shrtFullScreen = new QAction(tr("&Fullscreen"), this);
-	connect(_shrtFullScreen, SIGNAL(triggered()), this, SLOT(toggleFullScreen()));
 
 	_shrtQuit = new QShortcut(QKeySequence("Ctrl+Q"), this);
 	connect(_shrtQuit, SIGNAL(activated()), QApplication::instance(), SLOT(quit()));
@@ -104,24 +92,14 @@ void TouchScreen::startGame()
 	_scene->startGame(_startGame);
 }
 
-void TouchScreen::resetGame()
-{
-	const int result = MessageBox(nullptr, TEXT("Do you want to reset the game?"), TEXT("Reset Game"), MB_YESNO);
-	switch (result)
-	{
-		case IDYES:
-			// RESET GAME WIRD AUSGEFÜHRT
-			_scene->resetGame();
-			break;
-	}
-	
-}
-
+/*
 void TouchScreen::calibrate(){
 	_scene->changeCalibrateQuestionBool(true);
 }
+*/
 
 //LÖSCHEN NICHT ZU GEBRAUCHEN
+/*
 void TouchScreen::toggleFullScreen()
 {
 	if (isFullScreen()){
@@ -135,4 +113,5 @@ void TouchScreen::toggleFullScreen()
 		showFullScreen();
 	}
 }
+*/
 
