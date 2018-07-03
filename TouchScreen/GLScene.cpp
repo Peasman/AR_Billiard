@@ -135,32 +135,32 @@ void GLScene::updateFrame()
 		det.detectCue(img);
 
 		if (det._valid){
-		invalidFrames = 0;
-		racket.x = det._curr_x_1;
-		racket.y = det._curr_y_1;
-		racket.x2 = det._curr_x_2;
-		racket.y2 = det._curr_y_2;
-		racket.xLast = det._last_x_1;
-		racket.yLast = det._last_y_1;
-		racket.x2Last = det._last_x_2;
-		racket.y2Last = det._last_y_2;
+			invalidFrames = 0;
+			racket.x = det._curr_x_1;
+			racket.y = det._curr_y_1;
+			racket.x2 = det._curr_x_2;
+			racket.y2 = det._curr_y_2;
+			racket.xLast = det._last_x_1;
+			racket.yLast = det._last_y_1;
+			racket.x2Last = det._last_x_2;
+			racket.y2Last = det._last_y_2;
 		}
 		else
 		{
-		invalidFrames++;
+			invalidFrames++;
 		}
 		if (invalidFrames > maxInvalidFrames)
 		{
-		racket.vx = 0;
-		racket.vy = 0;
-		racket.x = 0;
-		racket.y = 0;
-		racket.x2 = 0;
-		racket.y2 = 0;
-		racket.xLast = 0;
-		racket.yLast = 0;
-		racket.x2Last = 0;
-		racket.y2Last = 0;
+			racket.vx = 0;
+			racket.vy = 0;
+			racket.x = 0;
+			racket.y = 0;
+			racket.x2 = 0;
+			racket.y2 = 0;
+			racket.xLast = 0;
+			racket.yLast = 0;
+			racket.x2Last = 0;
+			racket.y2Last = 0;
 		}*/
 		updatePhysics();
 		update();
@@ -584,12 +584,12 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 */
 bool GLScene::StillMoving()
 {
-	for (int i = 0; i <16; i++)
+	for (int i = 0; i < 16; i++)
 	{
 		if (_balls[i].exists)
 		{
 			//TODO Threshold anpassen
-			if (_balls[i].vx  > 0.5f || _balls[i].vy > 0.5f)
+			if (_balls[i].vx > 0.5f || _balls[i].vy > 0.5f)
 			{
 				return true;
 			}

@@ -17,7 +17,7 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 	// Kantenlänge ist 29 mm
 	// Weltkoordinaten sind nur in relativer Position der Eckpunkte
 	// wichtig, daher wird das Pattern eben in der xy-Ebene angenommen
-	float a = 29.0f;
+	float a = 10.0f;
 	for (int y = 0; y < 7; y++){
 		for (int x = 0; x < 15; x++){
 			// static_cast<float>()?
@@ -74,19 +74,40 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 			patternWorldBuffer.push_back(_patternWorldCoordinates);
 			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
 			//			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
+			//std::cout << "CALIB: " << ++_idximg << " / " << inputImages.size() << " Pattern gefunden -> Undistortion .." << std::endl;
 		}
 	}
 
 	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
-		std::cout << "CALIB: " << ++_idximg << " / " << inputImages.size() << " Pattern gefunden -> Undistortion .." << std::endl;
+		
 		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
 
 		// Kalibrierung durchfuehren
 		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs);
+
+		cv::Point2f undistortedPoint;
+		for (int i = 0; i < patternCorners[0].size(); i++){
+			std::cout << "CALIB: Distorted Point, x: " << patternCorners[0][i].x << ", y: " << patternCorners[0][i].y << std::endl;
+			undistortedPoint = undistortPoint(patternCorners[0][i]);
+
+			std::cout << "CALIB: Undistorted Point: " << undistortedPoint.x << ", y: " << undistortedPoint.y << std::endl;
+		}
+		cv::Mat img = *(inputImages.begin());
+		cv::Mat undistorted = undistort(img);
+
+		cv::Mat R;
+		cv::Rodrigues(_rvecs[0], R);
+
+
+
+		cv::Mat rotated;
+		cv::warpAffine(img, rotated, T, 2);
+		cv::imshow("nab", img);
+
 
 		cv::Point2f upperLeftPt = patternCorners[0][0];
 		cv::Point2f lowerRightPt = patternCorners[0][(15 * 7) - 1];

@@ -1,4 +1,5 @@
 #include "Detection.h"
+#include "Camera.h"
 
 using namespace cv;
 using namespace std;
@@ -80,14 +81,16 @@ void Detection::detectCue(cv::Mat imageOriginal){
 
 void Detection::runTest(){
 	_windowName = "Test";
-	int waitKeyValue = 10; // 100 Hz
+	
 
+	int waitKeyValue = 10; // 100 Hz
+	
 	cv::VideoCapture videoCapture(0);
 	if (!videoCapture.isOpened()) {
 		std::cout << "Cannot open the web cam" << std::endl;
 		return;
 	}
-
+	
 	
 	//Capture temporary imag from the camera
 	cv::Mat imageTemp;
@@ -100,8 +103,9 @@ void Detection::runTest(){
 	{	
 		cv::Mat imageAxis = cv::Mat::zeros(imageTemp.size(), CV_8UC3);;
 		cv::Mat imageOriginal;
-
 		videoCapture.read(imageOriginal);
+
+		//videoCapture.read(imageOriginal);
 
 		detectCue(imageOriginal);
 		if (_valid){
