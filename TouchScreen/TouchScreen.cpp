@@ -3,9 +3,11 @@
 #include <iostream>
 #include <QMenuBar>
 #include "GLScene.h"
+#include <string>
+#include <QString>
 
 TouchScreen::TouchScreen(QWidget *parent)
-    : QMainWindow(parent)
+	: QMainWindow(parent)
 {
 
   ui.setupUi(this);
@@ -32,7 +34,6 @@ TouchScreen::TouchScreen(QWidget *parent)
   _optionMenu->addAction(_shrtFullScreen);
  
   _helpMenu->addAction(_about);
-  
 }
 TouchScreen::~TouchScreen()
 {}
@@ -120,6 +121,7 @@ void TouchScreen::calibrate(){
 	_scene->changeCalibrateQuestionBool(true);
 }
 
+//LÖSCHEN NICHT ZU GEBRAUCHEN
 void TouchScreen::toggleFullScreen()
 {
 	if (isFullScreen()){

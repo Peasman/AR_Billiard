@@ -8,13 +8,16 @@
 #include <math.h>
 #include <GL\glut.h>
 #include <time.h>
+#include "TouchScreen.h"
+#include "Qlabel"
+#include <qlabel.h>
+#include <string>
+#include <QString>
 
 const float GLScene::eps = 0.01;
-GLScene::GLScene(QWidget *parent)
-	: QGLWidget(parent), _timerPeriod(4), _gameInit(60)
+GLScene::GLScene(QWidget *parent): QGLWidget(parent), _timerPeriod(4), _gameInit(60)
 {
 	setAttribute(Qt::WA_AcceptTouchEvents);
-
 	_shrtReset = new QShortcut(QKeySequence("Ctrl+R"), this);
 	connect(_shrtReset, SIGNAL(activated()), this, SLOT(resetGame()));
 
@@ -22,15 +25,39 @@ GLScene::GLScene(QWidget *parent)
 	connect(_timer, SIGNAL(timeout()), this, SLOT(updateFrame()));
 
 	_timer->start(_timerPeriod);
-
+	addLabel();
 	// initialize physics struct with zero
 	//resetGame();
 }
+
 //TODO ?
 void initGame()
 {
 
 }
+
+//TouchScreen test;
+int GLScene::GetCurrentPlayer(){
+	return currentPlayer;
+}
+
+
+void GLScene::addLabel(){
+	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(GetPlayer(0).ballType);
+	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
+	std::cout <<" QLABEL: " << inputCurrentPlayer.toStdString() << std::endl;
+	_currentPlayerLabel->setGeometry(QRect(300, 380, 100, 25));
+
+	//QColor bg_color(0.0f, 0.4f, 0.0f, 1.0f);
+	QPalette sample_palette;
+	sample_palette.setColor(QPalette::Background, QColor::fromRgb(0.0f, 0.4f, 0.0f, 1.0f));
+	sample_palette.setColor(QPalette::WindowText, Qt::white);
+	QWidget::setAttribute(Qt::WA_TranslucentBackground);
+
+	_currentPlayerLabel->setAutoFillBackground(true);
+	_currentPlayerLabel->setPalette(sample_palette);
+}
+
 bool alreadyStarted = false;
 bool isMouseEnable = false;
 
@@ -38,15 +65,65 @@ bool isMouseEnable = false;
 void GLScene::enableMouse(bool isEnable) {
 	isMouseEnable = isEnable;
 }
+
 //========================================================================================
 // Event für das Drücken einer Maustaste
 //========================================================================================
 void GLScene::mousePressEvent(QMouseEvent *event)
 {
+	addLabel();
 	if (!isMouseEnable) {
 		currentPos = event->pos();
 	}
 }
+
+/*
+bool _initballType = false;
+void GLScene::updateLabel(){
+	std::cout << "KLICKKLICKKLICK" << std::endl;
+	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(GetPlayer(GetCurrentPlayer()).ballType);
+
+	_currentPlayerLabel->setText(inputCurrentPlayer);
+
+
+	if (!_initballType){
+		std::cout << "INITIALBALLTYPE IST REIN GEGANGEN " << std::endl;
+		initialBallTyp();
+		_initballType = true;
+	}
+}
+
+void GLScene::addLabel(){
+
+	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(GetPlayer(0).ballType);
+	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
+	_currentPlayerLabel->setGeometry(QRect(300, 80, 100, 25));
+
+}
+
+void GLScene::initialBallTyp(){
+	bool i = GetPlayer(GetCurrentPlayer()).ballType;
+	if (i == true){
+		QString inputHalf = "BallType of Player1: FULL";
+		_playerHalf = new QLabel(inputHalf, this);
+		_playerHalf->setGeometry(QRect(400, 80, 150, 25));
+
+		QString inputFull = "BallType of Player2: Half ";
+		_playerFull = new QLabel(inputFull, this);
+		_playerFull->setGeometry(QRect(550, 80, 150, 25));
+	}
+	if (i == false){
+		QString inputHalf = "BallType of Player1: Half";
+		_playerHalf = new QLabel(inputHalf, this);
+		_playerHalf->setGeometry(QRect(400, 80, 150, 25));
+
+		QString inputFull = "BallType of Player2: Full ";
+		_playerFull = new QLabel(inputFull, this);
+		_playerFull->setGeometry(QRect(550,80, 150, 25));
+	}
+}
+*/
+
 //========================================================================================
 // Event für Mausbewegungen
 //========================================================================================
@@ -59,6 +136,7 @@ void GLScene::mouseMoveEvent(QMouseEvent *event)
 		currentPos = QPoint(currentx, currenty);
 	}
 }
+
 //========================================================================================
 // Event für das Loslassen einer Maustaste
 //========================================================================================
@@ -68,6 +146,12 @@ void GLScene::mouseReleaseEvent(QMouseEvent *event)
 
 	}
 }
+
+GLScene::Player GLScene::GetPlayer(int num)
+{
+	return players[num];
+}
+
 void GLScene::startGame(bool gameStarted) {
 	if (!alreadyStarted) {
 
@@ -124,6 +208,7 @@ void GLScene::updateFrame()
 				QApplication::quit();
 				break;
 			case IDYES:
+
 				alreadyStarted = true;
 				resetGame();
 				return;
@@ -316,6 +401,7 @@ void GLScene::initHoles() {
 		}
 	}
 }
+
 void GLScene::updateBallVelocity(Ball& ball)
 {
 
@@ -331,6 +417,7 @@ void GLScene::updateBallVelocity(Ball& ball)
 	ball.vy *= friction;
 	ball.omega *= rfriction;
 }
+
 void GLScene::CollisionWithHole(Ball& ball)
 {
 	for (int i = 0; i < 6; i++) {
@@ -349,12 +436,50 @@ void GLScene::CollisionWithHole(Ball& ball)
 				{
 					std::cout << "Schwarze Kugel von Spieler " << currentPlayer << " und dadurch gewonnen! " << std::endl;
 
+					std::string curPlayer = std::to_string(currentPlayer);
+					std::string player = std::string("Player: ");
+					std::string hasWon = std::string(" has WON!");
+					std::string mixed = std::string(player + curPlayer + hasWon);
+					MessageBoxA(NULL, mixed.c_str(), "WON!", MB_OK);
+
+					int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+					switch (result)
+					{
+					case IDNO:
+						QApplication::quit();
+						break;
+					case IDYES:
+
+						alreadyStarted = true;
+						resetGame();
+						break;
+					}
+
 					//TODO Win currentPlayer
 				} else
 				{
 					std::cout << "Schwarze Kugel von Spieler " << currentPlayer << " und dadurch verloren... " << std::endl;
+					
+					std::string curPlayer = std::to_string(currentPlayer);
+					std::string player = std::string("Player: ");
+					std::string hasWon = std::string(" has LOST!");
+					std::string mixed = std::string(player + curPlayer + hasWon);
+					MessageBoxA(NULL, mixed.c_str(), "LOST!", MB_OK);
 
 					//TODO Lose currentPlayer
+					int result = MessageBox(nullptr, TEXT("Start a new game?"), TEXT("Message"), MB_YESNO);
+					switch (result)
+					{
+					case IDNO:
+						QApplication::quit();
+						break;
+					case IDYES:
+
+						alreadyStarted = true;
+						resetGame();
+						break;
+					}
+
 				}
 			}
 			if (ball.color == Color::White) {
@@ -379,6 +504,7 @@ void GLScene::CollisionWithHole(Ball& ball)
 			{
 				//TODO Ja Dann Spieler weiterhin dran
 				std::cout << "Getroffen von Spieler " << currentPlayer << std::endl;
+
 				again = true;
 			}
 			else
@@ -387,11 +513,14 @@ void GLScene::CollisionWithHole(Ball& ball)
 				definitlyNotAgain = true;
 				//Nein dann nächster Spieler 
 				//TODO Listener für PlayerWechsel DIKO
-				//currentPlayer = (currentPlayer + 1) % 2;
+				currentPlayer = (currentPlayer + 1) % 2;
+
+
 			}
 		}
 	}
 }
+
 //Check wenn die Schwarze Kugel eingelocht wurde ob gewonnen oder verloren wurde.
 bool GLScene::VerifyWin()
 {
@@ -415,6 +544,7 @@ void GLScene::nextPlayer() {
 		}
 	}
 }
+
 bool GLScene::BallTypeStillExists(bool ballType)
 {
 	//Alle Kuglen außer der Weißen und Schwarzen
@@ -465,6 +595,7 @@ void GLScene::CollisionWithWall(Ball& ball) {
 	}
 
 }
+
 //Kollisionserkennung für die Maus
 void GLScene::CollisionWithMouse(Ball& ball)
 {
@@ -505,6 +636,7 @@ void GLScene::CollisionWithMouse(Ball& ball)
 		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
 	}
 }
+
 //Kollisionserkennung für den Kö
 //TODO immer erkennen oder nur wenn kein Ball sich bewegt?
 void GLScene::CollisionWithRacket(Ball& ball, bool other)
@@ -614,6 +746,7 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * ball.omega;
 	}*/
 }
+
 //Überprüft ob sich noch Kugeln bewegen / ob schon der andere Spieler anfangen darf
 /*
  * Gibt False zurück wenn sich keine Kugel mehr bewegt.True wenn sich noch mindestens eine bewegt
@@ -634,6 +767,7 @@ bool GLScene::StillMoving()
 	}
 	return false;
 }
+
 void GLScene::updateBallCollision(Ball& ball, int index)
 {
 
@@ -697,6 +831,7 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 		}
 	}
 }
+
 void GLScene::updatePhysics()
 {
 	const float friction = 0.9999;
@@ -715,6 +850,7 @@ void GLScene::updatePhysics()
 
 
 }
+
 void GLScene::initStandardBalls()
 {
 	loadTexture();
@@ -755,6 +891,9 @@ void GLScene::initStandardBalls()
 
 void GLScene::resetGame()
 {
+	players[0].num = 1;
+	players[1].num = 2;
+
 	//_balls.clear();
 	if (!alreadyStarted) {
 		initStandardBalls();
@@ -809,14 +948,15 @@ void GLScene::resetGame()
 	racket.y2Last = 0;
 }
 
-//Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
 
+//Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
 void GLScene::loadTexture() {
 	//GLuint texture;
 	int width, height, fullwidth, fullheight;
 	unsigned char * data;
 
 	//TODO Richtiger Filename
+
 	const char * textureName = "C:/Users/fp17/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
@@ -863,6 +1003,7 @@ void GLScene::loadTexture() {
 	free(data);
 
 }
+
 void GLScene::renderHole(Hole const &hole) {
 	GLfloat vertex[4];
 	GLfloat texcoord[2];
