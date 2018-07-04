@@ -821,7 +821,7 @@ void GLScene::loadTexture() {
 	unsigned char * data;
 
 	//TODO Richtiger Filename
-	const char * textureName = "C:/Users/fp17/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
+	const char * textureName = "C:/Users/fp16/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Release/Balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
 	//file = fopen(filename, "rb"); 
