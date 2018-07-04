@@ -129,7 +129,7 @@ void GLScene::updateFrame()
 			}
 		}
 		/*Detection
-
+		
 		cv::Mat img = cam.capture();
 		cv::Mat flipped;
 		cv::flip(img, flipped, 1);
@@ -490,44 +490,126 @@ void GLScene::CollisionWithWall(Ball& ball) {
 //Kollisionserkennung für die Maus
 void GLScene::CollisionWithMouse(Ball& ball)
 {	
-	float dist = d(currentPos.x(), currentPos.y(), ball.x, ball.y);
+	//float dist = d(currentPos.x(), currentPos.y(), ball.x, ball.y);
 	
+	float lastx = static_cast<float>(lastPos.x()), lasty = static_cast<float>(lastPos.y());
+	float mousex = static_cast<float>(currentPos.x()), mousey = static_cast<float>(currentPos.y());
+	
+	float x = mousex;
+	float y = mousey;
+	float xLast = lastx;
+	float yLast = lasty;
 
-	if (dist > 0 && dist < _ballSize * 2) {
-		const float slip = 0.1;
-		float nx, ny, tx, ty;
+	if (false){
 
-		// normal
-		nx = ball.x - lastPos.x();
-		ny = ball.y - lastPos.y();
-		normalize(nx, ny);
+		// d = xy - xyLast # direction vector from xyLast to xy
+		// f = xyLast - center # direction vector from center to xyLast
+		float dx = x - xLast, dy = y - yLast;
+		float fx = xLast - ball.x, fy = yLast - ball.y;
 
-		// tangent pointing to the left of normal
-		tx = -ny;
-		ty = nx;
+		// a = np.dot(d, d)
+		// b = 2 * np.dot(d, f)
+		// c = np.dot(f, f) - radius**2
+		// dis = b**2 - 4 * a*c
 
+		float a = dot(dx, dy, dx, dy);
+		float b = 2 * dot(dx, dy, fx, fy);
+		float c = dot(fx, fy, fx, fy) - _ballSize*_ballSize;
 
-		float mvx = (currentPos.x() - lastPos.x());
-		float mvy = (currentPos.y() - lastPos.y());
-		// relative velocity
-		float vsumx = mvx - ball.vx;
-		float vsumy = mvy - ball.vy;
+		float dis = b*b - 4 * a * c;
 
-		// coordinates in radial tangential coordinate frame
-		float vn = nx * vsumx + ny * vsumy;
-		float vt = tx * vsumx + ty * vsumy;
+		if (dis < 0){
+			// no collision
+			return;
+		}
+		dis = sqrt(dis);
+		float t1 = (-b - dis) / (2.0f * a); // always the first point
+		float t2 = (-b + dis) / (2.0f * a);
+	
+		if (t1 >= 0 && t1 <= 1){
+			// calculate collision point
+			x = xLast + t1 * dx;
+			y = yLast + t1 * dy;
 
-		ball.x += nx * (vn + 0.1);
-		ball.y += ny * (vn + 0.1);
+			const float slip = 0.1;
+			float nx, ny, tx, ty;
 
-		ball.vx += vn * nx;
-		ball.vy += vn * ny;
-		turnRunning = true;
-		currentPos = QPoint(-1, -1);
-		lastPos = QPoint(-1, -1);
-		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
-		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
+			// normal
+			nx = ball.x - x;
+			ny = ball.y - y;
+			normalize(nx, ny);
+
+			// tangent pointing to the left of normal
+			tx = -ny;
+			ty = nx;
+
+			//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
+			float mvx = (x - xLast);
+			float mvy = (y - yLast);
+			// relative velocity
+			float vsumx = mvx - ball.vx;
+			float vsumy = mvy - ball.vy;
+
+			// coordinates in radial tangential coordinate frame
+			float vn = nx * vsumx + ny * vsumy;
+			float vt = tx * vsumx + ty * vsumy;
+
+			ball.x += nx * (vn + 0.1);
+			ball.y += ny * (vn + 0.1);
+
+			ball.vx += vn * nx;
+			ball.vy += vn * ny;
+			turnRunning = true;
+			if (t2 > 1){
+				// Poke
+			}
+			else{
+				// Impale
+			}
+		}
+		else if (t2 >= 0 && t2 <= 1){
+			// Exit Wound
+		}
+		else{
+			// FallShort, Past, CompletelyInside"
+		}
+
 	}
+	else{
+		float dist = d(mousex, mousey, ball.x, ball.y);
+		if (dist < _ballSize) {
+			//TODO Geschwindigkeit von beiden Kugeln ändern
+			const float slip = 0.1;
+			float nx, ny, tx, ty;
+
+			// normal
+			nx = ball.x - x;
+			ny = ball.y - y;
+			normalize(nx, ny);
+
+			// tangent pointing to the left of normal
+			tx = -ny;
+			ty = nx;
+
+			//TODO eher einfach vx/vy direkt im RacketUpdate berechnen?
+			float mvx = (x - xLast);
+			float mvy = (y - yLast);
+			// relative velocity
+			float vsumx = mvx - ball.vx;
+			float vsumy = mvy - ball.vy;
+
+			// coordinates in radial tangential coordinate frame
+			float vn = nx * vsumx + ny * vsumy;
+			float vt = tx * vsumx + ty * vsumy;
+
+			ball.x += nx * (vn + 0.1);
+			ball.y += ny * (vn + 0.1);
+
+			ball.vx += vn * nx;
+			ball.vy += vn * ny;
+		}
+	}
+
 }
 //Kollisionserkennung für den Kö
 //TODO immer erkennen oder nur wenn kein Ball sich bewegt?
@@ -541,7 +623,7 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 
 	// d = xy - xyLast # direction vector from xyLast to xy
 	// f = xyLast - center # direction vector from center to xyLast
-	float dx = xLast - x, dy = yLast - y;
+	float dx = x - xLast, dy = y - yLast;
 	float fx = xLast - ball.x, fy = yLast - ball.y;
 
 	// a = np.dot(d, d)
@@ -560,8 +642,8 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 		return;
 	}
 	dis = sqrt(dis);
-	float t1 = (-b - dis) / (2 * a); // always the first point
-	float t2 = (-b + dis) / (2 * a);
+	float t1 = (-b - dis) / (2.0f * a); // always the first point
+	float t2 = (-b + dis) / (2.0f * a);
 
 
 	if (t1 > 0 && t1 <= 1){
@@ -595,8 +677,8 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 		ball.x += nx * (vn + 0.1);
 		ball.y += ny * (vn + 0.1);
 
-		ball.vx += 1/t1 * vn * nx;
-		ball.vy += 1/t1 * vn * ny;
+		ball.vx += vn * nx;
+		ball.vy += vn * ny;
 		turnRunning = true;
 		if (t2 > 1){
 			// Poke
@@ -648,7 +730,6 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 	{
 		CollisionWithWall(ball);
 		//Maus erkennung
-		CollisionWithMouse(ball);
 		for (int i = 0; i < 16; i++)
 		{
 			Ball& currentBall = _balls[i];
@@ -691,9 +772,11 @@ void GLScene::updateBallCollision(Ball& ball, int index)
 			}
 
 		}
+		
 		//TODO Checken ob das so funzt (Nur Kollision mit weißer kugel möglich/ keine Fouls in dem Sinne möglich
 		if (!StillMoving() && ball.color == Color::White)
 		{
+			CollisionWithMouse(ball);
 			if (invalidFrames < maxInvalidFrames){
 				CollisionWithRacket(ball, false);
 				CollisionWithRacket(ball, true);
@@ -821,7 +904,7 @@ void GLScene::loadTexture() {
 	unsigned char * data;
 
 	//TODO Richtiger Filename
-	const char * textureName = "C:/Users/fp16/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Release/Balls.bmp";
+	const char * textureName = "C:/Users/fp17/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
 	//file = fopen(filename, "rb"); 
