@@ -12,16 +12,21 @@
 \BOOKMARK [1][-]{section.3.2}{Kamerakalibrierung}{chapter.3}% 12
 \BOOKMARK [2][-]{subsection.3.2.1}{Entzerrung des Kamerabildes}{section.3.2}% 13
 \BOOKMARK [2][-]{subsection.3.2.2}{Erkennung des Spielfeldes}{section.3.2}% 14
-\BOOKMARK [1][-]{section.3.3}{K\366-Detektion}{chapter.3}% 15
+\BOOKMARK [1][-]{section.3.3}{Queue-Detektion}{chapter.3}% 15
 \BOOKMARK [2][-]{subsection.3.3.1}{Segmentierung}{section.3.3}% 16
 \BOOKMARK [2][-]{subsection.3.3.2}{Erkennung des Kollisionspunktes}{section.3.3}% 17
 \BOOKMARK [1][-]{section.3.4}{Benutzerinteraktion}{chapter.3}% 18
 \BOOKMARK [2][-]{subsection.3.4.1}{Spielregeln}{section.3.4}% 19
 \BOOKMARK [2][-]{subsection.3.4.2}{Benutzerinteraktion}{section.3.4}% 20
 \BOOKMARK [0][]{chapter.4}{Ergebnisse}{}% 21
-\BOOKMARK [0][]{chapter.5}{Diskussion}{}% 22
-\BOOKMARK [0][]{appendix.A}{Weitere Informationen}{}% 23
-\BOOKMARK [0][]{chapter*.3}{Abbildungsverzeichnis}{}% 24
-\BOOKMARK [0][]{chapter*.4}{Algorithmenverzeichnis}{}% 25
-\BOOKMARK [0][]{chapter*.5}{Quellcodeverzeichnis}{}% 26
-\BOOKMARK [0][]{chapter*.5}{Literaturverzeichnis}{}% 27
+\BOOKMARK [1][-]{section.4.1}{Aufbau der Umfrage}{chapter.4}% 22
+\BOOKMARK [1][-]{section.4.2}{Darstellung der Ergebnisse}{chapter.4}% 23
+\BOOKMARK [2][-]{subsection.4.2.1}{Benutzerfreundlichkeit}{section.4.2}% 24
+\BOOKMARK [2][-]{subsection.4.2.2}{Genauigkeit der Spielsteuerung}{section.4.2}% 25
+\BOOKMARK [0][]{chapter.5}{Diskussion}{}% 26
+\BOOKMARK [1][-]{section.5.1}{Verbesserungsvorschl\344ge}{chapter.5}% 27
+\BOOKMARK [0][]{appendix.A}{Weitere Informationen}{}% 28
+\BOOKMARK [0][]{chapter*.3}{Abbildungsverzeichnis}{}% 29
+\BOOKMARK [0][]{chapter*.4}{Algorithmenverzeichnis}{}% 30
+\BOOKMARK [0][]{chapter*.5}{Quellcodeverzeichnis}{}% 31
+\BOOKMARK [0][]{chapter*.5}{Literaturverzeichnis}{}% 32
