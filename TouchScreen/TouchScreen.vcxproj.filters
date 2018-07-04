@@ -18,12 +18,12 @@
     <ClCompile Include="Detection.cpp">
       <Filter>Source Dateien</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Camera.cpp">
+      <Filter>Generierte Dateien\Debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_TouchScreen.h" />
-    <ClInclude Include="Camera.h">
-      <Filter>Header Dateien</Filter>
-    </ClInclude>
     <ClInclude Include="Calibration.h">
       <Filter>Header Dateien</Filter>
     </ClInclude>
@@ -36,6 +36,9 @@
     <CustomBuild Include="TouchScreen.ui" />
     <CustomBuild Include="GLScene.h" />
     <CustomBuild Include="TouchScreen.qrc" />
+    <CustomBuild Include="Camera.h">
+      <Filter>Header Dateien</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Dateien">
@@ -47,6 +50,16 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;cxx;c;def</Extensions>
       <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generierte Dateien">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Generierte Dateien\Debug">
+      <UniqueIdentifier>{26fea6dc-85cd-4f98-94f2-774609c70e06}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
     </Filter>
   </ItemGroup>
 </Project>

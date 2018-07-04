@@ -84,6 +84,7 @@
     <ClCompile Include="Calibration.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Detection.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_Camera.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_GLScene.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -132,7 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Calibration.h" />
-    <ClInclude Include="Camera.h" />
+    <CustomBuild Include="Camera.h" />
     <ClInclude Include="Detection.h" />
     <ClInclude Include="GeneratedFiles\ui_TouchScreen.h" />
     <CustomBuild Include="GLScene.h">

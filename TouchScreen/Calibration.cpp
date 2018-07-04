@@ -148,7 +148,7 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 }
 
 cv::Point2f Calibration::mapPoint(cv::Point2f point){
-
+	return cv::Point2f(0, 0);
 }
 
 bool Calibration::actually_findChessboardCorners(cv::Mat& frame, cv::Size& size, cv::Mat& corners, int flags) {
