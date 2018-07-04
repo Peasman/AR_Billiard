@@ -1,0 +1,101 @@
+%========================================================================================
+% TU Dortmund, Informatik Lehrstuhl VII
+%========================================================================================
+
+\begin{titlepage}
+
+\begin{textblock}{150}(30.5,10.75)%
+\raggedright
+\includegraphics[width=83.25mm]{bilder/tud_logo_cmyk.pdf}%
+\end{textblock}
+
+\begin{textblock}{150}(21.2,41.6)%
+\raggedright\textsf%\Huge
+{\color{red}\rule{5mm}{5mm}}
+\end{textblock}
+
+\begin{textblock}{150}(30.4,40.32)%
+\raggedright
+\includegraphics[width=90mm]{bilder/fi_text.pdf}
+\end{textblock}
+
+\begin{textblock}{89}(35.0,62.75)%
+\begin{minipage}{80mm}
+	\vfill
+	\begin{center}
+	\fontsize{24pt}{24pt} \textsf
+	\Arbeitsbezeichnung
+	
+	\vspace{1cm}
+	\begin{onehalfspace}
+    \fontsize{18pt}{18pt}
+    \textsf \Arbeitstitel
+    \end{onehalfspace}
+	
+	\vspace{12mm}
+\begin{onehalfspace}
+	{\fontsize{14pt}{14pt}\textsf \Autor
+
+	\today}
+ \end{onehalfspace}
+	\end{center}
+	\vfill
+\end{minipage}\end{textblock}
+
+\begin{textblock}{150}(44.25,208)%
+\begin{minipage}{120mm}
+	\large
+	\raggedright
+	\textsf
+    {\fontsize{14pt}{14pt}
+	\textbf{Gutachter:}\\
+	\Erstgutachter\\
+	\Zweitgutachter\\}
+\end{minipage}
+\end{textblock}
+
+
+
+\begin{textblock}{150}(44.25,242.0)%
+\ifthenelse{\boolean{boolkeinZweitLS}}{
+%
+\begin{minipage}{120mm}
+	\fontsize{11.75pt}{11.75pt}\selectfont
+	\raggedright
+	%\textsf
+	\textcolor{TUGreen}{\ErstLehrstuhl}\\
+	\textcolor{TUGreen}{\ErstLehrstuhltitel}\\
+    \textcolor{TUGreen}{TU Dortmund}
+\end{minipage}
+%
+}{
+%
+\begin{tabular*}{\textwidth}[t]{c c}%
+  \begin{minipage}[t]{70mm}
+    \raggedright
+	\textsf
+    \textcolor{TUGreen}{\ErstLehrstuhl}\\
+    \textcolor{TUGreen}{(\ErstLehrstuhltitel)}\\
+    \textcolor{TUGreen}{TU Dortmund}
+    \end{minipage}
+    \hspace*{0.5cm}
+    \begin{minipage}[t]{70mm}
+    \raggedright
+	\textsf
+    \textcolor{TUOrange}{\ZweitLehrstuhl}\\
+    \textcolor{TUOrange}{(\ZweitLehrstuhltitel)}\\
+    \textcolor{TUOrange}{TU Dortmund}
+  \end{minipage}
+\end{tabular*}
+%
+}
+%
+\end{textblock}
+
+
+
+\vspace*{20cm}
+
+
+
+\end{titlepage}
