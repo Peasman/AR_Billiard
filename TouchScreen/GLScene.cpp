@@ -52,8 +52,9 @@ void GLScene::mouseMoveEvent(QMouseEvent *event)
 	if (!isMouseEnable) {
 		lastPos = currentPos;
 		float currentx = event->pos().x();
-		float currenty = event->pos().y() + 40.0f;
+		float currenty = _h - event->pos().y() - 30;
 		currentPos = QPoint(currentx, currenty);
+		//std::cout << "x: " << currentx << ", y: " << currenty << std::endl;
 	}
 }
 //========================================================================================
@@ -488,9 +489,9 @@ void GLScene::CollisionWithWall(Ball& ball) {
 }
 //Kollisionserkennung für die Maus
 void GLScene::CollisionWithMouse(Ball& ball)
-{
+{	
 	float dist = d(currentPos.x(), currentPos.y(), ball.x, ball.y);
-	//std::cout << dist << std::endl;
+	
 
 	if (dist > 0 && dist < _ballSize * 2) {
 		const float slip = 0.1;
@@ -522,6 +523,8 @@ void GLScene::CollisionWithMouse(Ball& ball)
 		ball.vx += vn * nx;
 		ball.vy += vn * ny;
 		turnRunning = true;
+		currentPos = QPoint(-1, -1);
+		lastPos = QPoint(-1, -1);
 		// Q_ASSERT(d(ball.x, ball.y, i.x, i.y) >= _ballsize + _ballsize); was ist das?
 		//ball.omega = slip * -vt + ball.omega - _ballSize / _ballSize * currentBall.omega;
 	}
@@ -548,7 +551,7 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 
 	float a = dot(dx, dy, dx, dy);
 	float b = 2 * dot(dx, dy, fx, fy);
-	float c = dot(fx, fy, fx, fy) - _ballSize;
+	float c = dot(fx, fy, fx, fy) - _ballSize*_ballSize;
 
 	float dis = b*b - 4 * a * c;
 
@@ -561,7 +564,7 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 	float t2 = (-b + dis) / (2 * a);
 
 
-	if (t1 >= 0 && t1 <= 1){
+	if (t1 > 0 && t1 <= 1){
 		// calculate collision point
 		x = xLast + t1 * dx;
 		y = yLast + t1 * dy;
@@ -592,8 +595,8 @@ void GLScene::CollisionWithRacket(Ball& ball, bool other)
 		ball.x += nx * (vn + 0.1);
 		ball.y += ny * (vn + 0.1);
 
-		ball.vx += t1 * vn * nx;
-		ball.vy += t1 * vn * ny;
+		ball.vx += 1/t1 * vn * nx;
+		ball.vy += 1/t1 * vn * ny;
 		turnRunning = true;
 		if (t2 > 1){
 			// Poke
