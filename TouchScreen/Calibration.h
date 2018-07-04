@@ -24,6 +24,10 @@ public:
 
 private:
 
+	cv::Point2f eckpunktObenLinks;
+	cv::Point2f eckpunktUntenRechts;
+	cv::Point2f mapPoint(cv::Point2f point);
+
 	// Flag fuer Zustand der Kalibrierung
 	bool _calibrationValid;
 

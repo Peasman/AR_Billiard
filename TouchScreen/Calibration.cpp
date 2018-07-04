@@ -14,10 +14,9 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 {
 	int _idximg = 0;
 	// erzeuge die Weltkoordinaten fuer das Kalibrierbild
-	// Kantenlänge ist 29 mm
 	// Weltkoordinaten sind nur in relativer Position der Eckpunkte
 	// wichtig, daher wird das Pattern eben in der xy-Ebene angenommen
-	float a = 10.0f;
+	float a = 10.0f; //Kantenlaenge
 	for (int y = 0; y < 7; y++){
 		for (int x = 0; x < 15; x++){
 			// static_cast<float>()?
@@ -25,20 +24,6 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		}
 	}
 
-	/*
-	for (int row = 0; row < 7; ++row)
-	{
-	for (int col = 0; col < 15; ++col)
-	{
-	cv::Vec3f vec;
-	int index = row * 7 + col;
-	vec[0] = static_cast<float>(col)* 29.0f;
-	vec[1] = static_cast<float>(row)* 29.0f;
-	vec[2] = 0.0f;
-
-	_patternWorldCoordinates.push_back(vec);
-	}
-	}*/
 	// Speicher fuer die Patterneckpunkte in Bildkoordinaten (object)
 	std::vector< std::vector< cv::Point2f > > patternCorners;
 
@@ -81,7 +66,6 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
-		
 		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
@@ -93,37 +77,57 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		for (int i = 0; i < patternCorners[0].size(); i++){
 			std::cout << "CALIB: Distorted Point, x: " << patternCorners[0][i].x << ", y: " << patternCorners[0][i].y << std::endl;
 			undistortedPoint = undistortPoint(patternCorners[0][i]);
-
 			std::cout << "CALIB: Undistorted Point: " << undistortedPoint.x << ", y: " << undistortedPoint.y << std::endl;
 		}
+
+		/* Erstes gutes Bild wird entzerrt */
 		cv::Mat img = *(inputImages.begin());
 		cv::Mat undistorted = undistort(img);
 
 		cv::Mat R;
-
 		cv::Rodrigues(_rvecs[0], R);
-		std::cout << R<< std::endl;
+		std::cout << R << std::endl;
 		cv::Mat rotated;
 		std::cout << "Rotating" << std::endl;
 		cv::Mat r1;
-		cv::vconcat(R.row(0), R.row(1),r1);
-		cv::invertAffineTransform(r1,r1);
+		cv::vconcat(R.row(0), R.row(1), r1);
+		cv::invertAffineTransform(r1, r1);
 		std::cout << r1 << std::endl;
 		cv::imshow("Distorted", img);
 		cv::Mat undistord;
-
 		cv::undistort(img, undistord, _cameraMatrix, _distortionCoeffs);
 		cv::imshow("Undistorted", undistord);
-
-
-		cv::warpAffine(undistord,rotated, r1, img.size());
+		cv::warpAffine(undistord, rotated, r1, img.size());
 		cv::imshow("Rotated", rotated);
-	
+		/* Undistrotion + Rotation completed */
 
+		/* Eckpunkte ganz aussen berechnen */
+		cv::Point2f obenLinks = patternCorners[0][(1 * 1) - 1];
+		cv::Point2f obenLinksInnen = patternCorners[0][(2 * 2) - 1];
+		cv::Point2f untenRechtsInnen = patternCorners[0][(14 * 6) - 1];
+		cv::Point2f untenRechts = patternCorners[0][(15 * 7) - 1];
+		/*
+		obenLinks = undistortPoint(obenLinks);
+		obenLinksInnen = undistortPoint(obenLinks);
+		untenRechtsInnen = undistortPoint(untenRechtsInnen);
+		untenRechts = undistortPoint(untenRechts);
+		*/
+		int xDiffOL = obenLinksInnen.x - obenLinks.x;
+		int yDiffOL = obenLinksInnen.y - obenLinks.y;
+		int xNeuOL = obenLinks.x - xDiffOL;
+		int yNeuOL = obenLinks.y - yDiffOL;
+		eckpunktObenLinks = cv::Point2f(xNeuOL, yNeuOL);
+
+		int xDiffUR = untenRechts.x - untenRechtsInnen.x;
+		int yDiffUR = untenRechts.y - untenRechtsInnen.y;
+		int xNeuUR = untenRechtsInnen.x - xDiffOL;
+		int yNeuUR = untenRechtsInnen.y - yDiffOL;
+		eckpunktUntenRechts = cv::Point2f(xNeuUR, yNeuUR);
+
+		/* Eckpunkte innen entzerren */
 		cv::Point2f upperLeftPt = patternCorners[0][0];
 		cv::Point2f lowerRightPt = patternCorners[0][(15 * 7) - 1];
-
-		std::cout << "CALIB		: Distorted: " << std::endl;
+		std::cout << "CALIB: Distorted: " << std::endl;
 		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
 		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
 
@@ -134,15 +138,19 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
 		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
 
-		// schalte die Kalibrierung gueltig
+		/* Kalibrierung fertig */
 		_calibrationValid = true;
 	}
-	// nicht genug Daten -> keine gueltige Kalibrierung
-	else
+	else// nicht genug Daten -> keine gueltige Kalibrierung
 	{
 		std::cout << "CALIB: Nicht genug gute Bilder gefunden" << std::endl;
 	}
 }
+
+cv::Point2f Calibration::mapPoint(cv::Point2f point){
+
+}
+
 bool Calibration::actually_findChessboardCorners(cv::Mat& frame, cv::Size& size, cv::Mat& corners, int flags) {
 	int count = size.area();
 	corners.create(count, 1, CV_32FC2);
