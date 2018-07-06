@@ -121,14 +121,13 @@ void GLScene::updateFrame()
 			{
 			case IDNO: //Ende
 				QApplication::quit();
-				break;
+				return;
 			case IDYES: //Neues Spiel starten
 				alreadyStarted = true;
 				resetGame();
 				return;
 			}
 		}
-		/*Detection
 		
 		cv::Mat img = cam.capture();
 		cv::Mat flipped;
@@ -136,15 +135,20 @@ void GLScene::updateFrame()
 		det.detectCue(img);
 
 		if (det._valid){
+			cv::Point2f curr1 = cam.camera2world(det._curr_x_1, det._curr_y_1);
+			cv::Point2f curr2 = cam.camera2world(det._curr_x_2, det._curr_y_2);
+			cv::Point2f last1 = cam.camera2world(det._last_x_1, det._last_x_1);
+			cv::Point2f last2 = cam.camera2world(det._last_x_2, det._last_x_2);
+
 			invalidFrames = 0;
-			racket.x = det._curr_x_1;
-			racket.y = det._curr_y_1;
-			racket.x2 = det._curr_x_2;
-			racket.y2 = det._curr_y_2;
-			racket.xLast = det._last_x_1;
-			racket.yLast = det._last_y_1;
-			racket.x2Last = det._last_x_2;
-			racket.y2Last = det._last_y_2;
+			racket.x = curr1.x;
+			racket.y = curr1.y;
+			racket.x2 = curr2.x;
+			racket.y2 = curr2.y;
+			racket.xLast = last1.x;
+			racket.yLast = last1.y;
+			racket.x2Last = last2.x;
+			racket.y2Last = last2.y;
 		}
 		else
 		{
@@ -162,7 +166,7 @@ void GLScene::updateFrame()
 			racket.yLast = 0;
 			racket.x2Last = 0;
 			racket.y2Last = 0;
-		}*/
+		}
 		updatePhysics();
 		update();
 	}
