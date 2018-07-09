@@ -516,6 +516,7 @@ void GLScene::CollisionWithMouse(Ball& ball)
 		// c = np.dot(f, f) - radius**2
 		// dis = b**2 - 4 * a*c
 
+
 		float a = dot(dx, dy, dx, dy);
 		float b = 2 * dot(dx, dy, fx, fy);
 		float c = dot(fx, fy, fx, fy) - _ballSize*_ballSize;
