@@ -66,6 +66,97 @@ void GLScene::mouseReleaseEvent(QMouseEvent *event)
 
 	}
 }
+
+//========================================================================================
+// Lebel INIT Labels
+//========================================================================================
+void GLScene::initLabel(){
+	std::cout << "INIT LABEL" << std::endl;
+
+	QPalette sample_palet;
+	sample_palet.setColor(QPalette::Window, QColor(1.0f, 0.4f, 0.0f, 1.0f));
+	sample_palet.setColor(QPalette::WindowText, Qt::white);
+	sample_palet.setColor(QPalette::Background, QColor::fromRgba(qRgba(0, 102, 0, 255)));
+
+
+	QString inputCurrentPlayer = "CurrentPlayer: ";
+	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
+	_currentPlayerLabel->setGeometry(QRect(200, 0, 100, 25));
+
+	QString inputFull = "BallType of Player: ";
+	_playerFull = new QLabel(inputFull, this);
+	_playerFull->setGeometry(QRect(300, 0, 150, 25));
+
+	QString inputHalf = "BallType of Player: ";
+	_playerHalf = new QLabel(inputHalf, this);
+	_playerHalf->setGeometry(QRect(430, 0, 150, 25));
+
+	_currentPlayerLabel->setAutoFillBackground(true);
+	_playerFull->setAutoFillBackground(true);
+	_playerHalf->setAutoFillBackground(true);
+
+	_currentPlayerLabel->setPalette(sample_palet);
+	_playerFull->setPalette(sample_palet);
+	_playerHalf->setPalette(sample_palet);
+}
+
+//========================================================================================
+// Lebel SET BallType labels
+//========================================================================================
+void GLScene::setBallTypeLabel(){
+	if (getPlayers(getCurrentPlayer()).colorSet){
+		if (getPlayers(getCurrentPlayer()).ballType){
+			if (getCurrentPlayer() == 0){
+				QString inputFull = "BallType of Player 0 : FULL";
+				_playerFull->setText(inputFull);
+
+				QString inputHalf = "BallType of Player 1: HALF";
+				_playerHalf->setText(inputHalf);
+			}
+			else{
+				QString inputFull = "BallType of Player 0 : HALF";
+				_playerFull->setText(inputFull);
+
+				QString inputHalf = "BallType of Player 1: FULL";
+				_playerHalf->setText(inputHalf);
+			}
+		}
+		else{
+			if (getCurrentPlayer() == 1){
+				QString inputFull = "BallType of Player 0 : HALF";
+				_playerFull->setText(inputFull);
+
+				QString inputHalf = "BallType of Player 1: FULL";
+				_playerHalf->setText(inputHalf);
+			}
+			else{
+				QString inputFull = "BallType of Player 0 : FULL";
+				_playerFull->setText(inputFull);
+
+				QString inputHalf = "BallType of Player 1: HALF";
+				_playerHalf->setText(inputHalf);
+			}
+		}
+	}
+}
+
+void GLScene::updateLabel(){
+	QString updateCurrentLabel = "CurrentPlayer: "+ QString::number(getCurrentPlayer());
+	_currentPlayerLabel->setText(updateCurrentLabel);
+}
+
+//========================================================================================
+// GETed die Spieler und GETed jetziger Spieler
+//========================================================================================
+GLScene::Player GLScene::getPlayers(int num){
+	return players[num];
+}
+
+int GLScene::getCurrentPlayer(){
+	return currentPlayer;
+}
+
+
 void GLScene::startGame(bool gameStarted) {
 	if (!alreadyStarted) {
 
@@ -181,6 +272,7 @@ void GLScene::initializeGL()
 	// Schattierungsmodell setzen
 	glShadeModel(GL_SMOOTH);
 
+	initLabel();
 	resetGame();
 }
 
@@ -386,6 +478,8 @@ void GLScene::CollisionWithHole(Ball& ball)
 				ball.vx = 0;
 				ball.vy = 0;
 				ball.exists = true;
+				nextPlayerTurn();
+				updateLabel();
 				return;
 			}
 			//Hat der Spieler die Richtige Farbe rein gemacht?
@@ -395,11 +489,14 @@ void GLScene::CollisionWithHole(Ball& ball)
 				int otherPlayerPosition = (currentPlayer + 1) % 2;
 				players[otherPlayerPosition].colorSet = true;
 				players[otherPlayerPosition].ballType = !ball.full;
+				setBallTypeLabel();
+				updateLabel();
 				std::cout << "Farbe angepasst auf " << players[currentPlayer].ballType << std::endl;
 			}
 			if (players[currentPlayer].ballType == ball.full)
 			{
 				//TODO Ja Dann Spieler weiterhin dran
+				updateLabel();
 				std::cout << "Getroffen von Spieler " << currentPlayer << std::endl;
 				again = true;
 			}
@@ -407,6 +504,8 @@ void GLScene::CollisionWithHole(Ball& ball)
 			{
 				std::cout << "Getroffen! Aber falsche Art von Spieler " << currentPlayer << std::endl;
 				definitlyNotAgain = true;
+				nextPlayerTurn();
+				updateLabel();
 				//Nein dann nächster Spieler 
 				//TODO Listener für PlayerWechsel DIKO
 				//currentPlayer = (currentPlayer + 1) % 2;
@@ -414,6 +513,11 @@ void GLScene::CollisionWithHole(Ball& ball)
 		}
 	}
 }
+
+void GLScene::nextPlayerTurn(){
+	currentPlayer = (currentPlayer + 1) % 2;
+}
+
 //Check wenn die Schwarze Kugel eingelocht wurde ob gewonnen oder verloren wurde.
 bool GLScene::VerifyWin()
 {
@@ -904,7 +1008,7 @@ void GLScene::loadTexture() {
 	unsigned char * data;
 
 	//TODO Richtiger Filename
-	const char * textureName = "C:/Users/fp17/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
+	const char * textureName = "C:/Users/fp18/Desktop/AR_BilliardFINISHED/TouchScreen/textures/balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
 	//file = fopen(filename, "rb"); 
