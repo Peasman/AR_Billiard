@@ -32,7 +32,7 @@ cv::Mat Camera::capture()
 // Undistort gegebenen X,Y-Punkt und gibt diesen zuruek
 cv::Point2f Camera::camera2world(float x, float y){
 	cv::Point2f pt(x, y);
-	return _calibrationObject.undistortPoint(pt);
+	return _calibrationObject.mapPoint(pt);
 }
 
 // Bild auswerten (Kalibrieren oder Erkennen)

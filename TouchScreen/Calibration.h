@@ -13,6 +13,7 @@ public:
 
 	// Kalibrierung berechnen
 	void run(std::list< cv::Mat >& inputImages);
+	cv::Point2f mapPoint(cv::Point2f point);
 
 	// Kalibrierung anwenden
 	cv::Mat undistort(cv::Mat img);
@@ -23,10 +24,11 @@ public:
 	inline bool valid() const { return _calibrationValid; }
 
 private:
-
-	cv::Point2f eckpunktObenLinks;
-	cv::Point2f eckpunktUntenRechts;
-	cv::Point2f mapPoint(cv::Point2f point);
+	// Schachbrett Eckpunkte ganz aussen
+	cv::Point2f epol; //oben links
+	cv::Point2f epur; //unten rechts
+	// Punkt vom Queue
+	cv::Point2f redpoint;
 
 	// Flag fuer Zustand der Kalibrierung
 	bool _calibrationValid;
