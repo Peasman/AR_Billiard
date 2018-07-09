@@ -54,6 +54,9 @@ void Detection::detectCue(cv::Mat imageOriginal){
 	cv::Point2d pt1 = pts[indices[0]];
 	cv::Point2d pt2 = pts[indices[1]];
 
+	//std::cout << "1.Punkt: X=" << pt1.x << " Y=" << pt1.y << std::endl;
+	//std::cout << "2.Punkt: X=" << pt2.x << " Y=" << pt2.y << std::endl;
+
 	// calculate distances of current point to last points
 	double dx = (_last_x_1 - pt1.x) * (_last_x_1 - pt1.x);
 	double dy = (_last_y_1 - pt1.y) * (_last_y_1 - pt1.y);
@@ -109,6 +112,8 @@ void Detection::runTest(){
 
 		detectCue(imageOriginal);
 		if (_valid){
+			//std::cout << "1.Punkt: X=" << _curr_x_1 << " Y=" << _curr_y_1 << std::endl;
+			//std::cout << "2.Punkt: X=" << _curr_x_2 << " Y=" << _curr_y_2 << std::endl;
 			cv::circle(imageAxis, cv::Point((int)_curr_x_1, (int)_curr_y_1), 3, cv::Scalar(0, 0, 255), CV_FILLED, 8, 0);
 			cv::circle(imageAxis, cv::Point((int)_curr_x_2, (int)_curr_y_2), 3, cv::Scalar(0, 255, 0), CV_FILLED, 8, 0);
 		}

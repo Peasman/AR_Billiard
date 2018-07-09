@@ -26,19 +26,19 @@ public:
 
 	public slots:
 
-	int getCurrentPlayer();
+//	int getCurrentPlayer();
 	void testPauseByInput();
 	void wait(int);
-	Player getPlayers(int);
+//	Player getPlayers(int);
 	void updateFrame();
 	void resetGame();
 	void enableMouse(bool);
 	void startGame(bool);
 	void changeCalibrateQuestionBool(bool);
-	void initLabel();
-	void setBallTypeLabel();
-	void updateLabel();
-	void nextPlayerTurn();
+//	void initLabel();
+//	void setBallTypeLabel();
+//	void updateLabel();
+//	void nextPlayerTurn();
 private:
 	QLabel *_currentPlayerLabel;
 	QLabel *_playerHalf;
