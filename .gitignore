@@ -19,3 +19,6 @@ UpgradeLog.htm
 *.vcxproj.filters
 *.user
 *.filters
+*.aux
+*.out
+*.gz
