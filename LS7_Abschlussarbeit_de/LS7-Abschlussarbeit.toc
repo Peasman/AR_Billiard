@@ -14,20 +14,23 @@
 \contentsline {subsubsection}{\nonumberline Kollision mit anderen Kugeln}{13}{section*.8}
 \contentsline {subsubsection}{\nonumberline Zusammenfassung}{14}{section*.9}
 \contentsline {section}{\numberline {3.2}Kamerakalibrierung}{15}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Entzerrung des Kamerabildes}{15}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Erkennung des Spielfeldes}{15}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Queue-Detektion}{16}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Segmentierung}{16}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Erkennung des Kollisionspunktes}{16}{subsection.3.3.2}
-\contentsline {section}{\numberline {3.4}Benutzerinteraktion}{17}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Spielregeln}{17}{subsection.3.4.1}
-\contentsline {subsection}{\numberline {3.4.2}Benutzerinteraktion}{17}{subsection.3.4.2}
-\contentsline {chapter}{\numberline {4}Ergebnisse}{19}{chapter.4}
-\contentsline {section}{\numberline {4.1}Aufbau der Umfrage}{19}{section.4.1}
-\contentsline {section}{\numberline {4.2}Darstellung der Ergebnisse}{19}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Benutzerfreundlichkeit}{19}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{19}{subsection.4.2.2}
-\contentsline {chapter}{\numberline {5}Diskussion}{21}{chapter.5}
-\contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{21}{section.5.1}
-\contentsline {chapter}{\numberline {A}Weitere Informationen}{23}{appendix.A}
-\contentsline {chapter}{Literaturverzeichnis}{24}{appendix.A}
+\contentsline {subsection}{\numberline {3.2.1}Entzerrung der Kamerabildes}{15}{subsection.3.2.1}
+\contentsline {subsubsection}{\nonumberline Darstellung des Erkennungsmusters}{15}{section*.11}
+\contentsline {subsubsection}{\nonumberline Entzerrung des Kamerabildes/Punktes}{15}{section*.12}
+\contentsline {subsection}{\numberline {3.2.2}Mappen eines Kamerapunktes in das Spielfeld}{16}{subsection.3.2.2}
+\contentsline {section}{\numberline {3.3}Queue-Detektion}{17}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Segmentierung}{17}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Erkennung des Kollisionspunktes}{18}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}Bewegungsinterpolation und Kollisionsberechnung}{19}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}Benutzerinteraktion}{20}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Spielregeln}{20}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Benutzerinteraktion}{20}{subsection.3.4.2}
+\contentsline {chapter}{\numberline {4}Ergebnisse}{21}{chapter.4}
+\contentsline {section}{\numberline {4.1}Aufbau der Umfrage}{21}{section.4.1}
+\contentsline {section}{\numberline {4.2}Darstellung der Ergebnisse}{21}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Benutzerfreundlichkeit}{21}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{21}{subsection.4.2.2}
+\contentsline {chapter}{\numberline {5}Diskussion}{23}{chapter.5}
+\contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{23}{section.5.1}
+\contentsline {chapter}{\numberline {A}Weitere Informationen}{25}{appendix.A}
+\contentsline {chapter}{Literaturverzeichnis}{26}{appendix.A}

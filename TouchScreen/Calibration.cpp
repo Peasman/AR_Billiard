@@ -172,7 +172,7 @@ cv::Point2f Calibration::mapPoint(cv::Point2f blackpoint)//Punkt in Kamera
 		blackpoint.y < epol.y ||
 		blackpoint.x > epur.x ||
 		blackpoint.y > epur.y){
-		std::cout << "CALIB: >> Punkt NOT" << std::endl;
+		//std::cout << "CALIB: >> Punkt NOT" << std::endl;
 		return cv::Point2f(-100, -100);
 	}
 	else//Punkt innerhalb des Spielfeldes (in cam-koords) = Koords.
