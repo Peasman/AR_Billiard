@@ -1,0 +1,90 @@
+\subsection{Querverweise}\label{sec:querverweise}
+
+\begin{frame}[c,fragile]
+\frametitle{Querverweise}
+
+Es gibt in \LaTeX\ drei Befehle zur Benutzung von Querverweisen:
+
+\begin{minipage}{0.45\textwidth}
+\begin{block}{Querverweise}
+\begin{verbatim}
+\label{marker}
+\ref{marker}
+\pageref{marker}
+\end{verbatim}
+\end{block}
+\end{minipage}
+\hfill
+\begin{minipage}{0.45\textwidth}
+\begin{block}{Pr\"afixe}
+\begin{tabular}{ll}
+\texttt{chap:} & chapter \\
+\texttt{sec:} & section \\
+\texttt{fig:} & figure \\
+\texttt{tab:} & table \\
+\texttt{eq:} & equation \\
+\texttt{lst:} & listing
+\end{tabular}
+\end{block}
+\end{minipage}
+
+Der \texttt{marker} ist frei w\"ahlbar. Es ist jedoch \"ublich einen Präfix zu benutzen, der angibt was referenziert wird:
+
+\verb|\label{sec:Querverweise}|
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Definition von Markern}
+
+F\"ur \texttt{figure}-- und \texttt{table}--Umgebungen ist wichtig, dass das Label innerhalb des \lc{caption}--Befehls angegeben wird.
+
+\begin{block}{Beispiel}
+\begin{verbatim}
+\section{Querverweise}\label{sec:querverweise}
+
+\begin{figure}
+\caption{Sch\"ones Bild\label{fig:beispielfig}}
+\end{figure}
+
+\begin{table}
+\caption{Wichtige Tabelle\label{tab:beispieltab}}
+\end{table}
+
+\begin{equation}\label{eq:fibonacci}
+\end{equation}
+
+\begin{defi}[Taylorpolynom]\label{th:taylorpolynom}
+\end{defi}
+\end{verbatim}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Referenzieren von Markern}
+
+\begin{block}{Beispiele}
+\begin{verbatim}
+siehe Seite~\pagref{sec:querverweise}
+siehe Abbildung~\ref{fig:beispielfig}
+siehe Tabelle~\ref{tab:beispieltab}
+siehe Gleichung~\ref{eq:fibonacci}
+  auf Seite~\pageref{eq:fibonacci}
+in Definition~(\ref{th:taylorpolynom})
+\ref{unbekannt}, \pageref{unbekannt}
+\end{verbatim}
+\end{block}
+
+\begin{block}{Ausgabe}
+siehe Seite~\pageref{sec:querverweise} \\
+siehe Abbildung~\ref{fig:beispielfig} \\
+siehe Tabelle~\ref{tab:beispieltab} \\
+siehe Gleichung~\ref{eq:fibonacci} auf Seite~\pageref{eq:fibonacci} \\
+in Definition~(\ref{th:taylorpolynom}) \\
+\ref{unbekannt}, \pageref{unbekannt}
+\end{block}
+
+\end{frame}
+
