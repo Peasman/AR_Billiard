@@ -40,7 +40,7 @@ void GLScene::enableMouse(bool isEnable) {
 //========================================================================================
 void GLScene::mousePressEvent(QMouseEvent *event)
 {
-	if (!isMouseEnable) {
+	if (isMouseEnable) {
 		currentPos = event->pos();
 	}
 }
@@ -49,7 +49,7 @@ void GLScene::mousePressEvent(QMouseEvent *event)
 //========================================================================================
 void GLScene::mouseMoveEvent(QMouseEvent *event)
 {
-	if (!isMouseEnable) {
+	if (isMouseEnable) {
 		lastPos = currentPos;
 		float currentx = event->pos().x();
 		float currenty = _h - event->pos().y() - 30;
@@ -62,7 +62,7 @@ void GLScene::mouseMoveEvent(QMouseEvent *event)
 //========================================================================================
 void GLScene::mouseReleaseEvent(QMouseEvent *event)
 {
-	if (!isMouseEnable) {
+	if (isMouseEnable) {
 
 	}
 }
@@ -469,7 +469,6 @@ void GLScene::CollisionWithHole(Ball& ball)
 				ball.vy = 0;
 				ball.exists = true;
 				nextPlayer();
-				updateLabel();
 				return;
 			}
 			//Hat der Spieler die Richtige Farbe rein gemacht?
@@ -480,7 +479,6 @@ void GLScene::CollisionWithHole(Ball& ball)
 				players[otherPlayerPosition].colorSet = true;
 				players[otherPlayerPosition].ballType = !ball.full;
 				setBallTypeLabel();
-				updateLabel();
 				std::cout << "Farbe angepasst auf " << players[currentPlayer].ballType << std::endl;
 			}
 			if (players[currentPlayer].ballType == ball.full)
@@ -494,7 +492,6 @@ void GLScene::CollisionWithHole(Ball& ball)
 				std::cout << "Getroffen! Aber falsche Art von Spieler " << currentPlayer << std::endl;
 				definitlyNotAgain = true;
 				nextPlayer();
-				updateLabel();
 				//Nein dann nächster Spieler 
 				//TODO Listener für PlayerWechsel DIKO
 				//currentPlayer = (currentPlayer + 1) % 2;
@@ -514,7 +511,7 @@ void GLScene::nextPlayer() {
 			{
 				currentPlayer = (currentPlayer + 1) % 2;
 				std::cout << "Spieler Wechsel" << std::endl;
-
+				updateLabel();
 			}
 			else {
 				std::cout << "Nochmal dran" << std::endl;
