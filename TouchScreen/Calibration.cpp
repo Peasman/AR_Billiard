@@ -12,6 +12,7 @@ Calibration::~Calibration(){}
 
 void Calibration::run(std::list< cv::Mat >& inputImages)
 {
+	std::cout << "CALIB: Images auswerten: " << std::endl;
 	int _idximg = 0;
 	// erzeuge die Weltkoordinaten fuer das Kalibrierbild
 	// Weltkoordinaten sind nur in relativer Position der Eckpunkte
@@ -57,15 +58,13 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 			patternCorners.push_back(pointBuffer);
 			// ebenso fuer Weltkoordinaten
 			patternWorldBuffer.push_back(_patternWorldCoordinates);
-			// Einzeichnen der Eckpunkte in das Bild fuer spaetere Wiedergabe
-			//			cv::drawChessboardCorners(*img, _patternSize, pointBuffer, found);
-			//std::cout << "CALIB: " << ++_idximg << " / " << inputImages.size() << " Pattern gefunden -> Undistortion .." << std::endl;
 		}
 	}
-
-	// genug gute Bilder gefunden?
 	if (goodCount > 0)
 	{
+		std::cout << "CALIB: Kalibrieren gestartet" << std::endl;
+		std::cout << std::endl;
+
 		// Speicher fuer extrinsische Kalibrierungen reservieren
 		_rvecs.resize(goodCount);
 		_tvecs.resize(goodCount);
@@ -73,14 +72,15 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		// Kalibrierung durchfuehren
 		cv::calibrateCamera(patternWorldBuffer, patternCorners, _patternSize, _cameraMatrix, _distortionCoeffs, _rvecs, _tvecs);
 
-		cv::Point2f undistortedPoint;
-		for (int i = 0; i < patternCorners[0].size(); i++){
-			std::cout << "CALIB: Distorted Point, x: " << patternCorners[0][i].x << ", y: " << patternCorners[0][i].y << std::endl;
-			undistortedPoint = undistortPoint(patternCorners[0][i]);
-			std::cout << "CALIB: Undistorted Point: " << undistortedPoint.x << ", y: " << undistortedPoint.y << std::endl;
-		}
+		//cv::Point2f undistortedPoint;
+		//for (int i = 0; i < patternCorners[0].size(); i++){
+		//	std::cout << "CALIB: Distorted Point, x: " << patternCorners[0][i].x << ", y: " << patternCorners[0][i].y << std::endl;
+		//	undistortedPoint = undistortPoint(patternCorners[0][i]);
+		//	std::cout << "CALIB: Undistorted Point: " << undistortedPoint.x << ", y: " << undistortedPoint.y << std::endl;
+		//}
 
-		/* Erstes gutes Bild wird entzerrt */
+		/*
+		// Erstes gutes Bild wird entzerrt
 		cv::Mat img = *(inputImages.begin());
 		cv::Mat undistorted = undistort(img);
 
@@ -99,46 +99,59 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 		cv::imshow("Undistorted", undistord);
 		cv::warpAffine(undistord, rotated, r1, img.size());
 		cv::imshow("Rotated", rotated);
-		/* Undistrotion + Rotation completed */
+		// Undistrotion + Rotation completed
+		*/
 
-		/* Eckpunkte ganz aussen berechnen */
-		cv::Point2f obenLinks = patternCorners[0][(1 * 1) - 1];
-		cv::Point2f obenLinksInnen = patternCorners[0][(2 * 2) - 1];
-		cv::Point2f untenRechtsInnen = patternCorners[0][(14 * 6) - 1];
-		cv::Point2f untenRechts = patternCorners[0][(15 * 7) - 1];
-		/*
+		// Eckpunkte ganz aussen berechnen (in cam-korrds)
+		// Eckpunkte aussen-1 und aussen-2 erfassen
+		cv::Point2f obenLinks = patternCorners[0][0]; //1. Zeile 1. Pattern
+		cv::Point2f obenLinksInnen = patternCorners[0][15 + 2 - 1]; //1. Zeile komplett + 2 aus 2. Zeile
+		cv::Point2f untenRechtsInnen = patternCorners[0][15 * 5 + 14 - 1]; //1.-5. Zeile komplett + 14 aus 6. Zeile
+		cv::Point2f untenRechts = patternCorners[0][15 * 7 - 1]; //7. (letzte) Zeile 15. (letztes) Pattern
+
+		// Eckpunkte aussen-1 und aussen-2 entzerren
 		obenLinks = undistortPoint(obenLinks);
-		obenLinksInnen = undistortPoint(obenLinks);
+		obenLinksInnen = undistortPoint(obenLinksInnen);
 		untenRechtsInnen = undistortPoint(untenRechtsInnen);
 		untenRechts = undistortPoint(untenRechts);
-		*/
-		int xDiffOL = obenLinksInnen.x - obenLinks.x;
-		int yDiffOL = obenLinksInnen.y - obenLinks.y;
-		int xNeuOL = obenLinks.x - xDiffOL;
-		int yNeuOL = obenLinks.y - yDiffOL;
-		eckpunktObenLinks = cv::Point2f(xNeuOL, yNeuOL);
+		// Eckpunkt oben links aussen berechnen
+		float xDiffOL = obenLinksInnen.x - obenLinks.x;
+		float yDiffOL = obenLinksInnen.y - obenLinks.y;
+		float xNeuOL = obenLinks.x - xDiffOL;
+		float yNeuOL = obenLinks.y - yDiffOL;
+		epol = cv::Point2f(xNeuOL, yNeuOL);//Eckpunkt oben links cam
+		// Eckpunkt unten rechts aussen berechnen
+		float xDiffUR = untenRechts.x - untenRechtsInnen.x;
+		float yDiffUR = untenRechts.y - untenRechtsInnen.y;
+		float xNeuUR = untenRechts.x + xDiffUR;
+		float yNeuUR = untenRechts.y + yDiffUR;
+		epur = cv::Point2f(xNeuUR, yNeuUR);//Eckpunkt unten rechts cam
 
-		int xDiffUR = untenRechts.x - untenRechtsInnen.x;
-		int yDiffUR = untenRechts.y - untenRechtsInnen.y;
-		int xNeuUR = untenRechtsInnen.x - xDiffOL;
-		int yNeuUR = untenRechtsInnen.y - yDiffOL;
-		eckpunktUntenRechts = cv::Point2f(xNeuUR, yNeuUR);
+		//std::cout << "CALIB: DiffOL x=" << xDiffOL << " Y=" << yDiffOL << std::endl;
+		//std::cout << "CALIB: DiffUR x=" << xDiffUR << " Y=" << yDiffUR << std::endl;
+		//std::cout << std::endl;
 
-		/* Eckpunkte innen entzerren */
-		cv::Point2f upperLeftPt = patternCorners[0][0];
-		cv::Point2f lowerRightPt = patternCorners[0][(15 * 7) - 1];
-		std::cout << "CALIB: Distorted: " << std::endl;
-		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
-		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
+		std::cout << "CALIB: openLinksAussen   x=" << epol.x << " Y=" << epol.y << std::endl;
+		std::cout << "CALIB: obenLinks         x=" << obenLinks.x << " Y=" << obenLinks.y << std::endl;
+		std::cout << "CALIB: obenLinksInnen    x=" << obenLinksInnen.x << " Y=" << obenLinksInnen.y << std::endl;
+		std::cout << "CALIB: untenRechtsInnen  x=" << untenRechtsInnen.x << " Y=" << untenRechtsInnen.y << std::endl;
+		std::cout << "CALIB: untenRechts       x=" << untenRechts.x << " Y=" << untenRechts.y << std::endl;
+		std::cout << "CALIB: untenRechtsAussen x=" << epur.x << " Y=" << epur.y << std::endl;
+		std::cout << std::endl;
 
-		upperLeftPt = undistortPoint(upperLeftPt);
-		lowerRightPt = undistortPoint(lowerRightPt);
+		// Eckpunkte innen entzerren
+		//cv::Point2f upperLeftPt = patternCorners[0][0];
+		//cv::Point2f lowerRightPt = patternCorners[0][(15 * 7) - 1];
+		//std::cout << "CALIB: Distorted: " << std::endl;
+		//std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
+		//std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
+		//upperLeftPt = undistortPoint(upperLeftPt);
+		//lowerRightPt = undistortPoint(lowerRightPt);
+		//std::cout << "CALIB: Undistorted: " << std::endl;
+		//std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
+		//std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
 
-		std::cout << "CALIB: Undistorted: " << std::endl;
-		std::cout << "CALIB: Upper Left, x: " << upperLeftPt.x << ", y: " << upperLeftPt.y << std::endl;
-		std::cout << "CALIB: Lower Right, x: " << lowerRightPt.x << ", y: " << lowerRightPt.y << std::endl;
-
-		/* Kalibrierung fertig */
+		// Kalibrierung fertig
 		_calibrationValid = true;
 	}
 	else// nicht genug Daten -> keine gueltige Kalibrierung
@@ -147,42 +160,83 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 	}
 }
 
-cv::Point2f Calibration::mapPoint(cv::Point2f point){
-	return cv::Point2f(0, 0);
+// Kamera-Korrdinaten in Spielfeld-Korrdinaten mappen
+cv::Point2f Calibration::mapPoint(cv::Point2f blackpoint)//Punkt in Kamera
+{
+	// Frame-Koords Spielfeld
+	int redframeX = 1380;
+	int redframeY = 690;
+
+	//Punkt auﬂerhalb des Spielfeldes (in cam-koords) = 100,100
+	if (blackpoint.x < epol.x ||
+		blackpoint.y < epol.y ||
+		blackpoint.x > epur.x ||
+		blackpoint.y > epur.y){
+		std::cout << "CALIB: >> Punkt NOT" << std::endl;
+		return cv::Point2f(-100, -100);
+	}
+	else//Punkt innerhalb des Spielfeldes (in cam-koords) = Koords.
+	{
+		float xBlack, yBlack, multBlackRedX, multBlackRedY;
+
+		// Kamera Schachbrett Eckpunkte (0,0 ist von Game/y invertiert)
+		// EPOL  -   o
+		//  |        |
+		// 0,0   -  EPUR  -> x
+		//  |
+		//  V y
+
+		xBlack = blackpoint.x - epol.x;
+		yBlack = epur.y - blackpoint.y;
+		multBlackRedX = redframeX / (epur.x - epol.x);
+		//std::cout << "CALIB: >> multBlackRedX = redframeX / (epur.x - epol.x) =" << std::endl;
+		//std::cout << "CALIB: >> " << multBlackRedX << " = " << redframeX << " / (" << epur.x << " - " << epol.x << ")" << std::endl;
+		multBlackRedY = redframeY / (epur.y - epol.y);
+		//std::cout << "CALIB: >> multBlackRedY = redframeY / (epur.y - epol.y) =" << std::endl;
+		//std::cout << "CALIB: >> " << multBlackRedY << " = " << redframeY << " / (" << epur.y << " - " << epol.y << ")" << std::endl;
+		//std::cout << "CALIB: >> Punkt Game Unscaled x=" << xBlack << " y=" << yBlack << std::endl;
+		//std::cout << "CALIB: >> Scale x=" << multBlackRedX << " y=" << multBlackRedY << std::endl;
+		xBlack = xBlack * multBlackRedX;
+		yBlack = yBlack * multBlackRedY;
+		std::cout << "CALIB: >> Punkt OKE x=" << blackpoint.x << "->" << xBlack << " y=" << blackpoint.y << "-> " << yBlack << std::endl;
+		redpoint = cv::Point2f(xBlack, yBlack);
+	}
+	return redpoint;
 }
 
-bool Calibration::actually_findChessboardCorners(cv::Mat& frame, cv::Size& size, cv::Mat& corners, int flags) {
+bool Calibration::actually_findChessboardCorners(cv::Mat& frame, cv::Size& size, cv::Mat& corners, int flags)//Wurden Chessboard-Ecken gefunden?
+{
 	int count = size.area();
 	corners.create(count, 1, CV_32FC2);
 	CvMat _image = frame;
 	return cvFindChessboardCorners(&_image, size, reinterpret_cast<CvPoint2D32f*>(corners.data), &count, flags) > 0;
 }
 
-cv::Point2f Calibration::undistortPoint(cv::Point2f point)
-{
-	std::vector<cv::Point2f> in;
-	in.push_back(point);
-
-	std::vector<cv::Point2f> out;
-
-	cv::undistortPoints(in, out, _cameraMatrix, _distortionCoeffs);
-
-	return *(out.begin());
+cv::Point2f Calibration::undistortPoint(cv::Point2f point)// Koordinaten entzerren/rotieren
+{/*
+ std::vector<cv::Point2f> distorted;
+ std::vector<cv::Point2f> undistorted;
+ std::vector<cv::Point2f> rotated;
+ distorted.push_back(point);
+ cv::Mat R;
+ cv::Rodrigues(_rvecs[0], R);
+ cv::Mat r1;
+ cv::vconcat(R.row(0), R.row(1), r1);
+ cv::invertAffineTransform(r1, r1);
+ cv::undistortPoints(distorted, undistorted, _cameraMatrix, _distortionCoeffs);
+ cv::warpAffine(undistorted, rotated, r1, cv::Size(2,1));
+ return *(rotated.begin());*/
+	return point;
 }
 
-cv::Mat Calibration::undistort(cv::Mat img)
+cv::Mat Calibration::undistort(cv::Mat img)// Bild entzerren
 {
-	// Ergebnisspeicher reservieren
 	cv::Mat result;
-
-	// Bild entzerren
 	cv::undistort(img, result, _cameraMatrix, _distortionCoeffs);
-
-	// Rueckgabe
 	return result;
 }
 
-void Calibration::printCalibration()
+void Calibration::printCalibration()// Kalibrierungsparameter ausgeben
 {
 	// keine Kalibrierung -> keine Asgabe
 	if (!_calibrationValid)

@@ -1,5 +1,33 @@
 \section{Kamerakalibrierung}
 
-\subsection{Entzerrung des Kamerabildes}
+Dieses Kapitel beschäftigt sich mit der Kamerakalibrierung, worunter neben der Entzerrung des Kamerabildes von Bild mit Tiefe in ein 2D-Bild auch die Transformation eines gegebenen XY-Punktes, welches die aktuelle Position des Queues repräsentiert, in das Spielfeldkoordinatensystem fällt.
+Die Kamerakalibrierung wird durch die Erkennung eines dargestellten und durch das Kamerabild erfassten Schachbrettmusters, welches ein bereits bekanntes Muster zur Erkennung von Fixpunkten im Kamerabild darstellt, bewerkstelligt. Dies stellt gleichzeitig die Erkennung des Spielfeldes dar, da das Schachbrettmuster auf dem Spielfeldbereich angezeigt wird. Im Folgenden wird zwischen Entzerrung des Kamerabildes und Transformieren eines Punktes unterteilt.
 
-\subsection{Erkennung des Spielfeldes}
+\subsection{Entzerrung der Kamerabildes}
+
+Sobald die Anwendung gestartet wird, wird die Kamera verbunden und ein Timer fragt alle 16ms ab, ob die Kalibrierung gestartet werden soll. Wenn dem so ist, werden Fotos aufgenommen (weiteres dazu s. 'Entzerrung des Kamerabildes'), ansonsten passiert nichts.
+
+\subsubsection{Darstellung des Erkennungsmusters}
+
+%createChessboard in GLScene.cpp
+Berechnung der Kachelabmessungen vertikal und horizontal:\\
+$H_{k}$ Höhe Kachel, $W_{k}$ Breite Kachel, $H_{p}$ Höhe Anzeigebereich, $W_{p}$ Breite Anzeigebereich, $Hor$ = Horizontale Anzahl Kacheln, $Vert$ = Vertikale Anzahl Kacheln\\
+$H_{k} = \dfrac{H_{p}}{Vert}, W_{k} = \frac{W_{p}}{Hor}$\\
+
+Darstellung von Kacheln:\\
+$i \in [1,Hor], j \in [1,Vert] : glRecti( i*H_{k}, j*W_{k}, (i+1)*H_{k}, (j+1)*W_{k} )$
+
+\subsubsection{Entzerrung des Kamerabildes/Punktes}
+Bildkoordinaten = BK, Weltkoordinaten = WK, Patterneckpunkte = PE, Vector 2/3 Point = 2/3V\\
+
+
+Nimmt 20 Fotos auf und wertet diese dann in der $Calibration$ aus:\\
+$patternWorldCoordinates$ = 3V mit $(x*a,y*a,0)$ für alle $x \in Hor-1$ für alle $y \in Vert-1$ und $a$ = Kantenlänge für Kachel in WK\\
+$patternCorners$ = 2V Speicher für PE in BK\\
+$patternWorldBuffer$ = 3V Speicher für PE in WK\\
+$pointBuffer$ = 2V Zwischenspeicher für PE in BK (wird für jedes Bild neu initialisiert)\\
+
+
+\subsection{Mappen eines Kamerapunktes in das Spielfeld}
+
+

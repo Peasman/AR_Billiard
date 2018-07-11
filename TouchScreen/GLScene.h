@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <Camera.h>
 #include <Detection.h>
+#include <qlabel.h>
 class GLScene : public QGLWidget
 {
 
@@ -25,14 +26,24 @@ public:
 
 	public slots:
 
+	int getCurrentPlayer();
 	void testPauseByInput();
 	void wait(int);
-
+	Player getPlayers(int);
 	void updateFrame();
 	void resetGame();
 	void enableMouse(bool);
 	void startGame(bool);
 	void changeCalibrateQuestionBool(bool);
+	void initLabel();
+	void setBallTypeLabel();
+	void updateLabel();
+
+
+private:
+	QLabel *_currentPlayerLabel;
+	QLabel *_playerHalf;
+	QLabel *_playerFull;
 
 protected:
 	Detection det;

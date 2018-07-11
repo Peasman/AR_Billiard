@@ -19,3 +19,7 @@ UpgradeLog.htm
 *.vcxproj.filters
 *.user
 *.filters
+*.aux
+*.out
+*.gz
+LS7_Abschlussarbeit_de/LS7-Abschlussarbeit.pdf

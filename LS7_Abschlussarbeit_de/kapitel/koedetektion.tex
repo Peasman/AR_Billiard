@@ -1,5 +1,54 @@
 \section{Queue-Detektion}
 
+
+Um die Billard-Kugeln mit dem realen Queue kollidieren zu lassen, muss der Queue in dem von der Kamera aufgenommenen Bild erkannt und korrekt modelliert werden. 
+
+
+
+
+
+
 \subsection{Segmentierung}
+Beschreibung des Eingabebildes
+
+Farbraumtransformation HSV
+
+Thresholding im HSV Farbraum um Binärbild zu gewinnen 
+
+Morphologisches Opening (Ausreißerentfernung) und Closing (Schließen der Lücken)
+
 
 \subsection{Erkennung des Kollisionspunktes}
+Binärbild $\textbf{B} \in \{0, 1\}^{n\times m}$ Ausgabe der Segmentierung
+
+Da der Queue 
+
+Hauptkomponentenanalyse:
+
+Koordinaten in $\textbf{B}$ der als Queue klassifizierten Pixel als Zeilenvektoren:
+
+$X = \{(x, y) \mid \textbf{B}_{x,y} = 1, x \in [1,n], y \in [1,m]\}$, $k = |\textbf{B}|$
+
+Sei $\textbf{X}$ die $k\times 2$ Matrix der $k$ Zeilenvektoren aus $X$
+
+Berechnung des Mittelwertes für beide Dimensionen:
+
+$\textbf{u} = (u_1, u_2)$ mit $u_j = \frac{1}{k}\sum_{i=1}^{k}\textbf{X}_{i, j}, j \in \{1,2\}$
+
+Normalisierung mittels des Mittelwertes:
+
+$\textbf{A} = \textbf{B} - \textbf{h}\textbf{u}^{T}$ mit dem $k\times 1$ Spaltenvektor $\textbf{h}, h_i = 1$ für $i = 1,\dots,k$
+
+Bestimmung der $2\times2$ Kovarianzmatrix:
+
+$\textbf{C} = \frac{1}{k-1} {\textbf{B}}^{T} \cdot \textbf{B}$
+
+
+
+
+
+
+
+
+
+\subsection{Bewegungsinterpolation}

@@ -66,6 +66,84 @@ void GLScene::mouseReleaseEvent(QMouseEvent *event)
 
 	}
 }
+
+void GLScene::initLabel(){
+	QPalette sample_palet;
+	sample_palet.setColor(QPalette::Window, QColor(1.0f, 0.4f, 0.0f, 1.0f));
+	sample_palet.setColor(QPalette::WindowText, Qt::white);
+	sample_palet.setColor(QPalette::Background, QColor::fromRgba(qRgba(0, 102, 0, 255)));
+
+
+	QString inputCurrentPlayer = "CurrentPlayer: ";
+	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
+	_currentPlayerLabel->setGeometry(QRect(200, 0, 100, 25));
+
+	QString inputFull = "BallType of Player: ";
+	_playerFull = new QLabel(inputFull, this);
+	_playerFull->setGeometry(QRect(300, 0, 150, 25));
+
+	QString inputHalf = "BallType of Player: ";
+	_playerHalf = new QLabel(inputHalf, this);
+	_playerHalf->setGeometry(QRect(430, 0, 150, 25));
+
+	_currentPlayerLabel->setAutoFillBackground(true);
+	_playerFull->setAutoFillBackground(true);
+	_playerHalf->setAutoFillBackground(true);
+
+	_currentPlayerLabel->setPalette(sample_palet);
+	_playerFull->setPalette(sample_palet);
+	_playerHalf->setPalette(sample_palet);
+}
+
+void GLScene::setBallTypeLabel(){
+	if (getPlayers(getCurrentPlayer()).colorSet){
+		if (getPlayers(getCurrentPlayer()).ballType){
+			if (getCurrentPlayer() == 0){
+				QString inputFull = "BallType of Player 0 : FULL";
+				_playerFull = new QLabel(inputFull, this);
+
+				QString inputHalf = "BallType of Player 1: HALF";
+				_playerHalf = new QLabel(inputHalf, this);
+			}
+			else{
+				QString inputFull = "BallType of Player 0 : HALF";
+				_playerFull = new QLabel(inputFull, this);
+
+				QString inputHalf = "BallType of Player 1: FULL";
+				_playerHalf = new QLabel(inputHalf, this);
+			}
+		}
+		else{
+			if (getCurrentPlayer() == 1){
+				QString inputFull = "BallType of Player 0 : HALF";
+				_playerFull = new QLabel(inputFull, this);
+
+				QString inputHalf = "BallType of Player 1: FULL";
+				_playerHalf = new QLabel(inputHalf, this);
+			}
+			else{
+				QString inputFull = "BallType of Player 0 : FULL";
+				_playerFull = new QLabel(inputFull, this);
+
+				QString inputHalf = "BallType of Player 1: HALF";
+				_playerHalf = new QLabel(inputHalf, this);
+			}
+		}
+	}
+}
+
+void GLScene::updateLabel(){
+	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(getCurrentPlayer());
+	_currentPlayerLabel->setText(inputCurrentPlayer);
+}
+
+int GLScene::getCurrentPlayer(){
+	return currentPlayer;
+}
+GLScene::Player GLScene::getPlayers(int curPlayer){
+	return players[curPlayer];
+}
+
 void GLScene::startGame(bool gameStarted) {
 	if (!alreadyStarted) {
 
@@ -128,23 +206,27 @@ void GLScene::updateFrame()
 				return;
 			}
 		}
-		/*Detection
-		
+
 		cv::Mat img = cam.capture();
 		cv::Mat flipped;
 		cv::flip(img, flipped, 1);
 		det.detectCue(img);
 
 		if (det._valid){
+			cv::Point2f curr1 = cam.camera2world(det._curr_x_1, det._curr_y_1);
+			cv::Point2f curr2 = cam.camera2world(det._curr_x_2, det._curr_y_2);
+			cv::Point2f last1 = cam.camera2world(det._last_x_1, det._last_x_1);
+			cv::Point2f last2 = cam.camera2world(det._last_x_2, det._last_x_2);
+
 			invalidFrames = 0;
-			racket.x = det._curr_x_1;
-			racket.y = det._curr_y_1;
-			racket.x2 = det._curr_x_2;
-			racket.y2 = det._curr_y_2;
-			racket.xLast = det._last_x_1;
-			racket.yLast = det._last_y_1;
-			racket.x2Last = det._last_x_2;
-			racket.y2Last = det._last_y_2;
+			racket.x = curr1.x;
+			racket.y = curr1.y;
+			racket.x2 = curr2.x;
+			racket.y2 = curr2.y;
+			racket.xLast = last1.x;
+			racket.yLast = last1.y;
+			racket.x2Last = last2.x;
+			racket.y2Last = last2.y;
 		}
 		else
 		{
@@ -162,7 +244,7 @@ void GLScene::updateFrame()
 			racket.yLast = 0;
 			racket.x2Last = 0;
 			racket.y2Last = 0;
-		}*/
+		}
 		updatePhysics();
 		update();
 	}
@@ -180,7 +262,7 @@ void GLScene::initializeGL()
 
 	// Schattierungsmodell setzen
 	glShadeModel(GL_SMOOTH);
-
+	initLabel();
 	resetGame();
 }
 
@@ -386,6 +468,8 @@ void GLScene::CollisionWithHole(Ball& ball)
 				ball.vx = 0;
 				ball.vy = 0;
 				ball.exists = true;
+				nextPlayer();
+				updateLabel();
 				return;
 			}
 			//Hat der Spieler die Richtige Farbe rein gemacht?
@@ -395,6 +479,8 @@ void GLScene::CollisionWithHole(Ball& ball)
 				int otherPlayerPosition = (currentPlayer + 1) % 2;
 				players[otherPlayerPosition].colorSet = true;
 				players[otherPlayerPosition].ballType = !ball.full;
+				setBallTypeLabel();
+				updateLabel();
 				std::cout << "Farbe angepasst auf " << players[currentPlayer].ballType << std::endl;
 			}
 			if (players[currentPlayer].ballType == ball.full)
@@ -407,6 +493,8 @@ void GLScene::CollisionWithHole(Ball& ball)
 			{
 				std::cout << "Getroffen! Aber falsche Art von Spieler " << currentPlayer << std::endl;
 				definitlyNotAgain = true;
+				nextPlayer();
+				updateLabel();
 				//Nein dann nächster Spieler 
 				//TODO Listener für PlayerWechsel DIKO
 				//currentPlayer = (currentPlayer + 1) % 2;
@@ -511,6 +599,7 @@ void GLScene::CollisionWithMouse(Ball& ball)
 		// b = 2 * np.dot(d, f)
 		// c = np.dot(f, f) - radius**2
 		// dis = b**2 - 4 * a*c
+
 
 		float a = dot(dx, dy, dx, dy);
 		float b = 2 * dot(dx, dy, fx, fy);
@@ -904,7 +993,7 @@ void GLScene::loadTexture() {
 	unsigned char * data;
 
 	//TODO Richtiger Filename
-	const char * textureName = "C:/Users/fp17/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Debug/Balls.bmp";
+	const char * textureName = "C:\\Users\\fp19\\Documents\\Fachprojekt\\AR_Billiard\\TouchScreen\\textures\\Balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
 	//file = fopen(filename, "rb"); 
