@@ -47,24 +47,24 @@ void Camera::run()
 		_images.push_back(dest);
 		//cv::imshow("Check image", dest); // Zeige Bild zur Ueberpruefung
 
-		std::cout << "." << std::ends;
+		//std::cout << "." << std::ends;
 		if (_images.size() >= _maximgs) // Falls Anzahl aufgenommener Bilder >= _maximgs
 		{
-			std::cout << " (size:" << _images.size() << ")" << std::endl;
+			//std::cout << " (size:" << _images.size() << ")" << std::endl;
 			// Werte BIlder aus in Calibration
-			std::cout << "CAM: Run calibration" << std::endl;
+			//std::cout << "CAM: Run calibration" << std::endl;
 			_calibrationObject.run(_images);
 			_images.clear();
 			if (_calibrationObject.valid())//Falls erfolgreich
 			{
-				std::cout << "CAM: Calibration finished" << std::endl;
-				std::cout << std::endl;
+				//std::cout << "CAM: Calibration finished" << std::endl;
+				//std::cout << std::endl;
 				_calibration = false; //Beende Calibration
 			}
 			else// Falls nicht erfolgreich
 			{
-				std::cout << "CAM: Calibration failed, try again .." << std::endl;
-				std::cout << std::endl;
+				//std::cout << "CAM: Calibration failed, try again .." << std::endl;
+				//std::cout << std::endl;
 				_calibration = true; //Erneut Calibration
 			}
 		}

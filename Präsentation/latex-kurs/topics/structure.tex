@@ -1,0 +1,613 @@
+\section{Aufbau von \LaTeX--Dokumenten}
+
+\begin{frame}[c,fragile]
+\frametitle{Aufbau von \LaTeX--Dokumenten}
+\begin{block}{Minimales \LaTeX--Dokument}
+\begin{verbatim}
+% Präambel
+\documentclass{article}
+\begin{document}
+% ... Text ...
+\end{document}
+\end{verbatim}
+\end{block}
+
+\begin{itemize}
+\item Kommentare beginnen mit dem Prozentzeichen \texttt{\%}
+\item \LaTeX-\emph{Befehle} beginnen mit einem \emph{backslash} \lc{befehl}.
+\item \emph{Umgebungen} sind Textbl\"ocke, die mit \lcp{begin}{\textit{umgebung}}, \lcp{end}{\textit{umgebung}} umschlossen sind.
+\item Geschweifte Klammern \texttt{\{}, \texttt{\}} fassen Text zu Bl\"ocken zusammen.
+\item Befehle und Umgebungen k\"onnen Parameter verarbeiten: \lc{emph\{Betonter Text\}} ergibt \emph{Betonter Text}. 
+\item Optionale Parameter k\"onnen erscheinen in eckigen Klammern zu Anfang der Parameterliste: \\
+  \lcopp{befehl}{optional}{parameter1}{parameter2}
+\end{itemize}
+\end{frame}
+
+\subsection{Dokumentenklassen}
+
+\begin{frame}[c,fragile]
+\frametitle{Dokumentenklassen}
+
+\begin{block}{}
+\lcop{documentclass}{option1,option2}{klasse} \\
+\lcop{documentclass}{11pt,a4paper}{article}
+\end{block}
+
+\LaTeX-Dokumentenklassen:
+\begin{description}
+\item[\texttt{article}] Artikel, Vortr\"age, Ausarbeitungen, Berichte
+\item[\texttt{scrartcl}] Deutsche, auf DinA4 angepasste Version
+\item[\texttt{report}] L\"angere Berichte, Diplomarbeiten, Dissertationen, Skripte
+\item[\texttt{scrreprt}] Deutsche, auf DinA4 angepasste Version
+\item[\texttt{book}] B\"ucher
+\item[\texttt{scrbook}] Deutsche, auf DinA4 angepasste Version
+\item[\texttt{letter}] Briefe
+\item[\texttt{scrlttr2}] Briefe nach DIN 676
+\end{description}
+\end{frame}
+
+\begin{frame}[c]
+\frametitle{G\"angige Dokumentenoptionen}
+
+H\"aufig benutzte Dokumentenoptionen:
+\begin{description}
+\item[\texttt{draft}] Entwurfsmodus (markiert überstehenden Text, zeigt Grafiken als Box)
+\item[\texttt{11pt}] Schriftgr\"o\ss{}e 11 Punkte
+\item[\texttt{12pt}] Schriftgr\"o\ss{}e 12 Punkte
+\item[\texttt{a4paper}] Gr\"o\ss{}en anpassen f\"ur Din A4
+\item[\texttt{titlepage}] Titelseite erzwingen f\"ur \emph{\texttt{article}}
+\item[\texttt{twocolumn}] Zweispaltiges Dokument
+\item[\texttt{twoside}] Vorder- und R\"uckseite der Seiten wird bedruckt
+\item[\texttt{fleqn}] Formeln linksb\"undig setzen
+\item[\texttt{leqno}] Nummerierung von Formeln links statt rechts
+\end{description}
+\end{frame}
+
+\begin{frame}[c]
+\frametitle{Einbindung von Paketen}
+
+Mit dem Befehl \lc{usepackage} k\"onnen zus\"atzliche Makropakete aktiviert werden.
+\begin{itemize}
+\item \lcp{usepackage}{amssymb,amsmath} Spezielle Mathematische Symbole und Umgebungen
+\item \lcp{usepackage}{graphicx} Einbindung von Grafiken
+\item \lcp{usepackage}{algorithm} Darstellung von Algorithmen
+\item \lcp{usepackage}{hyperref} Umgang mit Hyperlinks
+\item \lcp{usepackage}{fancyhdr} Selbstdefiniert Kopf- und Fu\ss{}zeilen
+\item \lcop{usepackage}{bottom=2cm}{geometry} Seitengeometrie \"andern
+\end{itemize}
+\end{frame}
+
+\subsection{Eingabe von Text}
+
+\begin{frame}[c,fragile]
+\frametitle{Eingabe von Text}
+
+\begin{itemize}
+\item F\"ur die Eingabe von Text steht der 7bit-ASCII-Zeichensatz zur Verf\"ugung $\Longrightarrow$ keine Sonderzeichen
+\item Manche Zeichen haben f\"ur \TeX{} eine spezielle Bedeutung: z.B.{} \verb+\+, \verb+&+, \verb+$+
+\item \glqq Escape\grqq-Zeichen: \verb+\+
+\end{itemize}
+
+\begin{block}{}
+\begin{center}
+
+\begin{tabular}{ll|ll}
+\multicolumn{2}{c}{\textbf{Sonderzeichen}} & \multicolumn{2}{c}{\textbf{Akzente}} \\ \hline
+\verb+$\backslash$+ & $\backslash$ & \verb+\^{a}+ & \^{a} \\
+\verb|\textbackslash| & \textbackslash & \verb+\`{a}+  & \`{a} \\
+\verb+\$+ & \$ & \verb+\'{a}+  & \'{a} \\
+\verb+\%+ & \% & \verb+\c{c}+  & \c{c} \\
+\verb+\{+ & \{ & \verb+\~{a}+  & \~{a} \\
+\verb+\}+ & \} & \verb+\"{i}+  & \"{i} \\
+\verb+\#+ & \# & \verb+\o+     & \o \\
+\verb+\_+ & \_ \\
+\verb+\&+ & \& &
+\end{tabular}
+
+\end{center}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Eingabe deutscher Texte}
+
+Zur Eingabe deutscher Texte:
+\begin{itemize}
+\item \lcop{usepackage}{german}{babel}
+  \begin{itemize}
+  \item Deutsche Überschriften \\ \glqq Inhaltsverzeichnis\grqq{} statt \glqq Table of contents\grqq
+  \item K\"urzel f\"ur deutsche Umlaute: \\ \verb+\"a\"A\"o\"O\"u\"U\ss{}+ $\Longrightarrow$ \"a\"A\"o\"O\"u\"U\ss{}
+  \item K\"urzel f\"ur deutsche Umlaute: \\ \verb+"a"A"o"O"u"U"s+ $\Longrightarrow$ "a"A"o"O"u"U"s
+  \item \verb+Fu\ss{}pilz+ $\Longrightarrow$ Fu\ss{}pilz, \verb+Ma\ss{} halten+ $\Longrightarrow$ Ma\ss{} halten
+  \end{itemize}
+\item \lcop{usepackage}{ngerman}{babel}
+  \begin{itemize}
+  \item Sprachpaket f\"ur die neue deutsche Rechtschreibung
+  \end{itemize}
+\item \lcop{usepackage}{latin1}{inputenc} f\"ur Unix (ISO-8859-1)
+\item \verb|\usepackage[ansinew]{inputenc}| für Windows
+\item \verb|\usepackage[applemac]{inputenc}| für den Mac
+\item \lcop{usepackage}{utf8}{inputenc} UTF-8-Kodierung
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Silbentrennung}
+
+\LaTeX{} hat ein eingebautes W\"orterbuch und einen Regelsatz nach dem es Worte trennt. Da dies jedoch f\"ur ungebr\"auchliche
+W\"orter nicht immer klappt, gibt es die M\"oglichkeit, die Trennstellen vorzugeben:
+
+\begin{block}{Trennstellen}
+\verb|Donau\-dampf\-schiff\-fahrts\-gesell\-schaft| \\
+\verb|Karl-""Heinz-""Stra\ss e| \\
+\verb|\hyphenation{Donau-dampf-schiff-fahrts-gesell-schaft}|
+\end{block}
+
+Der \lc{hyphenation}--Befehl kann in der Pr\"aambel angegeben werden und gibt die Schreibung f\"ur das ganze Dokument vor.
+
+Mit dem Befehl \lc{sloppy} in der Pr\"aambel kann festgelegt werden, dass im Dokument nie getrennt wird.
+
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Anf\"uhrungszeichen}
+
+\begin{block}{Anf\"uhrungszeichen}
+Auf dem Schild steht \glq Eingang\grq. \\
+Sie sagte, \glqq Das Vergn\"ugen ist ganz meinerseits.\grqq \\
+\flq Parlez-vous fran\c{c}ais?\frq \\
+\flqq Sur le pont d'Avignon\ldots\frqq \\
+I dit it `my way'. \\
+He's singing ``Yippie ya ya yippie yeah''.
+\end{block}
+
+\begin{itemize}
+\item Einfache deutsche Anf\"uhrungszeichen: \verb|\glq|, \verb|\grq| \\
+  \textbf{g}erman \textbf{l}eft/\textbf{r}ight \textbf{q}uote
+\item Doppelte deutsche Anf\"uhrungszeichen: \verb|\glqq|, \verb|\grqq| \\
+  \textbf{qq} $=$ double quote
+\item Einfache franz\"osische Anf\"uhrungszeichen: \verb|\flq|, \verb|\frq| \\
+  \textbf{f}rench
+\item Doppelte franz\"osische Anf\"uhrungszeichen: \verb|\flqq|, \verb|\frqq|
+\item Einfache englische Anf\"uhrungszeichen: \verb|`|, \verb|'|
+\item Doppelte englische Anf\"uhrungszeichen: \verb|``|, \verb|''|
+\end{itemize}
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Typographische Besonderheiten}
+\begin{block}{Gedankenstriche}
+\begin{description}
+\item[\texttt{-}] Trennungsstrich zwischen zwei W\"ortern bei Silben-\\trennung
+\item[\texttt{-{}-}] Gedankenstrich im deutschen oder Bindestrich: \LaTeX--Kurs
+\item[\texttt{-{}-{}-}] Nur im englischen: ---Gedankenstrich---
+\end{description}
+\end{block}
+
+\begin{block}{Auslassungspunkte und Leerzeichen}
+\begin{center}
+\nonfrenchspacing
+\begin{tabular}{lll}
+\dots & \lc{dots} & Auslassungspunkte \\
+... & \texttt{...} \\
+Nr. 1 & \verb|Nr. 1| & einfaches Leerzeichen \\
+Nr.\ 1 & \verb|Nr.\ 1| & maskiertes Leerzeichen \\
+Nr.~1 & \verb|Nr.~1| & gesch\"utztes Leerzeichen
+\end{tabular}
+\end{center}
+\end{block}
+
+\begin{block}{\lc{(non)frenchspacing}}
+\begin{center}
+\begin{tabular}{ll}
+{\frenchspacing Satzende. Satzanfang} &
+\verb|{\frenchspacing Satzende. Satzanfang}| \\
+{\nonfrenchspacing Satzende. Satzanfang} &
+\verb|{\nonfrenchspacing Satzende. Satzanfang}|
+\end{tabular}
+\end{center}
+\end{block}
+
+\end{frame}
+
+\section{Strukturierung des Dokuments}
+\subsection{Titelseite}
+
+\begin{frame}[c,fragile]
+\frametitle{Titelseite}
+
+\begin{block}{}
+\begin{verbatim}
+\documentclass[a4paper]{report}
+\begin{document}
+\title{Nicht wichtig}
+\author{Hans~Dampf \and Lore~Lei \and Polly~Morph}
+\date{\today}
+\maketitle
+\end{document}
+\end{verbatim}
+\end{block}
+
+\begin{description}
+\item[\texttt{\~}] Unzerbrechliches Leerzeichen
+\item[\lc{title}] Titel des Dokuments
+\item[\lc{author}] Autoren (Schl\"usselwort \lc{and} bei Angabe mehrerer Autoren)
+\item[\lc{date}] Ver\"offentlichungsdatum
+\item[\lc{maketitle}] Generieren der Titelseite aus den Metadaten
+\end{description}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Titelseite selbst gestalten}
+
+Um die Titelseite komplett selbst zu gestalten benutzt man die \texttt{titlepage}-Umgebung:
+\begin{block}{Beispiel}
+\begin{verbatim}
+\begin{titlepage}
+\textbf{\large{Titeltext}}
+
+geschrieben von mir\ldots
+\end{titlepage}
+\end{verbatim}
+\end{block}
+
+\begin{block}{Ausgabe}
+\textbf{\large{Titeltext}}
+
+geschrieben von mir\ldots
+\end{block}
+
+Die Titelseite taucht an der Stelle im Text auf, an der sie definiert wurde. Der Befehl \lc{maketitle} wird dann nicht verwendet.
+
+Nur bei der Buch--Dokumentenklasse nimmt die Titelseite auch tats\"achlich eine ganze Seite ein.
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Zusammenfassung}
+
+Einf\"ugen einer Zusammenfassung des Inhalts. Die Dokumentenklasse hat Auswirkungen auf die Darstellung.
+
+\begin{block}{}
+\begin{verbatim}
+\begin{abstract}
+... Zusammenfassung des Textes ...
+\end{abstract}
+\end{verbatim}
+\end{block}
+
+Zur \"Anderung des angezeigten Namens der Zusammenfassung nutzt man den Befehl
+\begin{verbatim}\renewcommand{\abstractname}{\"Uberblick}\end{verbatim}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Strukturierung des Dokuments}
+
+Gliederung des Dokuments in Kapitel und Unterkapitel:
+\begin{itemize}
+\item \lcp{part}{}
+\item \lcp{chapter}{} \emph{nur in der Buch- oder Report-Dokumentenklasse}
+\item \lcp{section}{}
+\item \lcp{subsection}{}
+\item \lcp{subsubsection}{}
+\item \lcp{paragraph}{}
+\item \lcp{subparagraph}{}
+\end{itemize}
+
+Als optionaler Parameter kann eine Kapitelbezeichnung angegeben werden, die nur im Inhaltsverzeichnis auftaucht.
+
+Anh\"angen von \verb|*| an den Kapitelbefehl verhindert, dass das Kapitel nummeriert und im Inhaltsverzeichnis aufgef\"uhrt wird:
+\verb|\section*{...}|
+
+Mit dem Befehl \lc{appendix} kann markiert werden, dass die nachfolgenden Kapitel zum Anhang gehören.
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Mehrere Quelldateien}
+
+Der \lc{input}--Befehl wird genutzt, um kleine Textst\"ucke in den laufenden Text einzuf\"ugen.
+\begin{block}{Einbinden von Textst\"ucken}
+\begin{verbatim}...wie in folgendem Programm:
+\input{cplusplus_beispiel}
+\end{verbatim}
+\end{block}
+
+
+Der \lc{include}--Befehl wird zur Gliederung des \LaTeX--Quellcodes benutzt: einzelne Kapitel werden in eigene Dateien geschrieben
+und in der Hauptdatei mit \lc{include} in das Gesamtdokument eingebunden.
+
+\begin{block}{Einbinden weiterer Dateien}
+\begin{verbatim}\includeonly{kapitel2,kapitel3}
+\include{kapitel1}
+\include{kapitel2}
+\include{kapitel3}\end{verbatim}
+\end{block}
+
+\lc{includeonly} bindet nur die angegebenen Dateien ein. Auf diese Weise muss nicht immer das vollst\"andige Dokument kompiliert werden.
+
+\end{frame}
+
+\begin{frame}[c]
+\frametitle{Umbr\"uche}
+\justifying
+
+\textbf{Abs\"atze:} Leerzeilen erzeugen neue Abs\"atze, \\[0.2mm]
+
+alternativ kann \lc{par} benutzt werden.\par
+
+\textbf{Zeilenumbruch:} \texttt{\textbackslash\textbackslash} \\ oder \lc{newline} \\ bricht eine Zeile um. \lc{linebreak} \linebreak gleicht den Wortabstand im Blocksatz aus.
+
+\textbf{Seitenwechsel:} \lc{newpage} erzwingt einen Seitenwechsel, \lc{pagebreak} versucht die Seite durch Ausgleich des Abstands zwischen den Abs\"atzen auszuf\"ullen.
+Die Befehle \lc{clearpage} und \lc{cleardoublepage} beenden ebenfalls die Seite und f\"ugen nachfolgend alle Gleitobjekte ein, die noch nicht ausgegeben wurden. Gleitobjekte sind u.a.{} Abbildungen und Tabellen.
+
+Bei den \texttt{break}-Befehlen kann als optionaler Parameter angegeben werden, mit welcher Priorit\"at (0--4) ein Seitenumbruch stattfinden soll.
+
+Die \texttt{no\ldots{}break}-Befehle verhindern den Umbruch.
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Aufz\"ahlungen}
+
+Drei Arten von Aufzählungen:
+\begin{description}
+\item[\texttt{itemize}] Einfache Aufz\"ahlung
+\item[\texttt{enumerate}] Nummerierte Aufz\"ahlung
+\item[\texttt{description}] Beschreibung
+\end{description}
+
+\begin{minipage}{0.3\textwidth}
+\begin{block}{\texttt{itemize}}
+\begin{itemize}
+\item A
+\item B
+\item[$\circ$] C
+\end{itemize}
+\begin{verbatim}
+\begin{itemize}
+\item A
+\item B
+\item[$\circ$] C
+\end{itemize}
+\end{verbatim}
+\end{block}
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{block}{\texttt{enumerate}}
+\begin{enumerate}
+\item A
+\item B
+\item C
+\end{enumerate}
+\begin{verbatim}
+\begin{enumerate}
+\item A
+\item B
+\item C
+\end{enumerate}
+\end{verbatim}
+\end{block}
+\end{minipage}
+\hfill
+\begin{minipage}{0.3\textwidth}
+\begin{block}{\texttt{description}}
+\begin{description}
+\item[A] \ldots
+\item[B] \ldots
+\item[C] \ldots
+\end{description}
+\begin{verbatim}
+\begin{description}
+\item[A] \ldots
+\item[B] \ldots
+\item[C] \ldots
+\end{description}
+\end{verbatim}
+\end{block}
+\end{minipage}
+
+\end{frame}
+
+\begin{frame}[c,fragile,squeeze]
+\frametitle{Verschachtelte Aufz\"ahlungen}
+
+\begin{minipage}[t]{0.48\textwidth}
+\begin{block}{Beispiel}
+\begin{verbatim}
+\begin{description}
+\item[Zutaten]
+  \begin{itemize}
+    \item 200g Mehl
+    \item 5 Eier
+    % ...
+  \end{itemize}
+\item[Zubereitung]
+  \begin{enumerate}
+    \item Mehl und Milch in
+          eine Sch\"ussel
+    \item Glatt r\"uhren
+    % ...
+  \end{enumerate}
+\end{description}
+\end{verbatim}
+\end{block}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\begin{block}{Beispiel}
+\begin{description}
+\item[Zutaten]
+  \begin{itemize}
+    \item 200g Mehl
+    \item 5 Eier
+    \item 400ml Milch
+    \item 1 Prise Salz
+    \item 25g Zucker
+  \end{itemize}
+\item[Zubereitung]
+  \begin{enumerate}
+    \item Mehl und Milch in
+          eine Sch\"ussel
+    \item Glatt r\"uhren
+    \item Eier, Salz und Zucker unterr\"uhren
+    \item Mit ein wenig Butter Pfannkuchen backen
+  \end{enumerate}
+\end{description}
+\end{block}
+\end{minipage}
+
+\end{frame}
+
+\subsection{Tabulatoren}
+
+\begin{frame}[c,fragile]
+\frametitle{Tabulatoren}
+
+\begin{block}{Beispiel}
+\begin{verbatim}
+\begin{tabbing}
+erste Spalte \= zweite Spalte \= dritte Spalte\kill
+erstes \> zweites \> drittes\\
+vorne  \> mitte   \> hinten \+ \\
+mitte  \> hinten  \+ \\
+hinten \- \- \\
+vorne \> mitte \> hinten \\
+\end{tabbing}
+\end{verbatim}
+\end{block}
+
+\begin{block}{Ausgabe}
+\begin{tabbing}
+erste Spalte \= zweite Spalte \= dritte Spalte\kill
+erstes \> zweites \> drittes\\
+vorne  \> mitte   \> hinten \+ \\
+mitte  \> hinten  \+ \\
+hinten \- \- \\
+vorne \> mitte \> hinten \\
+\end{tabbing}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Erkl\"arung}
+
+\begin{itemize}
+\item \begin{block}{}\verb|erste Spalte \= zweite Spalte \= dritte Spalte\kill|\end{block} 
+Vorlage f\"ur die Zeile \lc{=} legt die Tabpositionen fest. \\
+\verb|\kill| l\"oscht die Zeile.
+\item \begin{block}{}\verb|erstes \> zweites \> drittes\\|\end{block}
+\verb|\>| erzeugt den Sprung auf die n\"achste Tabposition.
+\item \begin{block}{}\verb|vorne  \> mitte   \> hinten \+|\end{block}
+\verb|\+| r\"uckt alle folgenden Zeilen um eine Tabposition ein.
+\item \begin{block}{}\verb|hinten \- \- \\|\end{block}
+\verb|\-| hebt eine Einr\"uckungsstufe f\"ur alle folgenden Zeilen auf.
+\item \verb|\pushtabs| speichert die aktuelle Tabulatorkonfiguration ab.
+\item \verb|\poptabs| stellt die letzte gespeicherte Tabulatorkonfigration wieder her.
+\end{itemize}
+
+\end{frame}
+
+\subsection{Tabellen}
+
+\begin{frame}[c,fragile]
+\frametitle{Tabellen}
+
+\begin{block}{Beispiel}
+\begin{verbatim}
+\begin{tabular}{c|c||c}
+$x$ & $y$ & Summe \\ \hline
+1 & 1 & 2 \\
+1 & 2 & 3 \\
+2 & 3 & 5 
+\end{tabular}
+\end{verbatim}
+\end{block}
+
+\begin{block}{Ausgabe}
+\begin{tabular}{c|c||c}
+$x$ & $y$ & Summe \\ \hline
+1 & 1 & 2 \\
+1 & 2 & 3 \\
+2 & 3 & 5 
+\end{tabular}
+\end{block}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Tabellenformat}
+
+%\begin{minipage}{0.45\textwidth}
+\begin{block}{Beispiel}
+\begin{verbatim}
+\begin{tabular}{l|c|r|p{3cm}||r@{$\times$}l}
+links & zentriert & rechts & $3$ cm & 8 & 3 \\
+\end{tabular}
+\end{verbatim}
+\end{block}
+
+\begin{block}{Ausgabe}
+\begin{tabular}{l|c|r|p{3cm}||r@{$\times$}l}
+links & zentriert & rechts & $3$ cm & 8 & 3 
+\end{tabular}
+\end{block}
+%\end{minipage}
+
+Tabellenformat:
+\begin{description}
+\item[\texttt{l}] Zelleninhalt linksb\"undig ausrichten
+\item[\texttt{c}] Zelleninhalt zentriert ausrichten
+\item[\texttt{r}] Zelleninhalt rechtsb\"undig ausrichten
+\item[\texttt{p\{$n$\}}] Zelle mit fester Breite $n$
+\item[\texttt{|}] Einfacher Trennstrich zur n\"achsten Zelle
+\item[\texttt{||}] Doppelter Trennstrich zur n\"achsten Zelle
+\item[\texttt{@\{text\}}] Benutzerdefiniertes Trennzeichen
+\end{description}
+
+\end{frame}
+
+\begin{frame}[c,fragile]
+\frametitle{Tabelleninhalt}
+
+\begin{minipage}{0.55\textwidth}
+\begin{block}{Beispiel}
+\begin{verbatim}
+eins & zwei & drei \\ \hline
+vier \vline{} f\"unf & sechs & \\
+\cline{1-2}
+\multicolumn{3}{|c|}{sieben} \\
+acht & neun & zehn \\
+\end{verbatim}
+\end{block}
+\end{minipage}
+\hspace*{1ex}
+\begin{minipage}{0.4\textwidth}
+\begin{block}{Ausgabe}
+\begin{tabular}{lll}
+eins & zwei & drei \\ \hline
+vier \vline{} f\"unf & sechs & \\
+\cline{1-2}
+\multicolumn{3}{|c|}{sieben} \\
+acht & neun & zehn 
+\end{tabular}
+\end{block}
+\end{minipage}
+
+\begin{description}
+\item[\texttt{\&}] Trennzeichen f\"ur Spalten
+\item[$\mathtt{\backslash\backslash}$] Trennzeichen f\"ur Zeilen
+\item[\lc{hline}] Linie \"uber die ganze Breite
+\item[\lc{vline}] Vertikale Linie innerhalb einer Spalte
+\item[\lcp{cline}{m-n}] Linie von Spalte $m$ bis Spalte $n$
+\item[\lcppp{multiline}{n}{format}{Inhalt}] Spalte \"uber $n$ Spalten strecken mit Format \texttt{format} und Inhalt \texttt{Inhalt}
+\end{description}
+
+\end{frame}
+

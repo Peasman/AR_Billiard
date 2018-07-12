@@ -1,101 +1,116 @@
 \section{Rendering und Physik}
-
+	Das erste Problem ist das Darstellen des Spiels und die Interaktion zwischen den im Spiel existierenden Kugeln und dem Spielfeld. Zunächst schauen wir uns die Darstellung an.
 \subsection{Objekte}
-	Die Szene lässt sich einteilen in Billiard-Pool und Billiard-Kugeln. Der Pool besteht aus einer grünen Fläche und 6 Löchern. Er besitzt zudem ein 2:1 Verhältnis von Breite zu Höhe. \\
-	Die Grüne Farbe ist lediglich die Clear-Color unseres OpenGL Kontextes. Dies können wir machen, weil es sich um eine 2D Anwendung handelt und niemals etwas über den Boden hinaus gezeichnet werden muss. Die Löcher werden simuliert, indem ein sogenannter Triangle-Fan aufgespannt wird. Dieser ist ein Konstrukt aus Dreiecken, die einen Knoten in der Mitte des Objekts haben und dann  2 weiteren Knoten auf dem Kreis. \\
-	Im Folgenden gehen wir zur Vereinfachung davon aus, dass wir stets nur 2 Koordinaten haben, da die z-Koordinate aufgrund der Zweidimensionalität der Anwendung immer 0 ist. \\
-	Die Struktur beginnt in der Mitte beim zum Objekt Relativen Punkt $(0,0)$. Von dort aus werden Dreiecke aufgespannt. Wir benötigen immer nur die  Koordinaten von dem Randpunkt, der im Uhrzeigersinn weiter verschoben ist, da der GL-Triangle-Fan immer den neuen Punkt mit dem letzten Randpunkt und dem Mittelpunkt verbindet. Der nachfolgende Randpunkt wird berechnet durch die Anzahl der Punkte die wir haben wollen, hier genannt $k$ und der Berechnung von Kreis-Koordinaten: \\
-	$\delta$ ist der Grad, um den in jedem Schritt der Punkt auf dem Kreis verschoben wird. Dabei muss gelten $\delta \cdot k = 360$ damit wir einen ganzen Kreis bekommen.\\
+	Die Szene lässt sich einteilen in Löcher und Kugeln. Beide Strukturen werden aufgrund der Beschränkung auf 2D durch Kreise oder Kreisteile dargestellt. Dazu wird ein Triangle-Fan verwendet, der nun kurz erklärt werden soll.
+	
+	Ein Triangle-Fan zur Darstellung von Kreisen wird durch das Tripel Mittelpunkt $\mathbf{c}$, Radius $r$ und Anzahl der Unterteilungen $k$ parametrisiert. 
+	Die Struktur beginnt im Punkt $(0,0)$.
+	Das ist im Späteren Spielfeld der Punkt $\mathbf{c}$.
+	Man gibt nun den Punkt an, bei dem das erste Dreieck beginnt. Dieser ist bei uns immer vertikal um r nach oben verschoben vom Mittelpunkt. Dann benötigt man noch einen Punkt um das Dreieck zu vollenden. Dieser Punkt ist im Uhrzeigersinn um $\delta$ auf dem Umriss verschoben. 
+	$\delta$ ist der Grad, um den in jedem Schritt der Punkt auf dem Umriss verschoben wird. 
+	Dabei muss gelten $\delta \cdot k = 360$ für einen ganzen Kreis.
+
 	\begin{equation}\label{eq:delta}
 		\delta =\frac{2 \cdot \pi}{k} 
 	\end{equation}
-	Sei n der gewünschte Radius von der Kugel und i der aktuelle Schritt in der Schleife von $i=1$ bis k, dann sind die Koordinaten für die Punkte auf dem Kreis:
+	Sei $r$ der  Radius von der Kugel und $i$ der aktuelle Schritt in der Schleife von $i=1$ bis k, dann sind die Koordinaten für die Punkte auf dem Kreis:
 	\begin{equation}\label{eq:circleCoord}
 		\begin{aligned}
-			x = \cos (\delta \cdot i) \cdot n\\
-			y = \sin (\delta \cdot i) \cdot n
+			x = \cos (\delta \cdot i) \cdot k\\
+			y = \sin (\delta \cdot i) \cdot k
 		\end{aligned}
 	\end{equation}
-	Wenn wir nun k mal die Koordinaten berechnet haben haben wir einen fertigen Kreis, bestehend aus k Dreiecken. Diese werden nun an den 4 Ecken des Spielfeldes angebracht, sowie bei $(w /2 h)$ und $(w/2, 0)$, mit w = Breite des Spielfeldes in Pixeln, h = Höhe des Spielfeldes in Pixeln. \\
+	Für jeden Punkt der hinzugefügt wird, wird ein neues Dreieck erstellt, mit dem letzten Punkt, dem Mittelpunkt und dem neuen Punkt als Parameter.
+	Wenn  nun $k$ mal die Koordinaten berechnet wurden, haben wir einen fertigen Kreis, bestehend aus $k$ Dreiecken.
 		\begin{figure}[h]
 		\centering
 		\caption{Vollständiger Triangle-Fan mit k=12}
-		\includegraphics[width=\textwidth/2]{bilder/k12kreis.png} \\
+		\includegraphics[width=\textwidth/6]{bilder/k12kreis.png} \\
 	\end{figure} \\
-	Man sieht, dass wenn man nur $k = 12 $ benutzt, ist der Kreis viel zu eckig. Deshalb sollte man einen Wert nehmen der für die Ansprüche genügt. Wir haben uns aufgrund der Größe unserer Kreise für $k=64$ entschieden um die besten Kreise zu erhalten. Dadurch bekommen wir die Illusion eines Kreises, ohne zu viele Ressourcen zu verbrauchen für alle 16 Kugeln und die 6 Löcher.\\
-	Diese Form der Kreisberechnung können wir auch für die Billiard-Kugeln anwenden. Somit haben wir schon einmal unser Spielfeld. Nur sieht dieses noch nicht gerade schön aus. \\
+	Die Triangle-Fans werden nun für die Löcher und Kugeln an den Positionen auf dem Spielfeld plaziert.
 	\begin{figure}[h]
-		\caption{Spielfeld ohne Texturen}
+		\caption{Spielfeld ohne Texturen, mit k=64 für Triangle-Fans}
 			\includegraphics[width=\textwidth]{bilder/untextured_pool_low.png} 
 	\end{figure}
 
 \subsection{Texturierung}
-	Das Spielfeld als solches benötigt keine Texturierung: Die Löcher können prinzipiell jede beliebige Farbe bekommen, solange man sie noch erkennen kann. Die Kugeln hingegen müssen vom Spieler unterschieden werden können. Man muss schließlich erkennen können, welche Kugeln die Halben und welche die Vollen sind. \\
-	Wir müssen also Texturen auf Kreise abbilden. Dazu erstellen wir zunächst eine Textur: \\ 
+	Die Farben für das Spielfeld sind trivial. 
+	Die Kugeln hingegen müssen vom Spieler unterschieden werden können. 
+	Wir müssen also Texturen auf Kreise abbilden. \\
 	\begin{figure}[h]
 		\caption{Billiardkugel Textur}
 			\includegraphics[width=\textwidth]{bilder/Balls.png} \\
-	\end{figure}
-	Nun müssen wir die Textur auf einen Kreis bekommen. Dazu verwenden wir u/v-Koordinaten. Unsere Textur besitzt auf beiden Achsen einen Wertebereich von 0 bis 1. Dabei ist $(0,0)$  oben links und $(1,1)$  unten rechts. Da wir die Texturen für alle Kugeln in einer Datei gespeichert haben, können wir jetzt anhand der u/v-Koordinaten der Textur jeder Kugel einen Ausschnitt zuweisen. Dafür werden den Farben der Kugeln werte nach ihrer Reihenfolge auf der Textur gegeben: \begin{equation}\label{eq:color}
-	c = 
+	\end{figure} \\
+	Um die Textur auf unsere Kugeln abzubilden verwenden wir u/v-Koordinaten. 
+	Unsere Textur besitzt auf der $u$ und $v$ Achse einen Wertebereich von 0 bis 1. 
+	Dabei ist $(0,0)$  oben links und $(1,1)$  unten rechts. 
+	Jeder Kugel muss nun ein Ausschnitt der Textur zugewiesen werden. 
+	Dafür bekommt jede Farbe einen Wert c.
+	\begin{equation}\label{eq:color}
+	c(b) = 
 	\begin{cases}
-		0, & \text{Gelb} \\
-		1, & \text{Blau} \\
-		2, & \text{Rot} \\
-		3, & \text{Lila} \\
-		4, & \text{Orange} \\
-		5, & \text{Green} \\
-		6, & \text{Rot} \\
-		7, & \text{Schwarz oder Weiß}
+		0, & \text{falls b Gelb} \\
+		1, & \text{falls b Blau} \\
+		2, & \text{falls b Rot} \\
+		3, & \text{falls b Lila} \\
+		4, & \text{falls b Orange} \\
+		5, & \text{falls b Grün} \\
+		6, & \text{falls b Rot} \\
+		7, & \text{falls b Schwarz oder Weiß}
 	\end{cases}
-	\end{equation} Außerdem bekommt jede Kugel gesagt, ob sie Halb oder Voll ist, wobei Voll = 0 ist und Halb = 1. \begin{equation} \label{eq:full}
-	f = 
+	\end{equation} 
+	Außerdem bekommt jede Kugel einen Wert für die Fülle, wobei Voll = 0 ist und Halb = 1.  \\
+	\begin{equation} \label{eq:full}
+	f(b) = 
 	\begin{cases}
-		0, & \text{Kugel voll} \\
-		1, & \text{Kugel halb}	
+		0, & \text{falls Kugel voll} \\
+		1, & \text{falls Kugel halb}	
 	\end{cases}
 	\end{equation}\\
 	\begin{figure}[h]
 		\caption{Textur mit u/v-Koordinaten}
 		\includegraphics[width=\textwidth]{bilder/ballsachsen}
-	\end{figure}
-	Nun können wir uns eine Funktion erstellen, die anhand von Farbe und Fülle die Textur "ausschneidet" und auf die Kugel abbildet. Dazu berechnen wir zuallererst die Anfangsposition der Textur. Diese setzt sich zusammen aus der Farbe c und der Fülle f. \\
-	Vorgedanke: Der Durchmesser einer Kugel auf unserer Textur ist $\frac{1}{8}$ für x, weil es 8 Kugeln pro Reihe gibt und die u Koordinate genau 1 lang ist, aber $\frac{1}{2}$ für y, weil es nur 2 Reihen gibt und die Textur trotzdem auf der v Achse 1 lang ist. Somit ist der Mittelpunkt der gelben vollen Kugel $(\frac{1}{16}, \frac{1}{4})$, weil dieser bei genau einer Halben Kugel Distanz auf beiden Achsen liegt. \\
-	Kommen wir nun zur tatsächlichen Berechnung der Textur-Koordinaten: \\
+	\end{figure} \\
+	Nun können wir uns eine Funktion erstellen, die anhand von Farbe und Fülle die Textur ausschneidet und auf die Kugel abbildet. 
+	Dazu berechnen wir zuallererst die Anfangsposition der Textur. 
+	Diese setzt sich zusammen aus der Farbe c und der Fülle f. \\
+	Vorgedanke: Der Durchmesser einer Kugel auf unserer Textur ist $\frac{1}{8}$ für $u$, weil es 8 Kugeln pro Reihe gibt und die u Koordinate genau 1 lang ist. Der Durchmesser auf der $v$-Achse hingegen ist $\frac{1}{2}$, weil es nur 2 Reihen gibt und die Textur trotzdem 1 lang ist. \\
 	Mittelpunkt m der Textur: \\
 	\begin{equation}\label{eq:texStart}
 	\begin{aligned} 
-		x = \frac{1}{16} + \frac{1}{8} \cdot c, c = \text{Farbe der Kugel \eqref{eq:color}} \\
-		y = \frac{1}{4} + \frac{1}{2} \cdot f, f = \text{Fülle der Kugel \eqref{eq:full}}
+		x(b) = \frac{1}{16} + \frac{1}{8} \cdot c(b), c(b) = \text{Farbe der Kugel \eqref{eq:color}} \\
+		y(b) = \frac{1}{4} + \frac{1}{2} \cdot f(b), f(b) = \text{Fülle der Kugel \eqref{eq:full}}
 	\end{aligned}
 	\end{equation}
-	Nun fehlen noch die Texturkoordinaten für den Kreis um den Mittelpunkt der Textur herum analog zum erstellen der Kreise mit dem Triangle-Fan. Die berechnung läuft dabei genau wie die Berechnung der Koordinaten für die Koordinaten des eigentlichen Kreises, mit dem Unterschied in der Skalierung und Startposition. So benutzen wir nicht den Radius der Kugeln des Spiels, sondern die Größe der Kugel auf der Textur und als Startpunkt haben wir nicht immer $(0,0)$ sondern unser vorher berechnetes x und y in \eqref{eq:texStart}. 
+	Nun fehlen noch die Texturkoordinaten für den Kreis um den Mittelpunkt der Textur herum.
+	Die Berechnung läuft dabei analog zum Triangle-Fan mit dem Unterschied in der Skalierung und Startposition. 
+	So benutzen wir nicht den Radius der Kugeln des Spiels, sondern die Größe der Kugel auf der Textur und als Startpunkt unser vorher berechnetes x und y in \eqref{eq:texStart}. 
 	\begin{equation}\label{eq:texXY}
 	\begin{aligned}
-		 xTex =  x + \cos(\delta \cdot i) \cdot \frac{1}{16}, \\
-		 yTex =  y + \sin(\delta \cdot i) \cdot \frac{1}{4}, \\
+		 xTex(b) =  x(b) + \cos(\delta \cdot i) \cdot \frac{1}{16}, \\
+		 yTex(b) =  y(b) + \sin(\delta \cdot i) \cdot \frac{1}{4}, \\
 		\text{mit } \delta \text{ nach }\eqref{eq:delta} \text{ und } i \text{ nach } \eqref{eq:circleCoord}
 	\end{aligned}
 	\end{equation}
-	Die Textur wird dann beim erstellen des Triangle-Fans auf die Dreiecke gezeichnet. Dabei bekommen die Dreiecke für den Startknoten $(0,0)$ immer $(x,y)$ als Texturkoordinaten (\eqref{eq:texStart}) und der Randpunkt bekommt dann $(xTex,yTex)$ (\eqref{eq:texXY}.
+	Die Textur wird dann beim erstellen des Triangle-Fans auf die Dreiecke gezeichnet. Dabei bekommen die Dreiecke für den Mittelpunkt $(x,y)$ als Texturkoordinaten \eqref{eq:texStart} und der Punkt auf dem Umriss bekommt dann $(xTex,yTex)$ \eqref{eq:texXY}.
 \subsection{Kollisionsberechnung}
 	Die Kollisionsberechnung lässt sich aufteilen in 3 Bereiche: \begin{itemize}
 		\item [1.] Kollision von Kugeln mit Wand und Löchern
 		\item [2.] Kollision von Kugeln mit anderen Kugeln
-		\item [3.] Kollision der Weißen Kugel mit dem Queue
+		\item [3.] Kollision der Weißen Kugel mit dem Queue (Kapitel 3.3.3)
 	\end{itemize}
 	\subsubsection{Kollision von Kugeln mit Wand und Löchern}
-		Das Kollidieren mit den Wänden ist sehr simpel: Wir geben  unsere Breite und Höhe des Spielfeldes als Grenzen an. Wenn die Kugel zu nah an eine der Grenzen kommt wird ihre Geschwindigkeit umgekehrt. Dementsprechend machen wir eine Fallunterscheidung mit 4 Fällen für die 4 verschiedenen Wände: \begin{itemize}
+		Das Kollidieren mit den Wänden ist sehr simpel: Wir geben  unsere Breite und Höhe des Spielfeldes als Grenzen an. Wenn die Kugel zu nah an eine der Wände kommt wird ihre Geschwindigkeit umgekehrt. Dementsprechend machen wir eine Fallunterscheidung mit 4 Fällen für die 4 verschiedenen Wände: \begin{itemize}
 			\item [1.] Die Linke Wand (x=0)
 			\item [2.] Die Rechte Wand (x=w)
 			\item [3.] Die Obere Wand (y=0)
 			\item [4.] Die untere Wand (y=h)
 		\end{itemize}
-		Dabei gilt wieder $ h = $ Höhe des Spielfeldes und $ w = $ Breite des Spielfeldes. \\
-		Wenn nun einer der Fälle eintritt, wird die Geschwindigkeit auf der Achse, die getroffen wurde, invertiert. Beispiel: Die Kugel stößt an die linke Wand (x=0). Dann hat diese vorher eine negative Geschwindigkeit auf der x-Achse, weil sie Richtung x=0 sich bewegt hat. Wenn wir diese Geschwindigkeit nun umkehren, rollt die Kugel Richtung +x und somit wieder Weg von der Wand. So simulieren wir die Kollision. \\
-		Nun kommen die Löcher als Einschränkung hinzu: Damit die Kugeln in die Löcher fallen können, müssen wir Lücken in den Wänden erzeugen. Diese simulieren wir durch weitere Bedingungen. Jeder der 4 vorherigen Fälle, bekommt nun eine weitere Einschränkungen. Die Kugeln müssen einmal an allen Ecken, und dann bei $x= \frac{w}{2}$ durch die Wand können. Dass heißt wir überprüfen bei den x-Achsen Kollisionen ( $x=0$ und $x=w$ ), ob wir auf der y-Achse zwischen beiden Löchern sind und nicht am Rand. Das lässt sich darstellen als: \begin{equation}
+		Dabei gilt $ h = $ Höhe des Spielfeldes, $ w = $ Breite des Spielfeldes und $l = $ Radius der Löcher.
+		Die Änderung der Geschwindigkeit ist dann:
+		\begin{equation}
 		vy = \begin{cases}
-			-vy, & \text{ falls } y \leq (h- l) \land y \geq l, \text{ mit } l = \text{größe der Löcher} \\
+			-vy, & \text{ falls } y \leq (h- l) \land y \geq l\\
 			vy, & sonst 
 		\end{cases}
 		\end{equation}
@@ -108,8 +123,9 @@
 		\end{equation}
 		Wir überprüfen also, ob die Kugel eine der Beiden Strecken zwischen den Löchern trifft, wenn sie vorher den Rand des Spielfeldes erreicht hat. 
 	\subsubsection{Kollision mit anderen Kugeln}
-		Für die Kollision zwischen den Kugeln müssen wir in jedem Frame berechnen, wie sich jede Kugel zu jeder anderen verhält und wenn sich diese treffen, in welche Richtung sie weiter Rollen. Dazu schauen wir uns immer nur 2 Kugeln an, wobei immer nur die erste verändert wird. 
-		Die Kollisionsberechnung war uns bereits vorgegeben aus einem Beispiel für ein AirHockey Spiel. Der Unterschied lag nur darin, dass im Airhockey nur eine Kugel aktiv ist und diese mit zwei nicht beweglichen Schlägern kollidiert. Somit haben wir, statt zu testen, ob die Kugel mit einem der beiden Schläger zusammenstößt, die Kollision von jeder Kugel mit jeder anderen berechnet. Dadurch, dass die jede Kugel in Relation zu jeder anderen Kugel berechnet wird, müssen wir die Kollisionsmethode nicht abändern und können einfach die Berechnung einseitig berechnen. Damit wird in jedem Frame überprüft, ob eine Kugel mit einer anderen Kollidiert und das für alle Kombinationsmöglichkeiten von 2 Kugeln. Dabei muss natürlich darauf geachtet werden, dass keine Kugel mit sich selbst kollidiert. \\
+		Die Kollisionsberechnung für 2 Kugeln war uns bereits vorgegeben aus einem Beispiel für ein AirHockey Spiel. 
+		Der Unterschied liegt darin, dass im Airhockey nur eine Kugel durch die Kollision ihre Geschwindigkeit ändert. Die beiden Schläger werden durch die Kollision nicht verändert. \\  
+		Wir nehmen nun eine Kugel und berechnen mit der Methode alle Kollisionen mit anderen Kugeln, indem wir statt dem Schläger die jeweils andere Kugel einsetzen. Das muss für jede Kugel einmal ausgeführt werden.  \\
 		
 		%\begin{equation}
 		%d = \sqrt{(x_2 - x_1)^2 + (y_2-y_1)^2} 

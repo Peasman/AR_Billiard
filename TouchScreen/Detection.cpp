@@ -5,23 +5,38 @@ using namespace cv;
 using namespace std;
 Detection::Detection()
 {
+	//_thresholdsLow = cv::Scalar(0, 0, 0);
+	//_thresholdsHigh = cv::Scalar(50, 50, 50);
 	_thresholdsLow = cv::Scalar(0, 0, 0);
-	_thresholdsHigh = cv::Scalar(50, 50, 50);
+	_thresholdsHigh = cv::Scalar(180, 255, 30);
 }
+
+bool _debug = true;
+std::string _windowName2 = "Thresholded";
 
 void Detection::detectCue(cv::Mat imageOriginal){
 	// convert the capture fram from BGR TO HSV
+	cv::Mat imageHSV;
+	cv::cvtColor(imageOriginal, imageHSV, CV_BGR2HSV);
+	
+	std::cout << "w: " << imageOriginal.size().width << ", h: " << imageOriginal.size().height << std::endl;
+	
 	cv::Mat imageThresholded;
 
+
+
 	// threshold RGB picture (maybe HSV better)
-	cv::inRange(imageOriginal, _thresholdsLow, _thresholdsHigh, imageThresholded);
+	cv::inRange(imageHSV, _thresholdsLow, _thresholdsHigh, imageThresholded);
+
 
 	// morphological filtering to remove small gaps
-	cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
-	cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
+	//cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15)));
+	//cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(15, 15)));
 
-	cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
-	cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7)));
+	// closing für belichtungseffekte
+	cv::dilate(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(9, 9)));
+	cv::erode(imageThresholded, imageThresholded, cv::getStructuringElement(cv::MORPH_RECT, cv::Size(9, 9)));
+
 
 	// get coordinates of detected object
 	cv::Mat nonZeroCoordinates = cv::Mat::zeros(imageOriginal.size(), CV_8UC3);
@@ -83,7 +98,7 @@ void Detection::detectCue(cv::Mat imageOriginal){
 }
 
 void Detection::runTest(){
-	_windowName = "Test";
+	_windowName = "Detection";
 	
 
 	int waitKeyValue = 10; // 100 Hz
@@ -120,7 +135,7 @@ void Detection::runTest(){
 		
 		// Anzeige des Ausgabebildes
 		imageOriginal = imageOriginal + imageAxis;
-			cv::imshow(_windowName, imageOriginal);
+		cv::imshow(_windowName, imageOriginal);
 		// Auf Benutzereingabe warten und die Benutzereingabe verarbeiten
 		int key = cv::waitKey(waitKeyValue);
 		if (key == 'e'){

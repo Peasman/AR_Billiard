@@ -1,0 +1,144 @@
+%
+% Slide template for LSIII presentations
+%
+
+%\documentclass[10pt,landscape,handout]{beamer}
+%\documentclass[10pt,landscape,draft]{beamer}
+\documentclass[10pt,landscape]{beamer}
+
+
+% Be able to directly input German Umlauts etc.
+%\usepackage[latin1]{inputenc}
+
+% Font encoding:
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+\usepackage{german}
+\usepackage{ragged2e}
+\usepackage{epstopdf}
+
+% We recommend toying around with these settings,
+% No overridden font encoding looks best,
+% unless you are using \textsc (which will default to CMF).
+
+
+% the usual imports
+\usepackage{graphicx}
+
+
+% setup beamer style to use TUDo Theme
+\mode<presentation>
+{
+  \usetheme{TUDortmund}
+}
+
+% Include intermediate TOCs automatically.
+% Completely pointless for these slides, however
+%\AtBeginSection[]
+%{
+%  \begin{frame}<beamer>
+%    \frametitle{\"Ubersicht}
+%    \tableofcontents[currentsection]
+%  \end{frame}
+%}
+
+%
+% Options for navigation symbols
+%
+% a) Small set of navigation symbols
+%\setbeamertemplate{navigation symbols}{
+%  \insertbackfindforwardnavigationsymbol
+%  \hspace{0.5em}
+%  \insertslidenavigationsymbol
+%  \insertframenavigationsymbol
+%  \insertsubsectionnavigationsymbol
+%  \insertsectionnavigationsymbol
+%  \insertdocnavigationsymbol
+%  \hspace*{\textwidth}\hspace*{0.2cm}
+%}
+%
+% b) Suppress navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+\newcommand{\lc}[1]{\texttt{\textbackslash#1}}
+\newcommand{\lcp}[2]{\texttt{\textbackslash#1\{#2\}}}
+\newcommand{\lco}[2]{\texttt{\textbackslash#1[#2]}}
+\newcommand{\lcop}[3]{\texttt{\textbackslash#1[#2]\{#3\}}}
+\newcommand{\lcpp}[3]{\texttt{\textbackslash#1\{{#2}\}\{{#3}\}}}
+\newcommand{\lcppp}[4]{\texttt{\textbackslash#1\{#2\}\{#3\}\{#4\}}}
+\newcommand{\lcopp}[4]{\texttt{\textbackslash#1[#2]\{#3\}\{#4\}}}
+\newcommand{\lenv}[2]{\texttt{\textbackslash{}begin\{#1\}\linebreak[0]#2\linebreak[0]\textbackslash{}end\{#1\}}}
+
+\newcommand{\todo}[2]{\colorbox{orange}{\textbf{#1:} {#2}}}
+\newcommand{\ds}{\ensuremath\displaystyle}
+\newenvironment{determinante}[1]{%
+\ensuremath\left|\begin{array}{#1}}{%
+\end{array}\right|}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Basic information
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{AR Billiard mit OpenCV und OpenGL}
+ 
+
+\subtitle{Sommersemester 2018}
+
+\author{Friedemann Runte, Moritz Ludolph, Diyar Omar, Robin Mertens} 
+
+\institute[Fakultät für Informatik, TU Dortmund]{Fakultät für Informatik}
+\date{\today}
+
+
+\begin{document}
+\logo{}
+\setlength{\parskip}{1mm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Title
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% slide options are: alignment: c(enter) or t(op), label
+\begin{frame}[c,label=titlepage]
+  \titlepage
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Overview
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\begin{frame}[t, label=overview]
+  %\frametitle{\"Ubersicht}
+  %\setcounter{tocdepth}{2}
+  %\tableofcontents
+%\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Global structure is declared through the usual section and 
+%%% subsection environments. Starred sections will not appear in the 
+%%% auto-generated TOCs.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\include{topics/einleitung}
+\include{topics/rendering}
+\include{topics/kamera}
+\include{topics/zusammenbau}
+
+
+
+\begin{frame}[c]
+\frametitle{Literatur}
+
+\nocite{*}
+\bibliographystyle{alphadin}
+\bibliography{literatur}
+
+\end{frame}
+
+\end{document}

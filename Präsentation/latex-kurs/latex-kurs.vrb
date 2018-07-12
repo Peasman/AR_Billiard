@@ -1,0 +1,21 @@
+\frametitle{Eingabe deutscher Texte}
+
+Zur Eingabe deutscher Texte:
+\begin{itemize}
+\item \lcop{usepackage}{german}{babel}
+  \begin{itemize}
+  \item Deutsche Überschriften \\ \glqq Inhaltsverzeichnis\grqq{} statt \glqq Table of contents\grqq
+  \item K\"urzel f\"ur deutsche Umlaute: \\ \verb+\"a\"A\"o\"O\"u\"U\ss{}+ $\Longrightarrow$ \"a\"A\"o\"O\"u\"U\ss{}
+  \item K\"urzel f\"ur deutsche Umlaute: \\ \verb+"a"A"o"O"u"U"s+ $\Longrightarrow$ "a"A"o"O"u"U"s
+  \item \verb+Fu\ss{}pilz+ $\Longrightarrow$ Fu\ss{}pilz, \verb+Ma\ss{} halten+ $\Longrightarrow$ Ma\ss{} halten
+  \end{itemize}
+\item \lcop{usepackage}{ngerman}{babel}
+  \begin{itemize}
+  \item Sprachpaket f\"ur die neue deutsche Rechtschreibung
+  \end{itemize}
+\item \lcop{usepackage}{latin1}{inputenc} f\"ur Unix (ISO-8859-1)
+\item \verb|\usepackage[ansinew]{inputenc}| für Windows
+\item \verb|\usepackage[applemac]{inputenc}| für den Mac
+\item \lcop{usepackage}{utf8}{inputenc} UTF-8-Kodierung
+\end{itemize}
+
