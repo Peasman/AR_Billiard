@@ -16,16 +16,19 @@
 	Sei $r$ der  Radius von der Kugel und $i$ der aktuelle Schritt in der Schleife von $i=1$ bis k, dann sind die Koordinaten für die Punkte auf dem Kreis:
 	\begin{equation}\label{eq:circleCoord}
 		\begin{aligned}
-			x = \cos (\delta \cdot i) \cdot k\\
-			y = \sin (\delta \cdot i) \cdot k
+			x = \cos (\delta \cdot i) \cdot r\\
+			y = \sin (\delta \cdot i) \cdot r
 		\end{aligned}
 	\end{equation}
 	Für jeden Punkt der hinzugefügt wird, wird ein neues Dreieck erstellt, mit dem letzten Punkt, dem Mittelpunkt und dem neuen Punkt als Parameter.
-	Wenn  nun $k$ mal die Koordinaten berechnet wurden, haben wir einen fertigen Kreis, bestehend aus $k$ Dreiecken.
-		\begin{figure}[h]
+	Wenn  nun $k$ mal die Koordinaten berechnet wurden, haben wir einen fertigen Kreis, bestehend aus $k$ Dreiecken.\\
+	\begin{figure}[h]
 		\centering
-		\caption{Vollständiger Triangle-Fan mit k=12}
-		\includegraphics[width=\textwidth/6]{bilder/k12kreis.png} \\
+		\caption{Bau eines Triangle-Fans mit k=36}
+		\subfigure[i=1]{\includegraphics[width=\textwidth/6]{bilder/1.png}}
+		\subfigure[i=2]{\includegraphics[width=\textwidth/6]{bilder/2.png}}
+ 		\subfigure[i=3]{\includegraphics[width=\textwidth/6]{bilder/3.png}} 
+		\subfigure[i=k=36]{\includegraphics[width=\textwidth/6]{bilder/full.png}}
 	\end{figure} \\
 	Die Triangle-Fans werden nun für die Löcher und Kugeln an den Positionen auf dem Spielfeld plaziert.
 	\begin{figure}[h]
@@ -78,17 +81,17 @@
 	Mittelpunkt m der Textur: \\
 	\begin{equation}\label{eq:texStart}
 	\begin{aligned} 
-		x(b) = \frac{1}{16} + \frac{1}{8} \cdot c(b), c(b) = \text{Farbe der Kugel \eqref{eq:color}} \\
-		y(b) = \frac{1}{4} + \frac{1}{2} \cdot f(b), f(b) = \text{Fülle der Kugel \eqref{eq:full}}
+		u(b) = \frac{1}{16} + \frac{1}{8} \cdot c(b), c(b) = \text{Farbe der Kugel \eqref{eq:color}} \\
+		v(b) = \frac{1}{4} + \frac{1}{2} \cdot f(b), f(b) = \text{Fülle der Kugel \eqref{eq:full}}
 	\end{aligned}
 	\end{equation}
 	Nun fehlen noch die Texturkoordinaten für den Kreis um den Mittelpunkt der Textur herum.
 	Die Berechnung läuft dabei analog zum Triangle-Fan mit dem Unterschied in der Skalierung und Startposition. 
-	So benutzen wir nicht den Radius der Kugeln des Spiels, sondern die Größe der Kugel auf der Textur und als Startpunkt unser vorher berechnetes x und y in \eqref{eq:texStart}. 
+	So benutzen wir nicht den Radius der Kugeln des Spiels, sondern die Größe der Kugel auf der Textur und als Startpunkt unser vorher berechnetes u und v in \eqref{eq:texStart}. 
 	\begin{equation}\label{eq:texXY}
 	\begin{aligned}
-		 xTex(b) =  x(b) + \cos(\delta \cdot i) \cdot \frac{1}{16}, \\
-		 yTex(b) =  y(b) + \sin(\delta \cdot i) \cdot \frac{1}{4}, \\
+		 xTex(b) =  u(b) + \cos(\delta \cdot i) \cdot \frac{1}{16}, \\
+		 yTex(b) =  v(b) + \sin(\delta \cdot i) \cdot \frac{1}{4}, \\
 		\text{mit } \delta \text{ nach }\eqref{eq:delta} \text{ und } i \text{ nach } \eqref{eq:circleCoord}
 	\end{aligned}
 	\end{equation}
@@ -109,16 +112,16 @@
 		Dabei gilt $ h = $ Höhe des Spielfeldes, $ w = $ Breite des Spielfeldes und $l = $ Radius der Löcher.
 		Die Änderung der Geschwindigkeit ist dann:
 		\begin{equation}
-		vy = \begin{cases}
-			-vy, & \text{ falls } y \leq (h- l) \land y \geq l\\
-			vy, & sonst 
+		vx = \begin{cases}
+			-vx, & \text{ falls } y \leq (h- l) \land y \geq l\\
+			vx, & sonst 
 		\end{cases}
 		\end{equation}
 		Das gilt für Fall 1 und 2. Für Fall 3 und 4 benötigen wir noch eine Bedingung mehr:
 		 \begin{equation}
-		vx = \begin{cases}
-		-vx, & \text{ falls } (x \leq (w/2 - l) \land x \geq l) \lor (x \geq (w/2 + l) \land (x \leq (w- l) \\
-		vx, & sonst 
+		vy = \begin{cases}
+		-vy, & \text{ falls } (x \leq (w/2 - l) \land x \geq l) \lor (x \geq (w/2 + l) \land (x \leq (w- l) \\
+		vy, & sonst 
 		\end{cases}
 		\end{equation}
 		Wir überprüfen also, ob die Kugel eine der Beiden Strecken zwischen den Löchern trifft, wenn sie vorher den Rand des Spielfeldes erreicht hat. 
