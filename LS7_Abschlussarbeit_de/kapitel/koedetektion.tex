@@ -18,8 +18,8 @@ Im HSV-Farbraum wird ein Farbwert durch seinem Farbton $H \in [0, 360]$, Sättig
 
 \begin{figure}[H]
 	\label{fig:HSVRGB}
-%	\subfigure[]{\includegraphics[height=3.3cm]{bilder/rgb.png}\label{fig:RGB}}
-%	\subfigure[]{\includegraphics[height=3.0cm]{bilder/hsv.png}\label{fig:HSV}}
+	\subfigure[]{\includegraphics[height=3.3cm]{bilder/rgb.png}\label{fig:RGB}}
+	\subfigure[]{\includegraphics[height=3.0cm]{bilder/hsv.png}\label{fig:HSV}}
 	\centering
 	\caption{Darstellung von Farbtönen im (a) RGB-Farbraumes durch Rot-, Grün- und Blauanteileund und  im (b) HSV-Farbraumes durch Farbton (Hue), Sättigung (Saturation) und Helilgkeitswert (Value). Dunkle Farben im HSV-Farbraum haben einen kleinen Helligkeitswert.}
 \end{figure}
@@ -42,9 +42,9 @@ Insgesamt werden durch diese beiden Operationen die Lücken im Binärbild geschl
 
 \begin{figure}[H]
 	\label{fig:thresholded}
-%	\subfigure[]{\includegraphics[height=3.3cm]{bilder/queue_orig.png}}
-%	\subfigure[]{\includegraphics[height=3.3cm]{bilder/queue_thresholded.png}}
-%	\subfigure[]{\includegraphics[height=3.3cm]{bilder/queue_close.png}}	
+	\subfigure[]{\includegraphics[height=3.3cm]{bilder/queue_orig.png}}
+	\subfigure[]{\includegraphics[height=3.3cm]{bilder/queue_thresholded.png}}
+	\subfigure[]{\includegraphics[height=3.3cm]{bilder/queue_close.png}}	
 	\centering
 	\caption{Ergebnis der Segmentierung des Eingabebildes. (a) Eingebild mit $1024 \times 768$ Pixeln, (b) Binärbild aus Schwellwertverfahren ($\theta = 30$),  (c) Ergebnis des morphologischen Closings ($k=9$)}
 \end{figure}
@@ -75,6 +75,15 @@ Für einen Punkt $\textbf{x} = (i, j)$ mit $\textbf{B}[i,j] = 1$ ergeben sich fo
 \end{equation*}
 Dabei bezeichnet $*$ das Skalarprodukt zweier Vektoren sowie $||\cdot||_2$ die euklidische Norm eines Vektors.
 Die beiden Punkte, die am weitesten von dem Mittelpunkt \textbf{c} entfernt sind, sind die beiden Enden des Queues. Für diese Punkte $\textbf{x}_1'$, $\textbf{x}_2'$ ist $s$ entweder minimal oder maximal. 
+
+\begin{figure}[H]
+	\label{fig:thresholded}
+	\subfigure[]{\includegraphics[height=4cm]{bilder/queue_pca_1.png}}
+	\subfigure[]{\includegraphics[height=4cm]{bilder/queue_pca_2.png}}
+	\centering
+	\caption{Erkannte Endpunkte des Queues. (a) Binärbild mit Zentrum \textbf{c} in blau sowie die berechneten Eigenvektoren in rot und grün, (b) Originalbild mit erkannten Endpunkten des Queues}
+\end{figure}
+
 
 Da das Vorzeichen für $s$ sich in aufeinanderfolgenden Bildern verändern kann, müssen die Punkte für die Kollisionsberechnung korrekt ihrem Vorgänger zugeordnet werden.
 Dies wird bewerkstelligt, indem der Punkt dem näheren der beiden Vorgänger-Punkte zugeordnet wird.
