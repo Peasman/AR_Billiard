@@ -140,13 +140,12 @@ Wenn der Mittelpunkt einer Kugel von der Distanz her weniger weit entfernt ist v
 Lösung:
 \begin{itemize}
 	\item Wir berechnen für jede Kugel die Kollision mit jeder anderen Kugel
-	\item Das heißt wir nehmen die Methode aus dem Airhockey und nehmen unsere Kugel die sich bewegen soll als Puck und berechnen die Kollision mit allen anderen Kugeln als Schläger
+	\item Wir nehmen die Methode aus dem Airhockey und wählen unsere Kugel die sich bewegen soll als Puck und berechnen die Kollision mit allen anderen Kugeln als Schläger
 	\item Wenn wir das in beide Richtungen ausführen, sodass jede Kugel sozusagen einmal Schläger und einmal Puck ist, wird jede Kugel von einer Kollision getroffen 
 \end{itemize}
 \end{frame}
 \begin{frame}{Kollision mit Queue}
 Die eigentliche Kollision bleibt gleich wie beim Airhockey. \\
 \textbf{Problem: Framerate der Kamera} \\
-Dadurch, dass unsere Kamera nur ungefähr 25 Bilder pro Sekunde aufnehmen kann, haben wir bei einer schnellen Bewegung des Queue's ein verwischtes Bild, sodass uns die Kollision abhanden kommen kann. \\
-Wir müssen also interpolieren, um zu gucken, ob auf dem Weg eine Kollision stattgefunden hat.
+$\implies$ Unschärfe lässt Kollisionen verloren gehen
 \end{frame}
