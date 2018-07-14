@@ -11,6 +11,8 @@ Ein erstes Problem bildet die Darstellung und die Physik des eigentlichen Spiels
 Die Kugeln sollen dabei mit unterschiedlichen Farben und Nummern sowie die Unterscheidung zwischen vollen und halben Kugeln dargestellt werden.
 Weiterhin muss die Physik des Billiardspiels simuliert werden, die Kollisionen an Kugeln und Banden behandelt sowie das Einlochen von Kugeln erkennt.
 
+Eine weitere Herausforderung ist die korrekte Erkennung des Spielfeldes im Kamerakoordinatensystem um damit das Transformieren eines gegebenen Punktes aus der Kamera ins Spielfeldkoordinatensystem zu gewährleisten. Darunter fällt das Rendern eines bekannten Patternmusters, welches von der Kamera erkannt werden kann, sowie die anschließende Entzerrung des Kamerabildes um das 3D-Kamerakoordinatensystem in das 2D-Spielfeldkoordinatensystem zu transformieren.
+
 Um durch den Queue mit dem Spiel zu interagieren, wird das projizierte Spielfeld durch eine Kamera aufgenommen. 
 In dem Kamerabild müssen die für die Spielphysik relevanten Punkte des Queues erkannt werden.
 Weiterhin muss es möglich sein, die im Bild erkannten Punkte korrekt in Spielkoordinaten umzuwandeln.
@@ -18,6 +20,8 @@ Da durch die Kameralinse jedoch das Bild verzerrt wird, muss neben der Erkennung
 
 Schließlich müssen die Spielregeln in das Spiel eingebunden werden sowie eine grafische Benutzeroberfläche entwickelt werden, die die einzelnen Komponenten verbindet.
 
+Die Graphische Oberfläche (GUI = Graphical User Interface) ist das Endprodukt unseres Projektes. Hierbei muss man die Funktionen und alle Arten von Komponenten die in Rendering und Physik, Kamera Kalibrierung, sowie die Queue-Erkennung beschrieben sind, zusammenfügen und ein laufendes und funktionierendes Spielfeldfenster erstellen. Die Herausforderung hierbei ist das man genau drauf achten muss, was die einzelnen Funktionen tun und die passenden Elemente in der Qt finden, die die Funktionen der anderen Klassen unterstützen könnten.
+Ein besondere Herausforderung besteht jedoch dabei, denn Benutzern zu Informieren, welcher Spieler welchen Balltypen bekommt und wer gerade am Zug ist.
 
 %Rendering und Phsyik \\
 %Das Erstellen des Spielfeldes an sich, stell dabei die erste Herausforderung dar: Man benötigt ein Spielfeld bzw. einen virtuellen Billardpool, bestehend aus Platte und Löchern. 
