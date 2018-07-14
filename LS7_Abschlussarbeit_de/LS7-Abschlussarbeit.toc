@@ -13,25 +13,25 @@
 \contentsline {subsubsection}{\nonumberline Kollision mit anderen Kugeln}{9}{section*.7}
 \contentsline {subsubsection}{\nonumberline Zusammenfassung}{10}{section*.8}
 \contentsline {section}{\numberline {3.2}Kamerakalibrierung}{11}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Entzerrung der Kamerabildes}{11}{subsection.3.2.1}
-\contentsline {subsubsection}{\nonumberline Darstellung des Erkennungsmusters}{11}{section*.10}
-\contentsline {subsubsection}{\nonumberline Entzerrung des Kamerabildes/Punktes}{11}{section*.11}
-\contentsline {subsection}{\numberline {3.2.2}Mappen eines Kamerapunktes in das Spielfeld}{12}{subsection.3.2.2}
-\contentsline {section}{\numberline {3.3}Queue-Detektion}{13}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Segmentierung}{13}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Erkennung der Queue-Enden}{14}{subsection.3.3.2}
-\contentsline {subsection}{\numberline {3.3.3}Kollisionserkennung}{16}{subsection.3.3.3}
-\contentsline {section}{\numberline {3.4}Spielregeln und Benutzerinteraktion}{17}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Spielregeln}{17}{subsection.3.4.1}
-\contentsline {subsection}{\numberline {3.4.2}Benutzerinteraktion}{18}{subsection.3.4.2}
-\contentsline {chapter}{\numberline {4}Ergebnisse}{21}{chapter.4}
-\contentsline {section}{\numberline {4.1}Aufbau der Umfrage}{21}{section.4.1}
-\contentsline {section}{\numberline {4.2}Darstellung der Ergebnisse}{21}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Benutzerfreundlichkeit}{21}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{21}{subsection.4.2.2}
-\contentsline {chapter}{\numberline {5}Diskussion}{23}{chapter.5}
-\contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{23}{section.5.1}
-\contentsline {subsubsection}{\nonumberline Rendering und Physik}{23}{section*.20}
-\contentsline {subsubsection}{\nonumberline Kamerakalibrierung}{23}{section*.21}
-\contentsline {subsubsection}{\nonumberline Queue-Detektion}{23}{section*.22}
-\contentsline {chapter}{Literaturverzeichnis}{24}{section*.22}
+\contentsline {subsection}{\numberline {3.2.1}Darstellung des Erkennungsmusters}{11}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Entzerrung des Kamerabildes/Punktes}{12}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}Punkt\IeC {\"u}bertragung von Kamera ins Spiel}{13}{subsection.3.2.3}
+\contentsline {subsection}{\numberline {3.2.4}Zusammenfassung}{15}{subsection.3.2.4}
+\contentsline {section}{\numberline {3.3}Queue-Detektion}{16}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Segmentierung}{16}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Erkennung der Queue-Enden}{17}{subsection.3.3.2}
+\contentsline {subsection}{\numberline {3.3.3}Kollisionserkennung}{19}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}Spielregeln und Benutzerinteraktion}{20}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Spielregeln}{20}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Benutzerinteraktion}{21}{subsection.3.4.2}
+\contentsline {chapter}{\numberline {4}Ergebnisse}{23}{chapter.4}
+\contentsline {section}{\numberline {4.1}Aufbau der Umfrage}{23}{section.4.1}
+\contentsline {section}{\numberline {4.2}Darstellung der Ergebnisse}{23}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Benutzerfreundlichkeit}{23}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{23}{subsection.4.2.2}
+\contentsline {chapter}{\numberline {5}Diskussion}{25}{chapter.5}
+\contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{25}{section.5.1}
+\contentsline {subsubsection}{\nonumberline Rendering und Physik}{25}{section*.22}
+\contentsline {subsubsection}{\nonumberline Kamerakalibrierung}{25}{section*.23}
+\contentsline {subsubsection}{\nonumberline Queue-Detektion}{25}{section*.24}
+\contentsline {chapter}{Literaturverzeichnis}{26}{section*.24}
