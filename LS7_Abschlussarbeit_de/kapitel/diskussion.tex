@@ -1,4 +1,25 @@
 \chapter{Diskussion}
+In diesem Kapitel soll die entwickelte Lösung kritisch betrachtet werden. Dabei soll gerade auf die Schwächen der Lösung eingangen und Verbesserungsvorschläge für diese dargestellt werden.
+
+
 
 \section{Verbesserungsvorschläge}
 
+\subsubsection{Rendering und Physik}
+
+\subsubsection{Kamerakalibrierung}
+
+\subsubsection{Queue-Detektion}
+Die vorgestellte Erkennung des Queues basiert stark auf der Farbe des Queues. 
+Da andere Gegenstände im Kamerabild eventuell ebenfalls einen dunklen Farbton können, wäre die Erkennung in diesem Fall sehr fehleranfällig. 
+Um die Erkennung robuster gegenüber diesen Störfaktoren zu machen, könnte die Erkennung des Queues auf weiteren Merkmalen, wie zum Beispiel Markern, basieren.
+
+Weiterhin limitiert die Wiederholfrequenz der Kamera von 25 Bildern die Sekunde stark die Präzision der Steuerung. 
+Durch die hohe Belichtungszeit ergibt sich eine starke Bewegungsunschärfe, gerade bei schnellen Bewegungen. 
+Diese wirkt sich negativ auf die genaue Erkennung der Queue Spitze aus.
+Zusätzlich sorgt die Wiederholfrequenz dafür, dass das Spiel selbst auch nur mit 25 Bildern pro Sekunde dargestellt wird. 
+Anders als das erste Problem könnte dies jedoch z.B. durch ein Double-Buffering der Eingabebilder behoben werden.
+
+Schließlich lässt sich die Modellierung des Queues an sich verbesseren.
+Die Kollision basiert in der vorgestellten Lösung lediglich auf einem Punkt, der Queue-Spitze.
+In der Realität hat der Queue jedoch noch eine Ausdehnung in die Breite, die bei dieser Modellierung nicht berücksichtigt wird.

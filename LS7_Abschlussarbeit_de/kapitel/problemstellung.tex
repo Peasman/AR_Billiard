@@ -3,21 +3,29 @@
 %========================================================================================
 
 \chapter{Problemstellung}
+Die Zielsetzung dieses Projektes war es, ein Billiard-Spiel zu entwickeln, welches die Interaktion mit dem Spiel durch einen realen Queue ermöglicht.
+Dabei sollte das Stoßen durch eine natürliche Bewegung mit den Queue gegen die projizierten Kugeln möglichen.
+Bei der Realisierung dieser Anforderungen ergeben sich mehrere Teilprobleme, die im folgenden näher erläutert werden sollen.
+
+Ein erstes Problem bildet die Darstellung und die Physik des eigentlichen Spiels. Hierzu müssen das Spielfeld inklusive Löchern sowie die Kugeln korrekt dargestellt werden. 
+Die Kugeln sollen dabei mit unterschiedlichen Farben und Nummern sowie die Unterscheidung zwischen vollen und halben Kugeln dargestellt werden.
+Weiterhin muss die Physik des Billiardspiels simuliert werden, die Kollisionen an Kugeln und Banden behandelt sowie das Einlochen von Kugeln erkennt.
+
+Um durch den Queue mit dem Spiel zu interagieren, wird das projizierte Spielfeld durch eine Kamera aufgenommen. 
+In dem Kamerabild müssen die für die Spielphysik relevanten Punkte des Queues erkannt werden.
+Weiterhin muss es möglich sein, die im Bild erkannten Punkte korrekt in Spielkoordinaten umzuwandeln.
+Da durch die Kameralinse jedoch das Bild verzerrt wird, muss neben der Erkennung des Spielfeldes auch eine Kalibrierung der Kamera durchgeführt werden.
+
+Schließlich müssen die Spielregeln in das Spiel eingebunden werden sowie eine grafische Benutzeroberfläche entwickelt werden, die die einzelnen Komponenten verbindet.
 
 
-
-
-
-
-
-
-Rendering und Phsyik \\
-Das Erstellen des Spielfeldes an sich, stell dabei die erste Herausforderung dar: Man benötigt ein Spielfeld bzw. einen virtuellen Billardpool, bestehend aus Platte und Löchern. 
-Außerdem braucht man Kugeln, die entweder Halb oder voll sind, verschiedene Nummern tragen, als auch verschieden Farben haben. 
-Die Kugeln müssen sich zudem auch noch bewegen können und miteinander, als auch mit der Wand und den Löchern kollidieren können. 
-Kamera Kalibrierung \\
-Kö-Detektion \\
-GUI-Zusammenbau \\
-Die Graphische Oberfläche(GUI=Graphical User Interface) ist das Endprodukt unseres Projektes. Hierbei muss man die Funktionen und alle Arten von Komponenten die in Rendering und Physik, Kamera Kalibrierung sowie die Queue-Erkennung sind, zusammenfügen und ein Laufendes funktionieredes Spielfeld-Fenster erstellen. Die Herausforderung hierbei ist das man genau drauf achten muss, was die einzelen funktionen tun und die passenden Elemente in der Qt zu finden, die die funktionen der anderen Klassen unterstützen könnten.
-Ein besondere Herausforderung besteht jedoch dabei, denn Benutzern zu Informieren, welcher Spieler welchen Balltypen bekommt und wer gerade am Zug ist.
+%Rendering und Phsyik \\
+%Das Erstellen des Spielfeldes an sich, stell dabei die erste Herausforderung dar: Man benötigt ein Spielfeld bzw. einen virtuellen Billardpool, bestehend aus Platte und Löchern. 
+%Außerdem braucht man Kugeln, die entweder Halb oder voll sind, verschiedene Nummern tragen, als auch verschieden Farben haben. 
+%Die Kugeln müssen sich zudem auch noch bewegen können und miteinander, als auch mit der Wand und den Löchern kollidieren können. 
+%Kamera Kalibrierung \\
+%Kö-Detektion \\
+%GUI-Zusammenbau \\
+%Die Graphische Oberfläche(GUI=Graphical User Interface) ist das Endprodukt unseres Projektes. Hierbei muss man die Funktionen und alle Arten von Komponenten die in Rendering und Physik, Kamera Kalibrierung sowie die Queue-Erkennung sind, zusammenfügen und ein Laufendes funktionieredes Spielfeld-Fenster erstellen. Die Herausforderung hierbei ist das man genau drauf achten muss, was die einzelen funktionen tun und die passenden Elemente in der Qt zu finden, die die funktionen der anderen Klassen unterstützen könnten.
+%Ein besondere Herausforderung besteht jedoch dabei, denn Benutzern zu Informieren, welcher Spieler welchen Balltypen bekommt und wer gerade am Zug ist.
 

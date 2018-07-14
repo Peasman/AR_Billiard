@@ -31,4 +31,7 @@
 \contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{21}{subsection.4.2.2}
 \contentsline {chapter}{\numberline {5}Diskussion}{23}{chapter.5}
 \contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{23}{section.5.1}
-\contentsline {chapter}{Literaturverzeichnis}{24}{section.5.1}
+\contentsline {subsubsection}{\nonumberline Rendering und Physik}{23}{section*.20}
+\contentsline {subsubsection}{\nonumberline Kamerakalibrierung}{23}{section*.21}
+\contentsline {subsubsection}{\nonumberline Queue-Detektion}{23}{section*.22}
+\contentsline {chapter}{Literaturverzeichnis}{24}{section*.22}
