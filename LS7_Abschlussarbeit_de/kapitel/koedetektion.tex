@@ -84,12 +84,11 @@ Die beiden Punkte, die am weitesten von dem Mittelpunkt \textbf{c} entfernt sind
 	\caption{Erkannte Endpunkte des Queues. (a) Binärbild mit Zentrum \textbf{c} in blau sowie die berechneten Eigenvektoren in rot und grün, (b) Originalbild mit erkannten Endpunkten des Queues}
 \end{figure}
 
-
 Da das Vorzeichen für $s$ sich in aufeinanderfolgenden Bildern verändern kann, müssen die Punkte für die Kollisionsberechnung korrekt ihrem Vorgänger zugeordnet werden.
-Dies wird bewerkstelligt, indem ein Punkt dem näheren der beiden Vorgänger-Punkte zugeordnet wird.
+Dazu wird ein Punkt immer dem näheren der beiden Vorgänger-Punkte zugeordnet.
 Weiterhin kann keines der beiden Enden mit Sicherheit als Spitze des Queues klassifiziert werden.
-Daher wird die Kollisionsbehandlung mit beiden Enden ausgeführt.
-Dies hat auf den Spielfluss jedoch keine Auswirkungen, da eines der Enden meist am Rand des Spielfeldes ist.
+Daher wird die Kollisionsbehandlung mit beiden Enden ausgeführt, was auf den Spielfluss jedoch keine Auswirkungen hat da eines der Enden meist am Rand des Spielfeldes ist.
+Die erkannten Endpunkte werden schließlich wie in Abschnitt 3.2.3 beschrieben, in das Spielkoordinatensystem überführt.
 
 \subsection{Kollisionserkennung}
 
@@ -113,7 +112,7 @@ Die Schnittpunkte einer Kugel mit Mittelpunkt $\textbf{c}$ und Radius $r$ und ei
 \end{minipage}
 \begin{minipage}{.333333\linewidth}
 	\begin{equation*}
-	s_{1,2} = \frac{-2 \cdot (\textbf{d} * \textbf{f}) \pm \sqrt{||\textbf{f}||^2 - r^2}}{2 \cdot ||\textbf{d}||^2}
+	s_{1,2} = \frac{-2 \cdot (\textbf{d} * \textbf{f}) \mp \sqrt{||\textbf{f}||^2 - r^2}}{2 \cdot ||\textbf{d}||^2}
 	\end{equation*}
 \end{minipage}
 \vspace{0.3cm}
@@ -121,7 +120,7 @@ Die Schnittpunkte einer Kugel mit Mittelpunkt $\textbf{c}$ und Radius $r$ und ei
 Falls $s_1 \in [0, 1] \subset \mathbb{R}$ ist, so ist der Schnittpunkt durch $\textbf{x}_c = s_1 \cdot d + \textbf{x}^{(t-1)}$ gegeben. 
 Mit diesem wird dann die übliche Kollisionsberechnung durchgeführt.
 In den anderen Fällen darf keine Kollision ausgeführt werden, da entweder kein Schnittpunkt exisiert oder der Schnittpunkt kein gültiger Kollisionspunkt wäre:
-
+\vspace{-0.5cm}
 \begin{figure}[H]
 	\label{fig:collision}
 	\subfigure[]{\includegraphics[height=4cm]{bilder/hit.eps}}
