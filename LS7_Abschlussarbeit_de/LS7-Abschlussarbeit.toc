@@ -21,17 +21,18 @@
 \contentsline {subsection}{\numberline {3.3.1}Segmentierung}{16}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Erkennung der Queue-Enden}{17}{subsection.3.3.2}
 \contentsline {subsection}{\numberline {3.3.3}Kollisionserkennung}{19}{subsection.3.3.3}
-\contentsline {section}{\numberline {3.4}Spielregeln und Benutzerinteraktion}{20}{section.3.4}
-\contentsline {subsection}{\numberline {3.4.1}Spielregeln}{20}{subsection.3.4.1}
-\contentsline {subsection}{\numberline {3.4.2}Benutzerinteraktion}{21}{subsection.3.4.2}
-\contentsline {chapter}{\numberline {4}Ergebnisse}{23}{chapter.4}
-\contentsline {section}{\numberline {4.1}Aufbau der Umfrage}{23}{section.4.1}
-\contentsline {section}{\numberline {4.2}Darstellung der Ergebnisse}{23}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Benutzerfreundlichkeit}{23}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{23}{subsection.4.2.2}
-\contentsline {chapter}{\numberline {5}Diskussion}{25}{chapter.5}
-\contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{25}{section.5.1}
-\contentsline {subsubsection}{\nonumberline Rendering und Physik}{25}{section*.22}
-\contentsline {subsubsection}{\nonumberline Kamerakalibrierung}{25}{section*.23}
-\contentsline {subsubsection}{\nonumberline Queue-Detektion}{25}{section*.24}
-\contentsline {chapter}{Literaturverzeichnis}{26}{section*.24}
+\contentsline {section}{\numberline {3.4}Spielregeln und Benutzerinteraktion}{21}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Spielregeln}{21}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Benutzerinteraktion}{22}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}Zusammenfassung}{23}{subsection.3.4.3}
+\contentsline {chapter}{\numberline {4}Ergebnisse}{25}{chapter.4}
+\contentsline {section}{\numberline {4.1}Aufbau der Umfrage}{25}{section.4.1}
+\contentsline {section}{\numberline {4.2}Darstellung der Ergebnisse}{25}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Benutzerfreundlichkeit}{25}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{25}{subsection.4.2.2}
+\contentsline {chapter}{\numberline {5}Diskussion}{27}{chapter.5}
+\contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{27}{section.5.1}
+\contentsline {subsubsection}{\nonumberline Rendering und Physik}{27}{section*.22}
+\contentsline {subsubsection}{\nonumberline Kamerakalibrierung}{27}{section*.23}
+\contentsline {subsubsection}{\nonumberline Queue-Detektion}{27}{section*.24}
+\contentsline {chapter}{Literaturverzeichnis}{28}{section*.24}
