@@ -1,30 +1,28 @@
-\BOOKMARK [0][]{chapter*.2}{Mathematische Notation}{}% 1
-\BOOKMARK [0][]{chapter.1}{Einleitung}{}% 2
-\BOOKMARK [1][-]{section.1.1}{Motivation und Hintergrund}{chapter.1}% 3
-\BOOKMARK [1][-]{section.1.2}{Zielsetzung}{chapter.1}% 4
-\BOOKMARK [1][-]{section.1.3}{Aufbau der Arbeit}{chapter.1}% 5
-\BOOKMARK [0][]{chapter.2}{Problemstellung}{}% 6
-\BOOKMARK [0][]{chapter.3}{Methoden und L\366sungswege}{}% 7
-\BOOKMARK [1][-]{section.3.1}{Rendering und Physik}{chapter.3}% 8
-\BOOKMARK [2][-]{subsection.3.1.1}{Objekte}{section.3.1}% 9
-\BOOKMARK [2][-]{subsection.3.1.2}{Texturierung}{section.3.1}% 10
-\BOOKMARK [2][-]{subsection.3.1.3}{Kollisionsberechnung}{section.3.1}% 11
-\BOOKMARK [1][-]{section.3.2}{Kamerakalibrierung}{chapter.3}% 12
-\BOOKMARK [2][-]{subsection.3.2.1}{Entzerrung der Kamerabildes}{section.3.2}% 13
-\BOOKMARK [2][-]{subsection.3.2.2}{Mappen eines Kamerapunktes in das Spielfeld}{section.3.2}% 14
-\BOOKMARK [1][-]{section.3.3}{Queue-Detektion}{chapter.3}% 15
-\BOOKMARK [2][-]{subsection.3.3.1}{Segmentierung}{section.3.3}% 16
-\BOOKMARK [2][-]{subsection.3.3.2}{Erkennung der Queue-Enden}{section.3.3}% 17
-\BOOKMARK [2][-]{subsection.3.3.3}{Kollisionserkennung}{section.3.3}% 18
-\BOOKMARK [1][-]{section.3.4}{Spielregeln und Benutzerinteraktion}{chapter.3}% 19
-\BOOKMARK [2][-]{subsection.3.4.1}{Spielregeln}{section.3.4}% 20
-\BOOKMARK [2][-]{subsection.3.4.2}{Benutzerinteraktion}{section.3.4}% 21
-\BOOKMARK [0][]{chapter.4}{Ergebnisse}{}% 22
-\BOOKMARK [1][-]{section.4.1}{Aufbau der Umfrage}{chapter.4}% 23
-\BOOKMARK [1][-]{section.4.2}{Darstellung der Ergebnisse}{chapter.4}% 24
-\BOOKMARK [2][-]{subsection.4.2.1}{Benutzerfreundlichkeit}{section.4.2}% 25
-\BOOKMARK [2][-]{subsection.4.2.2}{Genauigkeit der Spielsteuerung}{section.4.2}% 26
-\BOOKMARK [0][]{chapter.5}{Diskussion}{}% 27
-\BOOKMARK [1][-]{section.5.1}{Verbesserungsvorschl\344ge}{chapter.5}% 28
-\BOOKMARK [0][]{appendix.A}{Weitere Informationen}{}% 29
-\BOOKMARK [0][]{appendix.A}{Literaturverzeichnis}{}% 30
+\BOOKMARK [0][]{chapter.1}{Einleitung}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Motivation und Hintergrund}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Zielsetzung}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.3}{Aufbau der Arbeit}{chapter.1}% 4
+\BOOKMARK [0][]{chapter.2}{Problemstellung}{}% 5
+\BOOKMARK [0][]{chapter.3}{Methoden und L\366sungswege}{}% 6
+\BOOKMARK [1][-]{section.3.1}{Rendering und Physik}{chapter.3}% 7
+\BOOKMARK [2][-]{subsection.3.1.1}{Objekte}{section.3.1}% 8
+\BOOKMARK [2][-]{subsection.3.1.2}{Texturierung}{section.3.1}% 9
+\BOOKMARK [2][-]{subsection.3.1.3}{Kollisionsberechnung}{section.3.1}% 10
+\BOOKMARK [1][-]{section.3.2}{Kamerakalibrierung}{chapter.3}% 11
+\BOOKMARK [2][-]{subsection.3.2.1}{Entzerrung der Kamerabildes}{section.3.2}% 12
+\BOOKMARK [2][-]{subsection.3.2.2}{Mappen eines Kamerapunktes in das Spielfeld}{section.3.2}% 13
+\BOOKMARK [1][-]{section.3.3}{Queue-Detektion}{chapter.3}% 14
+\BOOKMARK [2][-]{subsection.3.3.1}{Segmentierung}{section.3.3}% 15
+\BOOKMARK [2][-]{subsection.3.3.2}{Erkennung der Queue-Enden}{section.3.3}% 16
+\BOOKMARK [2][-]{subsection.3.3.3}{Kollisionserkennung}{section.3.3}% 17
+\BOOKMARK [1][-]{section.3.4}{Spielregeln und Benutzerinteraktion}{chapter.3}% 18
+\BOOKMARK [2][-]{subsection.3.4.1}{Spielregeln}{section.3.4}% 19
+\BOOKMARK [2][-]{subsection.3.4.2}{Benutzerinteraktion}{section.3.4}% 20
+\BOOKMARK [0][]{chapter.4}{Ergebnisse}{}% 21
+\BOOKMARK [1][-]{section.4.1}{Aufbau der Umfrage}{chapter.4}% 22
+\BOOKMARK [1][-]{section.4.2}{Darstellung der Ergebnisse}{chapter.4}% 23
+\BOOKMARK [2][-]{subsection.4.2.1}{Benutzerfreundlichkeit}{section.4.2}% 24
+\BOOKMARK [2][-]{subsection.4.2.2}{Genauigkeit der Spielsteuerung}{section.4.2}% 25
+\BOOKMARK [0][]{chapter.5}{Diskussion}{}% 26
+\BOOKMARK [1][-]{section.5.1}{Verbesserungsvorschl\344ge}{chapter.5}% 27
+\BOOKMARK [0][]{section.5.1}{Literaturverzeichnis}{}% 28

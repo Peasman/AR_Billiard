@@ -1,4 +1,4 @@
-\begin{thebibliography}{0}
+\begin{thebibliography}{3}
 % this bibliography was produced with the style dinat.bst v2.5
 \makeatletter
 \newcommand{\dinatlabel}[1]%
@@ -6,5 +6,29 @@
 \makeatother
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax\def\url#1{\texttt{#1}}\fi
+
+\bibitem[HSVCylinder()]{HSVCylinder}
+\dinatlabel{HSVCylinder } \emph{HSV Color Space}. --
+\newblock URL
+  \url{https://commons.wikimedia.org/wiki/File:HSV_color_solid_cylinder.png}.
+  --
+\newblock Eingesehen am 14.07.2018
+
+\bibitem[RGBCube()]{RGBCube}
+\dinatlabel{RGBCube } \emph{RGB Color Space}. --
+\newblock URL
+  \url{https://commons.wikimedia.org/wiki/File:RGB_color_solid_cube.png}. --
+\newblock Eingesehen am 14.07.2018
+
+\bibitem[OpenCV:PCA()]{OpenCV:PCA}
+\dinatlabel{OpenCV:PCA } \emph{OpenCV Tutorials - Introduction to Principal
+  Component Analysis (PCA)}.
+\newblock
+  \url{https://docs.opencv.org/3.1.0/d1/dee/tutorial_introduction_to_pca.html}.
+  --
+\newblock URL
+  \url{https://docs.opencv.org/3.1.0/d1/dee/tutorial_introduction_to_pca.html}.
+  --
+\newblock Eingesehen am 14.07.2018
 
 \end{thebibliography}
