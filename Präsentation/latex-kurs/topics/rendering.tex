@@ -14,17 +14,6 @@
 	\item Auflösung $k$ ist die Anzahl der Dreiecke, aus denen unser Kreis hinterher besteht
 \end{itemize}
 \end{frame}
-\begin{frame}{Triangle-Fan}
-Berechnung:
-\begin{itemize}
-	\item [1.] Berechnen vom Winkel $\delta = \frac{2 \cdot \pi}{k}$, der den Abstand zwischen den Punkten auf dem Kreis darstellt
-	\item [2.] Mittelpunkt $= (0,0)$, Objekt wird später an die Stelle $c$ transformiert
-	\item [3.] Erste Punkt auf dem Kreis ist $(r,0)$
-	\item [4.] Dreieck wird vollendet mit dem Punkt $	x = \cos (\delta \cdot i) \cdot r$\\
-				$y = \sin (\delta \cdot i) \cdot r$, mit $i =$ Anzahl der Iterationen von $i = 0$ bis $k$
-	\item [5.] Jeder neu hinzugefügte Punkt wird mit dem Mittelpunkt und dem letzten Punkt auf dem Umriss zu einem Dreieck verbunden
-\end{itemize}
-\end{frame}
 \begin{frame}
 \begin{figure}
 	\caption{Erstes Dreieck eines Triangle-Fans, i = 1, k = 36}
@@ -79,15 +68,7 @@ Wir müssen nun berechnen, welcher Ausschnitt für welche Kugel ist.
 		\item Wir können jetzt eine Funktion erstellen, die uns anhand von Farbe und Fülle den Textur Mittelpunkt ausgibt 
 	\end{itemize}
 \end{frame}
-\begin{frame}{Texturierung}
-Beispiel: Mittelpunkt der gelben, halben Kugel auf der Textur: \\
-	$u = \frac{1}{16} + \frac{1}{8} \cdot 0 = \frac{1}{16}$\\
-	$v = \frac{1}{4} + \frac{1}{2} \cdot 1= \frac{3}{4}$ \\
-Dabei ist $\frac{1}{16}$ der Radius einer Kugel auf u, und $\frac{1}{4}$ der Radius auf v.
-Die Funktion ist dann: \\
-$	u(b) = \frac{1}{16} + \frac{1}{8} \cdot c(b), c(b) = \text{Farbe der Kugel}$\\
-$v(b) = \frac{1}{4} + \frac{1}{2} \cdot f(b), f(b) = \text{Fülle der Kugel}$\\
-\end{frame}
+
 \begin{frame}{Zwischenstand}
 Wir haben nun ein fertiges Spielfeld mit Texturierten Kugeln.
 \begin{figure}
@@ -112,21 +93,7 @@ Prinzip sehr einfach:
 	\item [3.] Geschwindigkeit auf der Achse die Geschnitten wurde invertieren, also bei $x=0$ oder $x=w$ wird $vx = -vx$ gesetzt, analog für y
 \end{itemize}
 \end{frame}
-\begin{frame}{Kollisionen: Kugel mit Wand}
-Nun fehlen noch die Löcher: 
-\begin{itemize}
-	\item Wir setzen zusätzliche Bedingungen für die Kollision mit Wänden ein
-	\item Wir überprüfen beim Schnitt mit einer der Wände, ob der Ausschnitt auf bei einem Loch liegt 	
-\end{itemize}
 
-$vx = \begin{cases}
--vx, & \text{ falls } y \leq (h- l) \land y \geq l, l = \text{Radius eines Lochs}\\
-vx, & sonst 
-\end{cases}$
-Analog für $vy$, nur mit 2 Wandabschnitten auf der X-Achse aufgrund der 3 Löcher auf X. \\
-Wenn der Mittelpunkt einer Kugel von der Distanz her weniger weit entfernt ist von dem Mittelpunkt eines Lochs, als der Radius von diesem, dann lassen wir die Kugel verschwinden und zählen sie als Punkt.
-
-\end{frame}
 
 \begin{frame}{Kollision mit anderen Kugeln}
 \begin{itemize}
