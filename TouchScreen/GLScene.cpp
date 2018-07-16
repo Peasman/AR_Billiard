@@ -74,7 +74,7 @@ void GLScene::initLabel(){
 	sample_palet.setColor(QPalette::Background, QColor::fromRgba(qRgba(0, 102, 0, 255)));
 
 
-	QString inputCurrentPlayer = "CurrentPlayer: ";
+	QString inputCurrentPlayer = "CurrentPlayer: "+QString::number(getCurrentPlayer());
 	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
 	_currentPlayerLabel->setGeometry(QRect(200, 0, 100, 25));
 
@@ -84,7 +84,7 @@ void GLScene::initLabel(){
 
 	QString inputHalf = "BallType of Player: ";
 	_playerHalf = new QLabel(inputHalf, this);
-	_playerHalf->setGeometry(QRect(430, 0, 150, 25));
+	_playerHalf->setGeometry(QRect(445, 0, 150, 25));
 
 	_currentPlayerLabel->setAutoFillBackground(true);
 	_playerFull->setAutoFillBackground(true);
@@ -99,34 +99,34 @@ void GLScene::setBallTypeLabel(){
 	if (getPlayers(getCurrentPlayer()).colorSet){
 		if (getPlayers(getCurrentPlayer()).ballType){
 			if (getCurrentPlayer() == 0){
-				QString inputFull = "BallType of Player 0 : FULL";
-				_playerFull = new QLabel(inputFull, this);
+				QString inputPlayer0 = "BallType of Player 0 : FULL";
+				_playerFull->setText(inputPlayer0);
 
-				QString inputHalf = "BallType of Player 1: HALF";
-				_playerHalf = new QLabel(inputHalf, this);
+				QString inputPlayer1 = "BallType of Player 1: HALF";
+				_playerHalf->setText(inputPlayer1);
 			}
 			else{
-				QString inputFull = "BallType of Player 0 : HALF";
-				_playerFull = new QLabel(inputFull, this);
+				QString inputPlayer0 = "BallType of Player 0 : HALF";
+				_playerFull->setText(inputPlayer0);
 
-				QString inputHalf = "BallType of Player 1: FULL";
-				_playerHalf = new QLabel(inputHalf, this);
+				QString inputPlayer1 = "BallType of Player 1: FULL";
+				_playerHalf->setText(inputPlayer1);
 			}
 		}
 		else{
 			if (getCurrentPlayer() == 1){
-				QString inputFull = "BallType of Player 0 : HALF";
-				_playerFull = new QLabel(inputFull, this);
+				QString inputPlayer0 = "BallType of Player 0 : HALF";
+				_playerFull->setText(inputPlayer0);
 
-				QString inputHalf = "BallType of Player 1: FULL";
-				_playerHalf = new QLabel(inputHalf, this);
+				QString inputPlayer1 = "BallType of Player 1: FULL";
+				_playerHalf->setText(inputPlayer1);
 			}
 			else{
-				QString inputFull = "BallType of Player 0 : FULL";
-				_playerFull = new QLabel(inputFull, this);
+				QString inputPlayer0 = "BallType of Player 0 : FULL";
+				_playerFull->setText(inputPlayer0);
 
-				QString inputHalf = "BallType of Player 1: HALF";
-				_playerHalf = new QLabel(inputHalf, this);
+				QString inputPlayer1 = "BallType of Player 1: HALF";
+				_playerHalf->setText(inputPlayer1);
 			}
 		}
 	}
@@ -185,6 +185,7 @@ void GLScene::updateFrame()
 		case IDNO:
 			return;
 		case IDYES:
+			hideLabels();
 			std::cout << std::endl;
 			std::cout << "GLScene: Calibration start" << std::endl;
 			cam.startCalibration();
@@ -202,6 +203,7 @@ void GLScene::updateFrame()
 				break;
 			case IDYES: //Neues Spiel starten
 				alreadyStarted = true;
+				showLabel();
 				resetGame();
 				return;
 			}
@@ -249,9 +251,20 @@ void GLScene::updateFrame()
 		update();
 	}
 }
-
+void GLScene::hideLabels(){
+	_currentPlayerLabel->hide();
+	_playerFull->hide();
+	_playerHalf->hide();
+}
+void GLScene::showLabel(){
+	_currentPlayerLabel->show();
+	_playerFull->show();
+	_playerHalf->show();
+}
 void GLScene::initializeGL()
 {
+	initLabel();
+	hideLabels();
 	// Set up the rendering context, define display lists etc.:
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glEnable(GL_DEPTH_TEST);
@@ -262,7 +275,6 @@ void GLScene::initializeGL()
 
 	// Schattierungsmodell setzen
 	glShadeModel(GL_SMOOTH);
-	initLabel();
 	resetGame();
 }
 
@@ -491,10 +503,10 @@ void GLScene::CollisionWithHole(Ball& ball)
 			{
 				std::cout << "Getroffen! Aber falsche Art von Spieler " << currentPlayer << std::endl;
 				definitlyNotAgain = true;
-				nextPlayer();
 				//Nein dann nächster Spieler 
 				//TODO Listener für PlayerWechsel DIKO
 				//currentPlayer = (currentPlayer + 1) % 2;
+				nextPlayer();
 			}
 		}
 	}

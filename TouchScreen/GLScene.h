@@ -26,6 +26,8 @@ public:
 
 	public slots:
 
+	void hideLabels();
+	void showLabel();
 	int getCurrentPlayer();
 	void testPauseByInput();
 	void wait(int);
