@@ -8,6 +8,11 @@ In diesem Kapitel soll die entwickelte Lösung kritisch betrachtet werden. Dabei
 \subsubsection{Rendering und Physik}
 
 \subsubsection{Kamerakalibrierung}
+Die Kalibrierung der Kamera, und damit die Erkennung des gegebenen Schachbrett-/Patternmusters bzw. deren Qualität, wird sehr durch den aktuellen Lichteinfluss, u.a. durch die Einstellungen des Beamers, auf das aufgenommene Kamerabild, beeinflusst.
+Sofern die genutzte Kamera nicht exakt scharf eingestellt ist oder das Bild zu dunkel oder zu hell wird, hat dies als direkte Folge eine unsaubere bzw. schlechte bis nicht funktionierende Kamera-Kalibrierung. 
+Da in unserem Projekt für die Erkennung des bekannten Schachbrettmusters eine bereits existierende Methode der OpenCV-Bibliothek genutzt wurde, sind die zu optimierenden Möglichkeiten sehr eingeschränkt.
+Eine lösende Variante wäre es, ein vorgefertigtes Bild anzeigen zu lassen und erst bei einem aufgenommenem Foto dieses Bildes über die Kamera, welches entsprechende Merkmale aufweist (Helligkeit, Schärfe, Ausrichtung), die Weiterleitung an die Kalibrierung zu gestatten. Somit müsste der Benutzer die Kamera und den Beamer vor der Kalibrierung bereits so einstellen, dass diese Einstellungen eine erfolgreiche Kalibrierung zufolge haben.
+
 
 \subsubsection{Queue-Detektion}
 Die vorgestellte Erkennung des Queues basiert stark auf der Farbe des Queues. 
