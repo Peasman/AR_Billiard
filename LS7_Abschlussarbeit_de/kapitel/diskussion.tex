@@ -13,7 +13,6 @@ Sofern die genutzte Kamera nicht exakt scharf eingestellt ist oder das Bild zu d
 Da in unserem Projekt für die Erkennung des bekannten Schachbrettmusters eine bereits existierende Methode der OpenCV-Bibliothek genutzt wurde, sind die zu optimierenden Möglichkeiten sehr eingeschränkt.
 Eine lösende Variante wäre es, ein vorgefertigtes Bild anzeigen zu lassen und erst bei einem aufgenommenem Foto dieses Bildes über die Kamera, welches entsprechende Merkmale aufweist (Helligkeit, Schärfe, Ausrichtung), die Weiterleitung an die Kalibrierung zu gestatten. Somit müsste der Benutzer die Kamera und den Beamer vor der Kalibrierung bereits so einstellen, dass diese Einstellungen eine erfolgreiche Kalibrierung zufolge haben.
 
-
 \subsubsection{Queue-Detektion}
 Die vorgestellte Erkennung des Queues basiert stark auf der Farbe des Queues. 
 Da andere Gegenstände im Kamerabild eventuell ebenfalls einen dunklen Farbton können, wäre die Erkennung in diesem Fall sehr fehleranfällig. 
@@ -28,3 +27,10 @@ Anders als das erste Problem könnte dies jedoch z.B. durch ein Double-Buffering
 Schließlich lässt sich die Modellierung des Queues an sich verbesseren.
 Die Kollision basiert in der vorgestellten Lösung lediglich auf einem Punkt, der Queue-Spitze.
 In der Realität hat der Queue jedoch noch eine Ausdehnung in die Breite, die bei dieser Modellierung nicht berücksichtigt wird.
+
+\subsubsection{Benutzerinteraktion}
+Bei der Benutzerinteraktion wurde der Großteil der Interaktionsmöglichkeiten durch Buttons und Pop-ups realisiert.
+Ein Teil dessen war allerdings auch das Anzeigen der Statistiken, worunter u.a. das Anzeigen des aktuellen Spielers oder der Kugelzuweisung fällt. Hierbei wurde die Variante gewählt, die Statistiken als Label auf dem Spielfeld anzeigen zu lassen.
+Eine bessere Lösung wäre gewesen, diese in der Menübar oberhalb des Spielfeldes zu positionieren, um die Sicht des Benutzers auf das Spielfeld nicht zu beeinträchtigen. 
+Das Problem lag in der Konnektivität der Physik- und der Anzeigeklasse, denn hier war es nicht einfach lösbar, Daten von der Physikklasse an die Anzeigeklasse weiterzuleiten.
+Um dies effizient zu realisieren, hätte man dies direkt am Anfang in der allgemeinen Programmstruktur beachten müssen um einen einfachen Austausch von Daten nicht nur von Oberklassen an Unterklassen, sondern auch umgekehrt, zu gewährleisten.
