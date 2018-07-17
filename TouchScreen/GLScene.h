@@ -25,7 +25,7 @@ public:
 	};
 
 	public slots:
-
+	void resetLabels();
 	void hideLabels();
 	void showLabel();
 	int getCurrentPlayer();

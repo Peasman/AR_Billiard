@@ -74,7 +74,7 @@ void GLScene::initLabel(){
 	sample_palet.setColor(QPalette::Background, QColor::fromRgba(qRgba(0, 102, 0, 255)));
 
 
-	QString inputCurrentPlayer = "CurrentPlayer: "+QString::number(getCurrentPlayer());
+	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(getCurrentPlayer());
 	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
 	_currentPlayerLabel->setGeometry(QRect(200, 0, 100, 25));
 
@@ -115,21 +115,38 @@ void GLScene::setBallTypeLabel(){
 		}
 		else{
 			if (getCurrentPlayer() == 1){
-				QString inputPlayer0 = "BallType of Player 0 : HALF";
-				_playerFull->setText(inputPlayer0);
-
-				QString inputPlayer1 = "BallType of Player 1: FULL";
-				_playerHalf->setText(inputPlayer1);
-			}
-			else{
 				QString inputPlayer0 = "BallType of Player 0 : FULL";
 				_playerFull->setText(inputPlayer0);
 
 				QString inputPlayer1 = "BallType of Player 1: HALF";
 				_playerHalf->setText(inputPlayer1);
 			}
+			else{
+				QString inputPlayer0 = "BallType of Player 0 : HALF";
+				_playerFull->setText(inputPlayer0);
+
+				QString inputPlayer1 = "BallType of Player 1: FULL";
+				_playerHalf->setText(inputPlayer1);
+			}
 		}
 	}
+}
+void GLScene::hideLabels(){
+	_currentPlayerLabel->hide();
+	_playerFull->hide();
+	_playerHalf->hide();
+}
+void GLScene::showLabel(){
+	_currentPlayerLabel->show();
+	_playerFull->show();
+	_playerHalf->show();
+}
+
+void GLScene::resetLabels(){
+	QString inputHalf = "BallType of Player: ";
+	_playerHalf->setText(inputHalf);
+	QString inputFull = "BallType of Player: ";
+	_playerFull->setText(inputFull);
 }
 
 void GLScene::updateLabel(){
@@ -183,7 +200,7 @@ void GLScene::updateFrame()
 		switch (result)
 		{
 		case IDNO:
-			return;
+			QApplication::quit();
 		case IDYES:
 			hideLabels();
 			std::cout << std::endl;
@@ -440,7 +457,9 @@ void GLScene::CollisionWithHole(Ball& ball)
 						QApplication::quit();
 						break;
 					case IDYES:
-
+						nextPlayer();
+						QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(getCurrentPlayer());
+						_currentPlayerLabel->setText(inputCurrentPlayer);
 						alreadyStarted = true;
 						resetGame();
 						break;
@@ -486,10 +505,17 @@ void GLScene::CollisionWithHole(Ball& ball)
 			//Hat der Spieler die Richtige Farbe rein gemacht?
 			if (!players[currentPlayer].colorSet) {
 				players[currentPlayer].colorSet = true;
-				players[currentPlayer].ballType = ball.full;
 				int otherPlayerPosition = (currentPlayer + 1) % 2;
 				players[otherPlayerPosition].colorSet = true;
-				players[otherPlayerPosition].ballType = !ball.full;
+				if (ball.full){
+					std::cout << "BallTyp: " << ball.full << std::endl;
+					players[currentPlayer].ballType = ball.full;
+					players[otherPlayerPosition].ballType = !ball.full;
+				}
+				else{
+					players[currentPlayer].ballType = ball.full;
+					players[otherPlayerPosition].ballType = !ball.full;
+				}
 				setBallTypeLabel();
 				std::cout << "Farbe angepasst auf " << players[currentPlayer].ballType << std::endl;
 			}
@@ -992,6 +1018,11 @@ void GLScene::resetGame()
 	racket.yLast = 0;
 	racket.x2Last = 0;
 	racket.y2Last = 0;
+
+	players[0].colorSet = false;
+	players[1].colorSet = false;
+
+	resetLabels();
 }
 
 //Render eine Kugel mit ihren Parametern vor allem ihrer Farbe
