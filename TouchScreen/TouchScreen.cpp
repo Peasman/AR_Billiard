@@ -31,6 +31,7 @@ TouchScreen::TouchScreen(QWidget *parent)
   _optionMenu->addAction(_mouseControll);
  
   _helpMenu->addAction(_about);
+  _helpMenu->addAction(_showTips);
 }
 TouchScreen::~TouchScreen()
 {}
@@ -48,6 +49,9 @@ void TouchScreen::createActions()
 	_about = new QAction(tr("&About AR_Biliard"), this);
 	connect(_about, SIGNAL(triggered()), this, SLOT(showAbout()));
 
+	_showTips = new QAction(tr("&Show Game Rules"), this);
+	connect(_showTips, SIGNAL(triggered()), this, SLOT(showURL()));
+
 	_shrtQuit = new QShortcut(QKeySequence("Ctrl+Q"), this);
 	connect(_shrtQuit, SIGNAL(activated()), QApplication::instance(), SLOT(quit()));
 
@@ -62,6 +66,10 @@ void TouchScreen::showAbout(){
 
 //CONTEXTMENU EVENTUELL NICHT BENÖTIGT
 void TouchScreen::contextMenuEvent(QContextMenuEvent *event){}
+
+void TouchScreen::showURL(){
+	ShellExecute(0, 0, L"http://www.billiardino.ch/billiard-regeln.html", 0, 0, SW_SHOW);
+}
 
 void TouchScreen::enableMouseControll()
 {

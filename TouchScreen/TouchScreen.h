@@ -25,6 +25,7 @@ private slots:
   void enableMouseControll();
   void showAbout();
  // void calibrate();
+  void showURL();
 
 protected:
 	void contextMenuEvent(QContextMenuEvent *event);
@@ -43,6 +44,7 @@ private:
 	QAction *_about;
 //	QAction *_shrtFullScreen;
 //	QAction *_calibrate;
+	QAction *_showTips;
     QShortcut   *_shrtQuit;
     QGridLayout *_gridLayout; 
     GLScene     *_scene;
