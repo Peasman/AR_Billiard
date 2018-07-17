@@ -6,8 +6,10 @@ In diesem Kapitel soll die entwickelte Lösung kritisch betrachtet werden. Dabei
 \section{Verbesserungsvorschläge}
 
 \subsubsection{Rendering und Physik}
-
-\subsubsection{Kamerakalibrierung}
+Die Optik des Spiels ist recht zweckmäßig: Das 2D sieht sorgt dafür, dass die Löcher des Spielfeldes und das  rein Rollen der Kugeln in diese schlecht aussieht. Man erkennt dadurch nicht richtig, ob man nun einen Punkt gemacht hat oder nicht, weil die Kugeln einfach verschwinden, wenn sie auf die Löcher treffen. Dies würde um einiges besser aussehen, wenn man das Spiel in 3D gemacht hätte, hätte aber auch dafür gesorgt, dass der Programmieraufwand für die Physik den Umfang des Projektes überstiegen hätte. \\
+Bei der Phsyik gibt es diverse Fehler bei der Kollisionsberechnung. So kann es passieren, dass Kugeln eine unendliche (bzw. Maximal Große) Geschwindigkeit beim Kollidieren bekommen und einfach verschwinden. \\
+Auch die Laufzeit der Kollisionsberechnung ist nicht gut. Diese ist Quadratisch nach der Anzahl der Kugeln. Dies ist jedoch nicht weiter schlimm, weil es nur begrenzt viele Kugeln geben kann und die Berechnung ansonsten trivial ist. Dies hätte man jedoch auch mit einem regulärem Gitter verbessern können, sodass die Kollision von Objekten untersucht wird, die tatsächlich in der Nähe voneinander sind.
+ \subsubsection{Kamerakalibrierung}
 Die Kalibrierung der Kamera, und damit die Erkennung des gegebenen Schachbrett-/Patternmusters bzw. deren Qualität, wird sehr durch den aktuellen Lichteinfluss, u.a. durch die Einstellungen des Beamers, auf das aufgenommene Kamerabild, beeinflusst.
 Sofern die genutzte Kamera nicht exakt scharf eingestellt ist oder das Bild zu dunkel oder zu hell wird, hat dies als direkte Folge eine unsaubere bzw. schlechte bis nicht funktionierende Kamera-Kalibrierung. 
 Da in unserem Projekt für die Erkennung des bekannten Schachbrettmusters eine bereits existierende Methode der OpenCV-Bibliothek genutzt wurde, sind die zu optimierenden Möglichkeiten sehr eingeschränkt.
