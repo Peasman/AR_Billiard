@@ -1,0 +1,112 @@
+\begin{frame}{Darstellung des Erkennungsmusters}
+	Um die Kamera kalibrieren und das Kamerabild bzw. die -punkte entzerren zu können, muss die Kamera ein bekanntes Erkennungsmuster finden und in diesem bestimmte Eckpunkte erfassen und auswerten können.
+	\pause
+	\begin{itemize}
+		\item[1.] Höhe und Breite der Eckpunkte der Kacheln\\
+		\pause
+		$\implies$ $Hoehe_{Kachel} = \frac{Hoehe_{Game}}{Vertikalen}$, $Breite_{Kachel} = \frac{Breite_{Game}}{Horizontalen}$\\
+		\pause
+		\item[2.] Kacheln Rendern:\\
+				$\implies$ Oben Links: ($i \cdot Hoehe_{Kachel}$, $j \cdot Breite_{Kachel}$)\\
+				$\implies$ Unten Rechts: ($(i+1) \cdot Hoehe_{Kachel}$, $(j+1) \cdot Breite_{Kachel}$)\\
+		\pause
+		\item[3.] Damit das klassische Schwarz-Weiß-Muster eines Schachbretts visualisiert wird muss man:\\
+		$\implies$ Kacheln in der Horizontalen die invertierte Farbe der vorherigen Kachel als Grundfarbe wählen und \\
+		$\implies$ Kacheln in der Vertikalen für die erste Kachel die invertiere Farbe der darüber liegenden Kachel wählen
+	\end{itemize}
+\end{frame}
+\begin{frame}{Darstellung des Erkennungsmusters}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.5]{bilder/schachbrett.png}
+	\end{figure}
+
+\end{frame}
+
+
+
+\begin{frame}{Entzerrung des Kamerabildes/Punktes}
+%	Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwischen zwei Ansichten unterschieden werde
+	
+%	Zum einen sind das die Weltkoordinaten, welche in einem 3D-Koordinatensystem liegen, zum anderen die Bildkoordinaten, welche in einem 2D-Koordinatensystem liegen
+	
+%	Da die übergebenen Punkte nachher in ein 2D-Koordinatensystem, das vom Spiel, dargestellt werden sollen, werden die Erkennungspunkte des Schachbrettmusters als 2D-Punkte gespeichert:\\
+%	$WeltCoords = (x \cdot a, y \cdot a, 0), a$ = Kantenlänge, $x \in [0,Vert-1], y \in [0,Hort-1]$\\
+	
+%	Nun werden die aufgenommenen Bilder der Kamera von dem, im vorherigen Abschnitt gerenderten, Schachbrettmuster analysiert, ob auf diesen das bekannte Pattern erkennbar ist
+	
+	%Im Anschluss wird die eigentliche Kamerakalibrierung gestartet, welche durch folgende Formel repräsentiert wird:\\
+%	\[s
+%	\begin{bmatrix}
+%	u\\v\\1
+%	\end{bmatrix}=
+%	\begin{bmatrix}
+%	f_{x} & 0 & c_{x}\\
+%	0 & f_{y} & c_{y}\\
+%	0 & 0 & 1
+%	\end{bmatrix}
+%	\begin{bmatrix}
+%	r_{11} & r_{12} & r_{13} & t_{1} \\
+%	r_{21} & r_{22} & r_{23} & t_{2} \\
+%	r_{31} & r_{32} & r_{33} & t_{3}
+%	\end{bmatrix}
+%	\begin{bmatrix}
+%	X\\Y\\Z\\1
+%	\end{bmatrix}
+%	\]
+	
+	%Als Eingabe werden die Bildkoordinaten als 2D Matrix, sowie die Weltkoordinaten als 3D Matrix der gefundenen Pattern und der Anzahl vertikaler und horizontaler Fixpunkte im Schachbrett übergeben
+	
+%	werden die Weltkoordinaten zu Kamerakoordinaten unter Verwendung der extrinsischen Parameter und die Kamerakoordinaten zu Bildkoordinaten unter Verwendung der intrinsischen Parameter.
+	
+%	\begin{figure}[h]
+%		\centering
+%		\includegraphics[scale=1.3]{bilder/extrinIntrin.PNG}
+%%	\end{figure}
+\end{frame}
+
+
+\begin{frame}{Punktübertragung von Kamera ins Spiel}
+	Der letzte Abschnitt der Kamerakalibrierung stellt das Übertragen eines von der Queue-Erkennung gegebenen Punktes da. Um dies einwandfrei zu ermöglichen, müssen folgende Punkte erfüllt werden:
+	\begin{itemize}
+		\item[1.] äußersten Eckpunkte des, von der Kamera erfassten bilder bekannt sein\\
+		$\implies$ die ganz äußersten Eckpunkte wie folgt berechnet werden:
+		$\implies$ $Lila_{min} = Gruen_{min} - Rot_{min}$, $Lila_{max} = Rot_{max} - Gruen_{max}$
+		\pause
+	\end{itemize}
+	Nun sind die äußersten Eckpunkte des Spielfeldes im Kamerakoordinatensystem bekannt und es ist möglich einen beliebigen 2D Punkt in das Spiel zu projizieren.
+	
+\end{frame}
+
+\begin{frame}{Punktübertragung von Kamera ins Spiel}
+		\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.5]{bilder/schachbrettdiff.png}
+		\caption{Schachbrettmuster Eckpunkte}
+	\end{figure}
+\end{frame}
+
+\begin{frame}{Punktübertragung von Kamera ins Spiel}
+	Hier wird unter zwei Fällen unterschieden. Der übergebene Punkt der Kamera liegt im Spielbereich gdw. $X \in [x_{min}, x_{max}]$ und $Y \in [y_{min},y_{max}]$ gilt.
+	Sofern dies erfüllt ist, wird der gegebene Punkt mit folgenden Gleichungen jeweils mit der X- und Y-Koordinate umgerechnet :\\
+	$X = \dfrac{(P.x - MIN.x) \cdot UR}{(MAX.x - MIN.x)}$, 
+	$Y = \dfrac{(MAX.y - P.y) \cdot OL}{(MAX.y - MIN.y)}$
+\end{frame}
+
+\begin{frame}{Punktübertragung von Kamera ins Spiel}
+	Nun sind die äußersten Eckpunkte des Spielfeldes im Kamerakoordinatensystem bekannt und es ist möglich einen beliebigen 2D Punkt in das Spiel zu projizieren.
+	
+	$X \in [x_{min}, x_{max}]$ und $Y \in [y_{min},y_{max}]$ gilt.
+	Sofern dies erfüllt ist, wird der gegebene Punkt mit folgenden Gleichungen jeweils mit der X- und Y-Koordinate umgerechnet :\\
+	$X = \dfrac{(P.x - MIN.x) \cdot UR}{(MAX.x - MIN.x)}$, 
+	$Y = \dfrac{(MAX.y - P.y) \cdot OL}{(MAX.y - MIN.y)}$
+	
+\end{frame}
+
+\begin{frame}{Punktübertragung von Kamera ins Spiel}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[scale=0.2]{bilder/schachbrettkamera.png}
+		\caption{Kamera- und Spielkoordinatensystem}
+	\end{figure}
+\end{frame}
