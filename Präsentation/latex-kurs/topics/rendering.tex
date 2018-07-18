@@ -1,5 +1,4 @@
-\begin{frame}{Rendering und Phsyik}
-\end{frame}
+
 \begin{frame}{Darstellung des Spielfeldes}
 \begin{itemize}
 	\item Hintergrundfarbe Dunkel-Grün mit der OpenGL ClearColor
@@ -14,25 +13,25 @@
 	\item Auflösung $k$ ist die Anzahl der Dreiecke, aus denen unser Kreis hinterher besteht
 \end{itemize}
 \end{frame}
-\begin{frame}
+\begin{frame}{Triangle-Fan}
 \begin{figure}
 	\caption{Erstes Dreieck eines Triangle-Fans, i = 1, k = 36}
 	\includegraphics[width =150pt]{bilder/1.png}
 \end{figure}
 \end{frame}
-\begin{frame}
+\begin{frame}{Triangle-Fan}
 \begin{figure}
 	\caption{i = 2, k = 36}
 	\includegraphics[width =150pt]{bilder/2.png}
 \end{figure}
 \end{frame}
-\begin{frame}
+\begin{frame}{Triangle-Fan}
 \begin{figure}
 	\caption{i = 3, k = 36}
 	\includegraphics[width =150pt]{bilder/3.png}
 \end{figure}
 \end{frame}
-\begin{frame}
+\begin{frame}{Triangle-Fan}
 \begin{figure}
 	\caption{Vollständiger Triangle-Fan, i = k = 36}
 	\includegraphics[width =150pt]{bilder/full.png}
@@ -81,7 +80,7 @@ Die Physik-Berechnungen des Spiels lassen sich aufteilen in 3 Bereiche:
 \begin{itemize}
 	\item Kollision von Kugel und Wand
 	\item Kollision von Kugeln mit anderen Kugeln
-	\item Kollision vom Queue mit der weißen Kugel
+	\item Kollision vom Queue mit der weißen Kugel (später)
 \end{itemize}
 \end{frame}
 \begin{frame}{Kollisionen: Kugel mit Wand}
@@ -110,10 +109,4 @@ Lösung:
 	\item Wir nehmen die Methode aus dem Airhockey und wählen unsere Kugel die sich bewegen soll als Puck und berechnen die Kollision mit allen anderen Kugeln als Schläger
 	\item Wenn wir das in beide Richtungen ausführen, sodass jede Kugel sozusagen einmal Schläger und einmal Puck ist, wird jede Kugel von einer Kollision getroffen 
 \end{itemize}
-\end{frame}
-\begin{frame}{Kollision mit Queue}
-Die eigentliche Kollision bleibt gleich wie beim Airhockey. \\
-\textbf{Problem: Framerate der Kamera} \\
-$\implies$ Unschärfe lässt Kollisionen verloren gehen \\
-Wird Später im Kontext des Queues erläutert.
 \end{frame}

@@ -25,8 +25,13 @@ Camera::~Camera(){}
 // Bild aufnehmen und zuruekgeben
 cv::Mat Camera::capture()
 {
-	_camera.read(img);
-	return img;
+	if (current == 0)
+	{
+		return img1;
+	}
+	else {
+		return img2;
+	}
 }
 
 // Undistort gegebenen X,Y-Punkt und gibt diesen zuruek
@@ -67,6 +72,16 @@ void Camera::run()
 				//std::cout << std::endl;
 				_calibration = true; //Erneut Calibration
 			}
+		}
+	}
+	else {
+		if (current == 0) {
+			_camera.read(img2);
+			current = 1;
+		}
+		else {
+			_camera.read(img1);
+			current = 0;
 		}
 	}
 }

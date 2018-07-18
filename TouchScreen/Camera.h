@@ -20,7 +20,8 @@ public:
 	void setupCam();
 	cv::Mat capture();
 	cv::Mat img;
-
+	cv::Mat img1, img2,img3, img4;
+	int current = 0;
 	cv::Point2f camera2world(float x, float y);
 
 	inline void startCalibration(){

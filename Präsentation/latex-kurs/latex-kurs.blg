@@ -1,8 +1,8 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: latex-kurs.aux
-A level-1 auxiliary file: topics/einleitung.aux
-A level-1 auxiliary file: topics/rendering.aux
-A level-1 auxiliary file: topics/kamera.aux
-A level-1 auxiliary file: topics/detektion.aux
-A level-1 auxiliary file: topics/zusammenbau.aux
+A level-1 auxiliary file: topics/einleitung.tex.aux
+A level-1 auxiliary file: topics/rendering.tex.aux
+A level-1 auxiliary file: topics/kamera.tex.aux
+A level-1 auxiliary file: topics/detektion.tex.aux
+A level-1 auxiliary file: topics/zusammenbau.tex.aux
 The style file: alphadin.bst
 Database file #1: literatur.bib

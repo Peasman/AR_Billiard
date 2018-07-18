@@ -164,8 +164,8 @@ void Calibration::run(std::list< cv::Mat >& inputImages)
 cv::Point2f Calibration::mapPoint(cv::Point2f blackpoint)//Punkt in Kamera
 {
 	// Frame-Koords Spielfeld
-	int redframeX = 1380;
-	int redframeY = 690;
+	int redframeX = 1080;
+	int redframeY = 540;
 
 	//Punkt auﬂerhalb des Spielfeldes (in cam-koords) = 100,100
 	if (blackpoint.x < epol.x ||

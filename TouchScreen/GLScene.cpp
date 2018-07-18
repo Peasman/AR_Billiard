@@ -76,15 +76,15 @@ void GLScene::initLabel(){
 
 	QString inputCurrentPlayer = "CurrentPlayer: " + QString::number(getCurrentPlayer());
 	_currentPlayerLabel = new QLabel(inputCurrentPlayer, this);
-	_currentPlayerLabel->setGeometry(QRect(200, 0, 100, 25));
+	_currentPlayerLabel->setGeometry(QRect(100, 0, 100, 25));
 
 	QString inputFull = "BallType of Player: ";
 	_playerFull = new QLabel(inputFull, this);
-	_playerFull->setGeometry(QRect(300, 0, 150, 25));
+	_playerFull->setGeometry(QRect(200, 0, 150, 25));
 
 	QString inputHalf = "BallType of Player: ";
 	_playerHalf = new QLabel(inputHalf, this);
-	_playerHalf->setGeometry(QRect(445, 0, 150, 25));
+	_playerHalf->setGeometry(QRect(300, 0, 150, 25));
 
 	_currentPlayerLabel->setAutoFillBackground(true);
 	_playerFull->setAutoFillBackground(true);
@@ -268,16 +268,6 @@ void GLScene::updateFrame()
 		update();
 	}
 }
-void GLScene::hideLabels(){
-	_currentPlayerLabel->hide();
-	_playerFull->hide();
-	_playerHalf->hide();
-}
-void GLScene::showLabel(){
-	_currentPlayerLabel->show();
-	_playerFull->show();
-	_playerHalf->show();
-}
 void GLScene::initializeGL()
 {
 	initLabel();
@@ -415,6 +405,13 @@ void GLScene::updateBallVelocity(Ball& ball)
 
 	const float friction = 0.98f;
 	const float rfriction = 0.99f;
+	const float maxSpeed = 50.0f;
+	if (ball.vx > maxSpeed) {
+		ball.vx = maxSpeed;
+	}
+	if (ball.vy > maxSpeed){
+		ball.vy = maxSpeed;
+	}
 	rotate(ball.omega, ball.vx, ball.vy);
 	ball.x = ball.x + ball.vx;
 	ball.y = ball.y + ball.vy;
@@ -1033,7 +1030,7 @@ void GLScene::loadTexture() {
 	unsigned char * data;
 
 	//TODO Richtiger Filename
-	const char * textureName = "C:\\Users\\fp19\\Documents\\Fachprojekt\\AR_Billiard\\TouchScreen\\textures\\Balls.bmp";
+	const char * textureName = "C:/Users/fp16/Documents/Visual Studio 2013/Projects/AR_Billiard/TouchScreen/Release/Balls.bmp";
 	FILE * fullFile;
 	fullFile = fopen(textureName, "rb");
 	//file = fopen(filename, "rb"); 

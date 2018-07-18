@@ -21,6 +21,9 @@
     <ClCompile Include="GeneratedFiles\Debug\moc_Camera.cpp">
       <Filter>Generierte Dateien\Debug</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Camera.cpp">
+      <Filter>Generierte Dateien\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_TouchScreen.h" />
@@ -58,6 +61,11 @@
     </Filter>
     <Filter Include="Generierte Dateien\Debug">
       <UniqueIdentifier>{26fea6dc-85cd-4f98-94f2-774609c70e06}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generierte Dateien\Release">
+      <UniqueIdentifier>{506d82e0-5bb3-4022-bab0-d27f648cbff4}</UniqueIdentifier>
       <Extensions>cpp;moc</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>

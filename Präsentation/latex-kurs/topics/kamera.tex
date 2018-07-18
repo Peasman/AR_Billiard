@@ -1,25 +1,23 @@
-\begin{frame}{Kamerakalibrierung}
-\end{frame}
 
-\begin{frame}{Darstellung des Erkennungsmusters}
-	Um die Kamera kalibrieren und das Kamerabild bzw. die -punkte entzerren zu können, muss die Kamera ein bekanntes Erkennungsmuster finden und in diesem bestimmte Eckpunkte erfassen und auswerten können.
-	\pause
-	\begin{itemize}
-		\item[1.] Anzahl der Kacheln in der $Vertikalen$ und $Horizontalen$
-		\item[2.] Höhe und Breite der Kacheln\\
-		\pause
-		$\implies$ $Hoehe_{Kachel} = \frac{Hoehe_{Game}}{Vertikalen}$, $Breite_{Kachel} = \frac{Breite_{Game}}{Horizontalen}$\\
-		\pause
-		\item[3.] Kacheln Rendern:\\
-				$\implies$ Oben Links: ($i \cdot Hoehe_{Kachel}$, $j \cdot Breite_{Kachel}$)\\
-				$\implies$ Unten Rechts: ($(i+1) \cdot Hoehe_{Kachel}$, $(j+1) \cdot Breite_{Kachel}$)\\
-		\pause
-		\item[4.] Damit das klassische Schwarz-Weiß-Muster eines Schachbretts visualisiert wird muss man:\\
-		$\implies$ Kacheln in der Horizontalen die invertierte Farbe der vorherigen Kachel als Grundfarbe wählen und \\
-		$\implies$ Kacheln in der Vertikalen für die erste Kachel die invertiere Farbe der darüber liegenden Kachel wählen
-	\end{itemize}
-\end{frame}
-\begin{frame}{Darstellung des Erkennungsmusters}
+%\begin{frame}{Kamera: Erkennungsmuster}
+%	Um die Kamera kalibrieren und das Kamerabild bzw. die -punkte entzerren zu können, muss die Kamera ein bekanntes Erkennungsmuster finden und in diesem bestimmte Eckpunkte erfassen und auswerten können.
+%	\pause
+%	\begin{itemize}
+%		\item[1.] Anzahl der Kacheln in der $Vertikalen$ und $Horizontalen$
+%		\item[2.] Höhe und Breite der Kacheln\\
+%		\pause
+%		$\implies$ $Hoehe_{Kachel} = \frac{Hoehe_{Game}}{Vertikalen}$, $Breite_{Kachel} = \frac{Breite_{Game}}{Horizontalen}$\\
+%		\pause
+%		\item[3.] Kacheln Rendern:\\
+%				$\implies$ Oben Links: ($i \cdot Hoehe_{Kachel}$, $j \cdot Breite_{Kachel}$)\\
+%				$\implies$ Unten Rechts: ($(i+1) \cdot Hoehe_{Kachel}$, $(j+1) \cdot Breite_{Kachel}$)\\
+%		\pause
+%		\item[4.] Damit das klassische Schwarz-Weiß-Muster eines Schachbretts visualisiert wird muss man:\\
+%		$\implies$ Kacheln in der Horizontalen die invertierte Farbe der vorherigen Kachel als Grundfarbe wählen und \\
+%		$\implies$ Kacheln in der Vertikalen für die erste Kachel die invertiere Farbe der darüber liegenden Kachel wählen
+%	\end{itemize}
+%\end{frame}
+\begin{frame}{Kamera: Erkennungsmuster}
 	\begin{figure}[h]
 		\centering
 		\includegraphics[scale=0.5]{bilder/schachbrett.png}
@@ -29,7 +27,7 @@
 
 %###########################
 
-\begin{frame}{Entzerrung des Kamerabildes/Punktes}
+\begin{frame}{Kamera: Entzerrung}
 Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwischen zwei Ansichten unterschieden werde
 	\begin{itemize}
 		\item Weltkoordinaten = Patternkoords. ideal/entzerrt
@@ -37,13 +35,13 @@ Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwisch
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Weltkoordinaten erstellen}
+\begin{frame}{Kamera: Weltkoordinaten}
 	Da die übergebenen Punkte nachher in ein 2D-Koordinatensystem, das vom Spiel, dargestellt werden sollen, werden die Erkennungspunkte des Schachbrettmusters als 2D-Punkte gespeichert:\\
 	$WeltCoords = (x \cdot a, y \cdot a, 0)$\\
 	$a$ = Kantenlänge, $x \in [0,Vert-1], y \in [0,Hort-1]$\\
 \end{frame}
 
-\begin{frame}{Kalibrierungsparameter berechnen}
+\begin{frame}{Kamera: Kalibrierungsparameter}
 	\[s
 	\begin{bmatrix}
 	u\\v\\1
@@ -64,7 +62,7 @@ Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwisch
 	\]
 \end{frame}
 
-\begin{frame}{Kalibrierungsparameter berechnen}
+\begin{frame}{Kamera: Kalibrierungsparameter}
 	Eingabe:\\
 	\begin{itemize}
 		\item Bildkoordinaten 2D Matrix\\
@@ -73,17 +71,17 @@ Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwisch
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Kalibrierungsparameter berechnen
+\begin{frame}{Kamera: Kalibrierungsparameter}
 	\begin{figure}[h]
 		\centering
-		\includegraphics[scale=1.3]{bilder/extrinIntrin.PNG}
+		\includegraphics[scale=1.0]{bilder/extrinIntrin.PNG}
 	\end{figure}
-	Nun erhalten wir die extrinsischen ("äußeren"), sowie die intrinsischen ("inneren") Entzerrungsparameter
+	Nun erhalten wir die extrinsischen, sowie die intrinsischen Entzerrungsparameter
 \end{frame}
 
 %###########################
 
-\begin{frame}{Punktübertragung von Kamera ins Spiel}
+\begin{frame}{Kamera: Mapping}
 	Der letzte Abschnitt der Kamerakalibrierung stellt das Übertragen eines von der Queue-Erkennung gegebenen Punktes ins Spielfeld da. Um dies einwandfrei zu ermöglichen, müssen folgende Punkte erfüllt werden:
 	\begin{itemize}
 		\item[1.] äußersten Eckpunkte des, von der Kamera erfassten bilder bekannt sein\\
@@ -93,7 +91,7 @@ Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwisch
 	\end{itemize}	
 \end{frame}
 
-\begin{frame}{Punktübertragung von Kamera ins Spiel}
+\begin{frame}{Kamera: Mapping}
 		\begin{figure}[h]
 		\centering
 		\includegraphics[scale=0.5]{bilder/schachbrettdiff.png}
@@ -101,7 +99,7 @@ Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwisch
 	\end{figure}
 \end{frame}
 
-\begin{frame}{Punktübertragung von Kamera ins Spiel}
+\begin{frame}{Kamera: Mapping}
 	Nun sind die äußersten Eckpunkte des Spielfeldes im Kamerakoordinatensystem bekannt und es ist möglich einen beliebigen 2D Punkt in das Spiel zu projizieren.
 	
 	$X \in [x_{min}, x_{max}]$ und $Y \in [y_{min},y_{max}]$ gilt.
@@ -111,7 +109,7 @@ Für die Kalibrierung des Kamerabildes mittels eines Patternmusters, muss zwisch
 	
 \end{frame}
 
-\begin{frame}{Punktübertragung von Kamera ins Spiel}
+\begin{frame}{Kamera: Mapping}
 	\begin{figure}[h]
 		\centering
 		\includegraphics[scale=0.2]{bilder/schachbrettkamera.png}
