@@ -1,4 +1,4 @@
-\select@language {german}
+\babel@toc {german}{}
 \contentsline {chapter}{\numberline {1}Einleitung}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Motivation und Hintergrund}{1}{section.1.1}
 \contentsline {section}{\numberline {1.2}Zielsetzung}{1}{section.1.2}
@@ -28,12 +28,10 @@
 \contentsline {chapter}{\numberline {4}Ergebnisse}{25}{chapter.4}
 \contentsline {section}{\numberline {4.1}Aufbau der Umfrage}{25}{section.4.1}
 \contentsline {section}{\numberline {4.2}Darstellung der Ergebnisse}{25}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Benutzerfreundlichkeit}{25}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Genauigkeit der Spielsteuerung}{25}{subsection.4.2.2}
 \contentsline {chapter}{\numberline {5}Diskussion}{27}{chapter.5}
 \contentsline {section}{\numberline {5.1}Verbesserungsvorschl\IeC {\"a}ge}{27}{section.5.1}
-\contentsline {subsubsection}{\nonumberline Rendering und Physik}{27}{section*.22}
-\contentsline {subsubsection}{\nonumberline Kamerakalibrierung}{27}{section*.23}
-\contentsline {subsubsection}{\nonumberline Queue-Detektion}{28}{section*.24}
-\contentsline {subsubsection}{\nonumberline Benutzerinteraktion}{28}{section*.25}
-\contentsline {chapter}{Literaturverzeichnis}{30}{section*.25}
+\contentsline {subsubsection}{\nonumberline Rendering und Physik}{27}{section*.23}
+\contentsline {subsubsection}{\nonumberline Kamerakalibrierung}{27}{section*.24}
+\contentsline {subsubsection}{\nonumberline Queue-Detektion}{28}{section*.25}
+\contentsline {subsubsection}{\nonumberline Benutzerinteraktion}{28}{section*.26}
+\contentsline {chapter}{Literaturverzeichnis}{30}{section*.26}
